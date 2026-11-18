@@ -2,6 +2,22 @@
 
 All notable changes to `@fangxinyan/aster-ui` are documented in this file following [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.5.1] - 2026-11-18
+
+### Added
+- **Imperative Modal Bus (`afModal` / `AfModal.confirm`) & Declarative Modal Actions**:
+  - Added singleton `afModal` (`confirm`, `info`, `success`, `warning`, `error`, `destroyAll`) attached directly to `AfModal` and exposed on `createAsterPluginRuntime` (`runtime.modal` / `runtime.shared.modal`), with `<AfModalHost>` auto-mounted inside top-level `AsterThemeProvider` (`.af-portal-root`).
+  - Imperative handles implement `Promise<boolean> & { destroy, close }` for both `await AfModal.confirm(...)` and manual `dialog.destroy()` workflows with `160ms` exit transitions and async `onOk` loading guards.
+  - Added optional built-in confirmation footer props (`onOk`, `onCancel`, `okText`, `cancelText`, `confirmLoading`, `okButtonProps`, `cancelButtonProps`, `escClosable`, `maskStyle`, `bodyProps`) and headerless `aria-label` / `aria-labelledby` support on `<AfModal>`.
+- **Icon Registry & Validation Helpers**:
+  - Added `SettingOutlined` and 24 additional standard named icon components to `@fangxinyan/aster-ui`, `/core`, `/icons`, and `NAMED_ICON_MAP`, plus `barChart`, `picture`, `sync`, and semantic aliases in `AF_ICON_ALIASES`.
+  - Exported `isAfIconName` and `resolveAfIconName` helper utilities.
+- **Desktop Form, Overlay & Media Control Refinements**:
+  - Enhanced `AfSelect` (`aria-label`, `aria-labelledby`, `showSearch`, `selectedRender`, `optionExtraRender`, `emptyContent`, `popupClassName`, `popupStyle`, `listHeight`) and `AfCascader` (`aria-label`, `aria-labelledby`, `showSearch` with custom path `filter`, `optionRender`, `selectedRender`, `popupClassName`, `listHeight`).
+  - Enhanced `AfDrawer` (`size`, `extra`, `bodyOverflow`), `AfPopover` (`placement` 12-way shorthand & `overlayClassName`), `AfTooltip` (`overlayClassName`), and `afMessage` (`title` & smooth `dismiss` / `dismissByKey` exit transitions).
+  - Enhanced `AfCheckbox`, `AfRadio` (`AfRadio.Group`), `AfRadioGroup` (`direction`, `size`, `aria-*`), `AfNumberInput` (`onFocus`, `onBlur`, `aria-*`), `AfSlider` (`aria-label`, `onKeyUp`, `onBlur`), `AfDatePicker` (controlled `open` / `onOpenChange`, `allowClear`), and `AfTabs` (`aria-label`, alias icon support).
+  - Enhanced `AfTable` / `AfTablePro` (`scroll={{ x, y }}`, `scrollY`, `tableProps`), `AfSplitter` (`forwardRef`, `secondMin`, pane/handle class & style slots, `onResize`, `onResizeEnd`), `AfSpriteImage` (`sprite` slice & `scale` transform), `AfLayeredImage` (per-layer `fit`, `inset`, `style`, and `<img>` attributes), `AfText` (`ellipsis` & non-disabling `copyable`), `AfTag` (`removable`, `onRemove`, `bordered={false}`), `AfAvatar` (`initials`), and `AfProgress` (`max`, `showValue`, `indeterminate`).
+
 ## [0.5.0] - 2026-11-18
 
 ### Added

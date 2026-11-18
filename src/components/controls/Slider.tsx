@@ -4,7 +4,9 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type FocusEventHandler,
   type KeyboardEvent,
+  type KeyboardEventHandler,
   type PointerEvent as ReactPointerEvent,
   type PointerEventHandler,
   type ReactElement,
@@ -21,6 +23,8 @@ export type AfSliderBaseProps = {
   label?: string;
   /** 无障碍名称；区间模式可分别传入起点/终点名称。 */
   ariaLabel?: string | [string, string];
+  /** 原生无障碍名称（与 `ariaLabel` 等效，`aria-label` 优先）。 */
+  "aria-label"?: string;
   /** 原生表单字段名。 */
   name?: string;
   /** 控件 id。 */
@@ -53,6 +57,10 @@ export type AfSliderBaseProps = {
   colors?: string[];
   /** 指针抬起回调。 */
   onPointerUp?: PointerEventHandler<HTMLDivElement>;
+  /** 键盘松开回调。 */
+  onKeyUp?: KeyboardEventHandler<HTMLDivElement>;
+  /** 失焦回调。 */
+  onBlur?: FocusEventHandler<HTMLDivElement>;
   /** 根节点附加样式。 */
   className?: string;
   style?: CSSProperties;
@@ -113,6 +121,8 @@ function AfSliderInner(props: AfSliderProps, forwardedRef: Ref<HTMLDivElement>) 
     tone = "accent",
     colors,
     onPointerUp,
+    onKeyUp,
+    onBlur,
     className,
     style,
   } = props;
@@ -165,7 +175,7 @@ function AfSliderInner(props: AfSliderProps, forwardedRef: Ref<HTMLDivElement>) 
   const sortedHigh = Math.max(low, high);
   const lowPct = percent(sortedLow);
   const highPct = percent(sortedHigh);
-  const ariaLabel = props.ariaLabel;
+  const ariaLabel = props["aria-label"] ?? props.ariaLabel;
   const singleLabel = typeof ariaLabel === "string" ? ariaLabel : props.label ?? "Slider";
   const lowLabel = Array.isArray(ariaLabel) ? ariaLabel[0] : props.label ?? "Minimum";
   const highLabel = Array.isArray(ariaLabel) ? ariaLabel[1] : props.label ?? "Maximum";
@@ -239,6 +249,8 @@ function AfSliderInner(props: AfSliderProps, forwardedRef: Ref<HTMLDivElement>) 
       ref={forwardedRef}
       className={cn("af-slider", className)}
       style={style}
+      onKeyUp={onKeyUp}
+      onBlur={onBlur}
       data-size={size !== "md" ? size : undefined}
       data-inline={inline || undefined}
       data-disabled={disabled || undefined}

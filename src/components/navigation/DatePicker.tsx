@@ -1,6 +1,6 @@
 import { forwardRef, useId, useRef, useState, type KeyboardEvent } from "react";
 import { AfIcon } from "../../icons";
-import { cn, composeRefs, getLocalToday, useIsomorphicLayoutEffect } from "../../primitives";
+import { cn, composeRefs, getLocalToday, useControllableState, useIsomorphicLayoutEffect } from "../../primitives";
 import {
   type AfDatePickerProps,
   DATE_WEEKDAYS,
@@ -40,17 +40,21 @@ export const AfDatePicker = forwardRef<HTMLButtonElement, AfDatePickerProps>(fun
     isDateDisabled,
     placeholder: placeholderProp,
     label: labelProp,
+    "aria-label": ariaLabelProp,
     showLabel = false,
     hint,
     error,
     optional = false,
     required = false,
     clearable = true,
+    allowClear,
     today = getLocalToday(),
     weekStartsOn = 1,
     locale,
     presets,
+    open: openProp,
     defaultOpen = false,
+    onOpenChange,
     showYearNav = false,
     showFooter = false,
     formatDisplay,
@@ -60,11 +64,16 @@ export const AfDatePicker = forwardRef<HTMLButtonElement, AfDatePickerProps>(fun
 ) {
   const isZh = isZhPickerLocale(locale);
   const placeholder = placeholderProp ?? (isZh ? "选择日期" : "Select date");
-  const label = labelProp ?? (isZh ? "选择日期" : "Select date");
+  const label = ariaLabelProp ?? labelProp ?? (isZh ? "选择日期" : "Select date");
+  const canClear = allowClear ?? clearable;
   const fieldCtx = useAfFormFieldControl();
   const [inner, setInner] = useState<Date | null>(() => (defaultValue ? clampDate(defaultValue, min, max) : null));
   const current = value !== undefined ? value : inner;
-  const [open, setOpen] = useState(defaultOpen);
+  const [open, setOpen] = useControllableState<boolean>({
+    value: openProp,
+    defaultValue: defaultOpen,
+    onChange: onOpenChange,
+  });
   const [slideDir, setSlideDir] = useState<"left" | "right" | null>(null);
   const [view, setView] = useState(() => {
     const base = current ?? today;
@@ -394,7 +403,7 @@ export const AfDatePicker = forwardRef<HTMLButtonElement, AfDatePickerProps>(fun
               >
                 {isZh ? "今天" : "Today"}
               </button>
-              {clearable ? (
+              {canClear ? (
                 <button
                   type="button"
                   className="af-in-date__link"

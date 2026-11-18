@@ -1,6 +1,7 @@
 import { forwardRef, type CSSProperties, type ReactNode } from "react";
 import { cn, useControllableState } from "../../primitives";
 import { useAfFormFieldControl } from "./FormField";
+import { AfRadioGroup } from "./RadioGroup";
 
 /** 独立单选框属性。 */
 export type AfRadioProps = {
@@ -20,6 +21,8 @@ export type AfRadioProps = {
   description?: ReactNode;
   /** 无可见文字时的无障碍名称。 */
   ariaLabel?: string;
+  /** 原生无障碍名称（与 `ariaLabel` 等效，`aria-label` 优先）。 */
+  "aria-label"?: string;
   /** 原生 radio 分组名。 */
   name?: string;
   /** 原生表单值。 */
@@ -41,7 +44,7 @@ export type AfRadioProps = {
 /**
  * 独立单选原子控件：16px 发丝圆点 + 强调色选中圆心，适合表格单选行或自定义布局单选项。
  */
-export const AfRadio = forwardRef<HTMLInputElement, AfRadioProps>(function AfRadio(
+const AfRadioBase = forwardRef<HTMLInputElement, AfRadioProps>(function AfRadio(
   {
     checked,
     defaultChecked = false,
@@ -51,6 +54,7 @@ export const AfRadio = forwardRef<HTMLInputElement, AfRadioProps>(function AfRad
     label,
     description,
     ariaLabel,
+    "aria-label": ariaLabelProp,
     name,
     value,
     required,
@@ -94,7 +98,7 @@ export const AfRadio = forwardRef<HTMLInputElement, AfRadioProps>(function AfRad
         required={resolvedRequired || undefined}
         checked={isChecked}
         disabled={disabled}
-        aria-label={ariaLabel}
+        aria-label={ariaLabelProp ?? ariaLabel}
         aria-describedby={fieldCtx?.describedBy}
         aria-invalid={bad || undefined}
         onChange={(event) => setIsChecked(event.target.checked)}
@@ -108,4 +112,9 @@ export const AfRadio = forwardRef<HTMLInputElement, AfRadioProps>(function AfRad
       ) : null}
     </label>
   );
+});
+
+/** 复合单选组件：支持 `<AfRadio />` 与 `<AfRadio.Group />`。 */
+export const AfRadio = Object.assign(AfRadioBase, {
+  Group: AfRadioGroup,
 });

@@ -136,6 +136,7 @@ export const AF_ICON_ALIASES = {
   aim: "compass",
   appstore: "grid",
   AppstoreOutlined: "grid",
+  barChart: "chart",
   border: "square",
   checkCircleFilled: "checkCircle",
   chevDown: "chevronDown",
@@ -150,9 +151,11 @@ export const AF_ICON_ALIASES = {
   environment: "mapPin",
   loading: "loader",
   native: "external",
+  picture: "image",
   reload: "refresh",
   starFilled: "star",
   swap: "arrowRight",
+  sync: "refresh",
   unorderedList: "list",
   volume: "speaker",
   zap: "bolt",
@@ -163,40 +166,82 @@ export const AF_ICON_ALIASES = {
   windowRestore: "windowRestore",
   windowClose: "x",
   AimOutlined: "compass",
+  ArrowDownOutlined: "arrowDown",
+  ArrowLeftOutlined: "arrowLeft",
+  ArrowRightOutlined: "arrowRight",
+  ArrowUpOutlined: "arrowUp",
   BarChartOutlined: "chart",
+  BellOutlined: "bell",
+  CalendarOutlined: "calendar",
   CameraOutlined: "camera",
   CaretDownOutlined: "chevronDown",
   CaretUpOutlined: "chevronUp",
   CheckCircleFilled: "checkCircle",
   CheckCircleOutlined: "checkCircle",
   CheckOutlined: "check",
+  ClockCircleOutlined: "clock",
   CloseCircleOutlined: "xCircle",
   CloseOutlined: "x",
+  CloudServerOutlined: "server",
+  CodeOutlined: "code",
   CopyOutlined: "copy",
+  DatabaseOutlined: "database",
   DeleteOutlined: "trash",
   DownOutlined: "chevronDown",
+  DownloadOutlined: "download",
+  EditOutlined: "pencil",
+  EllipsisOutlined: "more",
   EnvironmentOutlined: "mapPin",
   ExclamationCircleOutlined: "alert",
+  EyeInvisibleOutlined: "eyeOff",
+  EyeOutlined: "eye",
+  FileOutlined: "file",
+  FileTextOutlined: "file",
+  FilterOutlined: "filter",
   FolderOpenOutlined: "folderOpen",
+  FolderOutlined: "folder",
+  FullscreenExitOutlined: "minimize",
+  FullscreenOutlined: "maximize",
+  GlobalOutlined: "globe",
+  HomeOutlined: "home",
+  InfoCircleOutlined: "info",
   LeftOutlined: "chevronLeft",
+  LinkOutlined: "link",
   LoadingOutlined: "loader",
+  LockOutlined: "lock",
   MinusCircleOutlined: "minus",
   MinusOutlined: "minus",
+  MoreOutlined: "more",
+  PauseCircleOutlined: "pause",
   PictureOutlined: "image",
+  PlayCircleOutlined: "play",
   PlusOutlined: "plus",
   QqOutlined: "message",
+  QuestionCircleOutlined: "help",
+  RedoOutlined: "redo",
   ReloadOutlined: "refresh",
   RightOutlined: "chevronRight",
   RobotOutlined: "sparkle",
   SearchOutlined: "search",
+  SendOutlined: "send",
+  SettingOutlined: "settings",
+  ShopOutlined: "store",
   StarFilled: "star",
   StarOutlined: "star",
   SwapOutlined: "arrowRight",
   SwapRightOutlined: "arrowRight",
   SyncOutlined: "refresh",
   ThunderboltOutlined: "bolt",
+  TranslationOutlined: "translate",
+  UndoOutlined: "undo",
+  UnlockOutlined: "unlock",
   UnorderedListOutlined: "list",
+  UpOutlined: "chevronUp",
+  UploadOutlined: "upload",
   UserOutlined: "user",
+  WarningOutlined: "alert",
+  ZoomInOutlined: "zoomIn",
+  ZoomOutOutlined: "zoomOut",
   email: "mail",
   envelope: "mail",
   lightbulb: "bulb",
@@ -221,11 +266,17 @@ export function isKnownAfIconName(name: string): name is AfIconName {
   return name in paths || name in AF_ICON_ALIASES;
 }
 
+/** `isKnownAfIconName` 的简写校验辅助函数。 */
+export const isAfIconName = isKnownAfIconName;
+
 /** 将经典或别名图标键解析为规范的 `AffectIconKey`。 */
 export function resolveAfIconKey(name: AfIconName | string): AffectIconKey {
   if (name in paths) return name as AffectIconKey;
   return AF_ICON_ALIASES[name as AfIconAliasKey] ?? "info";
 }
+
+/** `resolveAfIconKey` 的语义化别名。 */
+export const resolveAfIconName = resolveAfIconKey;
 
 /** 渲染通用图标槽：传入字符串时渲染 `<AfIcon>`，传入自定义节点时原样渲染。 */
 export function renderAfIconSlot(
@@ -281,98 +332,142 @@ export type AfNamedIconProps = Omit<AfIconProps, "name"> & {
   spin?: boolean;
 };
 
-function createNamedIcon(displayName: string, key: AffectIconKey, filled = false) {
-  function NamedIcon({ style, spin, className, ...rest }: AfNamedIconProps = {}) {
-    return (
-      <AfIcon
-        name={key}
-        className={[spin ? "af-spin-icon" : undefined, className].filter(Boolean).join(" ") || undefined}
-        fill={filled ? "currentColor" : "none"}
-        fillOpacity={filled ? 0.22 : undefined}
-        style={spin ? { animation: "af-spin 1s linear infinite", ...style } : style}
-        {...rest}
-      />
-    );
-  }
-  NamedIcon.displayName = displayName;
-  return NamedIcon;
+function renderNamedIcon(key: AffectIconKey, filled: boolean, { style, spin, className, ...rest }: AfNamedIconProps = {}) {
+  return (
+    <AfIcon
+      name={key}
+      className={[spin ? "af-spin-icon" : undefined, className].filter(Boolean).join(" ") || undefined}
+      fill={filled ? "currentColor" : "none"}
+      fillOpacity={filled ? 0.22 : undefined}
+      style={spin ? { animation: "af-spin 1s linear infinite", ...style } : style}
+      {...rest}
+    />
+  );
 }
 
-export const AimOutlined = createNamedIcon("AimOutlined", "compass");
-export const AppstoreOutlined = createNamedIcon("AppstoreOutlined", "grid");
-export const BarChartOutlined = createNamedIcon("BarChartOutlined", "chart");
-export const CameraOutlined = createNamedIcon("CameraOutlined", "camera");
-export const CaretDownOutlined = createNamedIcon("CaretDownOutlined", "chevronDown");
-export const CaretUpOutlined = createNamedIcon("CaretUpOutlined", "chevronUp");
-export const CheckCircleFilled = createNamedIcon("CheckCircleFilled", "checkCircle", true);
-export const CheckCircleOutlined = createNamedIcon("CheckCircleOutlined", "checkCircle");
-export const CheckOutlined = createNamedIcon("CheckOutlined", "check");
-export const CloseCircleOutlined = createNamedIcon("CloseCircleOutlined", "xCircle");
-export const CloseOutlined = createNamedIcon("CloseOutlined", "x");
-export const CopyOutlined = createNamedIcon("CopyOutlined", "copy");
-export const DeleteOutlined = createNamedIcon("DeleteOutlined", "trash");
-export const DownOutlined = createNamedIcon("DownOutlined", "chevronDown");
-export const EnvironmentOutlined = createNamedIcon("EnvironmentOutlined", "mapPin");
-export const ExclamationCircleOutlined = createNamedIcon("ExclamationCircleOutlined", "alert");
-export const FolderOpenOutlined = createNamedIcon("FolderOpenOutlined", "folderOpen");
-export const LeftOutlined = createNamedIcon("LeftOutlined", "chevronLeft");
-export const LoadingOutlined = createNamedIcon("LoadingOutlined", "loader");
-export const MinusCircleOutlined = createNamedIcon("MinusCircleOutlined", "minus");
-export const MinusOutlined = createNamedIcon("MinusOutlined", "minus");
-export const PictureOutlined = createNamedIcon("PictureOutlined", "image");
-export const PlusOutlined = createNamedIcon("PlusOutlined", "plus");
-export const QqOutlined = createNamedIcon("QqOutlined", "message");
-export const ReloadOutlined = createNamedIcon("ReloadOutlined", "refresh");
-export const RightOutlined = createNamedIcon("RightOutlined", "chevronRight");
-export const RobotOutlined = createNamedIcon("RobotOutlined", "sparkle");
-export const SearchOutlined = createNamedIcon("SearchOutlined", "search");
-export const StarFilled = createNamedIcon("StarFilled", "star", true);
-export const StarOutlined = createNamedIcon("StarOutlined", "star");
-export const SwapOutlined = createNamedIcon("SwapOutlined", "arrowRight");
-export const SwapRightOutlined = createNamedIcon("SwapRightOutlined", "arrowRight");
-export const SyncOutlined = createNamedIcon("SyncOutlined", "refresh");
-export const ThunderboltOutlined = createNamedIcon("ThunderboltOutlined", "bolt");
-export const UnorderedListOutlined = createNamedIcon("UnorderedListOutlined", "list");
-export const UserOutlined = createNamedIcon("UserOutlined", "user");
+export function AimOutlined(props?: AfNamedIconProps) { return renderNamedIcon("compass", false, props); }
+export function AppstoreOutlined(props?: AfNamedIconProps) { return renderNamedIcon("grid", false, props); }
+export function BarChartOutlined(props?: AfNamedIconProps) { return renderNamedIcon("chart", false, props); }
+export function BellOutlined(props?: AfNamedIconProps) { return renderNamedIcon("bell", false, props); }
+export function CalendarOutlined(props?: AfNamedIconProps) { return renderNamedIcon("calendar", false, props); }
+export function CameraOutlined(props?: AfNamedIconProps) { return renderNamedIcon("camera", false, props); }
+export function CaretDownOutlined(props?: AfNamedIconProps) { return renderNamedIcon("chevronDown", false, props); }
+export function CaretUpOutlined(props?: AfNamedIconProps) { return renderNamedIcon("chevronUp", false, props); }
+export function CheckCircleFilled(props?: AfNamedIconProps) { return renderNamedIcon("checkCircle", true, props); }
+export function CheckCircleOutlined(props?: AfNamedIconProps) { return renderNamedIcon("checkCircle", false, props); }
+export function CheckOutlined(props?: AfNamedIconProps) { return renderNamedIcon("check", false, props); }
+export function ClockCircleOutlined(props?: AfNamedIconProps) { return renderNamedIcon("clock", false, props); }
+export function CloseCircleOutlined(props?: AfNamedIconProps) { return renderNamedIcon("xCircle", false, props); }
+export function CloseOutlined(props?: AfNamedIconProps) { return renderNamedIcon("x", false, props); }
+export function CopyOutlined(props?: AfNamedIconProps) { return renderNamedIcon("copy", false, props); }
+export function DeleteOutlined(props?: AfNamedIconProps) { return renderNamedIcon("trash", false, props); }
+export function DownOutlined(props?: AfNamedIconProps) { return renderNamedIcon("chevronDown", false, props); }
+export function DownloadOutlined(props?: AfNamedIconProps) { return renderNamedIcon("download", false, props); }
+export function EditOutlined(props?: AfNamedIconProps) { return renderNamedIcon("pencil", false, props); }
+export function EllipsisOutlined(props?: AfNamedIconProps) { return renderNamedIcon("more", false, props); }
+export function EnvironmentOutlined(props?: AfNamedIconProps) { return renderNamedIcon("mapPin", false, props); }
+export function ExclamationCircleOutlined(props?: AfNamedIconProps) { return renderNamedIcon("alert", false, props); }
+export function EyeInvisibleOutlined(props?: AfNamedIconProps) { return renderNamedIcon("eyeOff", false, props); }
+export function EyeOutlined(props?: AfNamedIconProps) { return renderNamedIcon("eye", false, props); }
+export function FileOutlined(props?: AfNamedIconProps) { return renderNamedIcon("file", false, props); }
+export function FileTextOutlined(props?: AfNamedIconProps) { return renderNamedIcon("file", false, props); }
+export function FilterOutlined(props?: AfNamedIconProps) { return renderNamedIcon("filter", false, props); }
+export function FolderOpenOutlined(props?: AfNamedIconProps) { return renderNamedIcon("folderOpen", false, props); }
+export function FolderOutlined(props?: AfNamedIconProps) { return renderNamedIcon("folder", false, props); }
+export function GlobalOutlined(props?: AfNamedIconProps) { return renderNamedIcon("globe", false, props); }
+export function HomeOutlined(props?: AfNamedIconProps) { return renderNamedIcon("home", false, props); }
+export function InfoCircleOutlined(props?: AfNamedIconProps) { return renderNamedIcon("info", false, props); }
+export function LeftOutlined(props?: AfNamedIconProps) { return renderNamedIcon("chevronLeft", false, props); }
+export function LinkOutlined(props?: AfNamedIconProps) { return renderNamedIcon("link", false, props); }
+export function LoadingOutlined(props?: AfNamedIconProps) { return renderNamedIcon("loader", false, props); }
+export function LockOutlined(props?: AfNamedIconProps) { return renderNamedIcon("lock", false, props); }
+export function MinusCircleOutlined(props?: AfNamedIconProps) { return renderNamedIcon("minus", false, props); }
+export function MinusOutlined(props?: AfNamedIconProps) { return renderNamedIcon("minus", false, props); }
+export function MoreOutlined(props?: AfNamedIconProps) { return renderNamedIcon("more", false, props); }
+export function PictureOutlined(props?: AfNamedIconProps) { return renderNamedIcon("image", false, props); }
+export function PlusOutlined(props?: AfNamedIconProps) { return renderNamedIcon("plus", false, props); }
+export function QqOutlined(props?: AfNamedIconProps) { return renderNamedIcon("message", false, props); }
+export function QuestionCircleOutlined(props?: AfNamedIconProps) { return renderNamedIcon("help", false, props); }
+export function ReloadOutlined(props?: AfNamedIconProps) { return renderNamedIcon("refresh", false, props); }
+export function RightOutlined(props?: AfNamedIconProps) { return renderNamedIcon("chevronRight", false, props); }
+export function RobotOutlined(props?: AfNamedIconProps) { return renderNamedIcon("sparkle", false, props); }
+export function SearchOutlined(props?: AfNamedIconProps) { return renderNamedIcon("search", false, props); }
+export function SettingOutlined(props?: AfNamedIconProps) { return renderNamedIcon("settings", false, props); }
+export function StarFilled(props?: AfNamedIconProps) { return renderNamedIcon("star", true, props); }
+export function StarOutlined(props?: AfNamedIconProps) { return renderNamedIcon("star", false, props); }
+export function SwapOutlined(props?: AfNamedIconProps) { return renderNamedIcon("arrowRight", false, props); }
+export function SwapRightOutlined(props?: AfNamedIconProps) { return renderNamedIcon("arrowRight", false, props); }
+export function SyncOutlined(props?: AfNamedIconProps) { return renderNamedIcon("refresh", false, props); }
+export function ThunderboltOutlined(props?: AfNamedIconProps) { return renderNamedIcon("bolt", false, props); }
+export function UnlockOutlined(props?: AfNamedIconProps) { return renderNamedIcon("unlock", false, props); }
+export function UnorderedListOutlined(props?: AfNamedIconProps) { return renderNamedIcon("list", false, props); }
+export function UpOutlined(props?: AfNamedIconProps) { return renderNamedIcon("chevronUp", false, props); }
+export function UploadOutlined(props?: AfNamedIconProps) { return renderNamedIcon("upload", false, props); }
+export function UserOutlined(props?: AfNamedIconProps) { return renderNamedIcon("user", false, props); }
+export function WarningOutlined(props?: AfNamedIconProps) { return renderNamedIcon("alert", false, props); }
 
 /** 历史宿主迁移兼容命名图标表：按组件名映射到可直接渲染的图标组件。 */
 export const NAMED_ICON_MAP = {
   AimOutlined,
   AppstoreOutlined,
   BarChartOutlined,
+  BellOutlined,
+  CalendarOutlined,
   CameraOutlined,
   CaretDownOutlined,
   CaretUpOutlined,
   CheckCircleFilled,
   CheckCircleOutlined,
   CheckOutlined,
+  ClockCircleOutlined,
   CloseCircleOutlined,
   CloseOutlined,
   CopyOutlined,
   DeleteOutlined,
   DownOutlined,
+  DownloadOutlined,
+  EditOutlined,
+  EllipsisOutlined,
   EnvironmentOutlined,
   ExclamationCircleOutlined,
+  EyeInvisibleOutlined,
+  EyeOutlined,
+  FileOutlined,
+  FileTextOutlined,
+  FilterOutlined,
   FolderOpenOutlined,
+  FolderOutlined,
+  GlobalOutlined,
+  HomeOutlined,
+  InfoCircleOutlined,
   LeftOutlined,
+  LinkOutlined,
   LoadingOutlined,
+  LockOutlined,
   MinusCircleOutlined,
   MinusOutlined,
+  MoreOutlined,
   PictureOutlined,
   PlusOutlined,
   QqOutlined,
+  QuestionCircleOutlined,
   ReloadOutlined,
   RightOutlined,
   RobotOutlined,
   SearchOutlined,
+  SettingOutlined,
   StarFilled,
   StarOutlined,
   SwapOutlined,
   SwapRightOutlined,
   SyncOutlined,
   ThunderboltOutlined,
+  UnlockOutlined,
   UnorderedListOutlined,
+  UpOutlined,
+  UploadOutlined,
   UserOutlined,
+  WarningOutlined,
 } as const satisfies Record<string, ComponentType<AfNamedIconProps>>;
 
 /** 兼容图标名联合类型。 */

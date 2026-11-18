@@ -9,8 +9,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from "react";
-import { AfIcon } from "../../icons";
-import type { AffectIconKey } from "../../model";
+import { AfIcon, type AfIconName } from "../../icons";
 import { cn, useIsomorphicLayoutEffect } from "../../primitives";
 
 /** 标签页数据。 */
@@ -24,7 +23,7 @@ export type AfTabItem = {
   /** `content` 的兼容别名。 */
   children?: ReactNode;
   /** 前置图标。 */
-  icon?: AffectIconKey | ReactNode;
+  icon?: AfIconName | ReactNode;
   /** 右侧计数徽标。 */
   count?: number;
   /** 是否允许关闭该标签页。 */
@@ -57,6 +56,10 @@ export type AfTabsProps = {
   centered?: boolean;
   /** 占满父容器，正文独立滚动。 */
   fill?: boolean;
+  /** 标签栏无障碍名称。 */
+  ariaLabel?: string;
+  /** 标签栏无障碍名称（与 `ariaLabel` 等效，`aria-label` 优先）。 */
+  "aria-label"?: string;
   /** 根节点附加类名。 */
   className?: string;
   /** 标签条附加类名。 */
@@ -94,6 +97,8 @@ export const AfTabs = forwardRef<HTMLDivElement, AfTabsProps>(function AfTabs(
     keepMounted = false,
     centered,
     fill,
+    ariaLabel,
+    "aria-label": ariaLabelProp,
     className,
     tabBarClassName,
     contentClassName,
@@ -283,6 +288,7 @@ export const AfTabs = forwardRef<HTMLDivElement, AfTabsProps>(function AfTabs(
       ref={barRef}
       className={cn("af-tabs__bar", tabBarClassName)}
       role="tablist"
+      aria-label={ariaLabelProp ?? ariaLabel}
       data-centered={centered || undefined}
     >
       {indicator ? (
@@ -321,7 +327,7 @@ export const AfTabs = forwardRef<HTMLDivElement, AfTabsProps>(function AfTabs(
           >
             {item.icon ? (
               typeof item.icon === "string" ? (
-                <AfIcon name={item.icon as AffectIconKey} size={14} className="af-tabs__icon" />
+                <AfIcon name={item.icon} size={14} className="af-tabs__icon" />
               ) : (
                 <span className="af-tabs__icon">{item.icon}</span>
               )

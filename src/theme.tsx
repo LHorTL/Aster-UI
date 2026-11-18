@@ -12,6 +12,7 @@ import {
   type ReactNode,
 } from "react";
 import { AfMessageHost } from "./components/overlay/Message";
+import { AfModalHost } from "./components/overlay/Modal";
 import { useIsomorphicLayoutEffect } from "./primitives/cn";
 import { AfThemePortalContext, registerAfHostPortalRoot } from "./primitives/layer";
 import { installAfListHover } from "./primitives/motion";
@@ -603,6 +604,8 @@ export type AsterThemeProviderProps = {
   syncStorage?: boolean;
   /** 是否在当前主题根内挂载全局 `AfMessageHost`（默认仅顶层 Provider 挂载，嵌套局部 Provider 自动跳过以避免重复吐司）。 */
   messageHost?: boolean;
+  /** 是否在当前主题根内挂载全局 `AfModalHost`（默认仅顶层 Provider 挂载，承载 `afModal` / `AfModal.confirm` 命令式对话框）。 */
+  modalHost?: boolean;
   /** 外部注入附加预设主题。 */
   presets?: AsterThemePresetItem[];
   /** 追加到主题根节点的类名。 */
@@ -654,6 +657,7 @@ export function AsterThemeProvider({
   storage,
   syncStorage = true,
   messageHost,
+  modalHost,
   presets = ASTER_THEME_PRESETS,
   className,
   style,
@@ -704,6 +708,7 @@ export function AsterThemeProvider({
   const isPresetAccent = isAsterAccentPreset(accent);
   const isPrimaryHost = target === "document" || parentTheme === null;
   const shouldRenderMessageHost = messageHost ?? parentTheme === null;
+  const shouldRenderModalHost = modalHost ?? parentTheme === null;
 
   const emitSnapshot = useCallback(
     (patch: Partial<Omit<AsterThemeSnapshot, "resolved" | "transparent">>) => {
@@ -1193,6 +1198,7 @@ export function AsterThemeProvider({
           {children}
           <div ref={setPortalRoot} className="af-portal-root" data-af-portal-root />
           {shouldRenderMessageHost ? <AfMessageHost container={portalRoot} /> : null}
+          {shouldRenderModalHost ? <AfModalHost container={portalRoot} /> : null}
         </div>
       </AfThemePortalContext.Provider>
     </ThemeContext.Provider>

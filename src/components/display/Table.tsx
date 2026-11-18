@@ -178,8 +178,14 @@ export type AfTableProps<T extends Record<string, unknown> = Record<string, unkn
   tableClassName?: string;
   /** 内部 `<table>` 元素内联样式。 */
   tableStyle?: CSSProperties;
+  /** 透传给内部 `<table>` 元素的附加属性。 */
+  tableProps?: ComponentPropsWithoutRef<"table">;
   /** 横向滚动最小宽度（设置固定列且未显式传入时自动按列宽总和保底）。 */
   scrollX?: number | string;
+  /** 纵向最大滚动高度（开启后表头自动吸顶）。 */
+  scrollY?: number | string;
+  /** 复合横纵滚动容器配置（等价于同时声明 `scrollX` / `scrollY`）。 */
+  scroll?: { x?: number | string; y?: number | string };
   /** 自定义行类名。 */
   rowClassName?: string | ((row: T, index: number) => string);
   /** 当前高亮激活行 key。 */
@@ -359,7 +365,10 @@ export function AfTable<T extends Record<string, unknown> = Record<string, unkno
   onRowClick,
   tableClassName,
   tableStyle,
-  scrollX,
+  tableProps,
+  scrollX: scrollXProp,
+  scrollY: scrollYProp,
+  scroll,
   rowClassName,
   activeRowKey,
   resizableColumns = false,
@@ -367,9 +376,13 @@ export function AfTable<T extends Record<string, unknown> = Record<string, unkno
   virtual = false,
   children,
   className,
+  "aria-label": ariaLabelAttr,
   ...rest
 }: AfTableProps<T> = {} as AfTableProps<T>) {
   void _striped;
+  const scrollX = scrollXProp ?? scroll?.x;
+  const scrollY = scrollYProp ?? scroll?.y;
+  const effectiveAriaLabel = ariaLabelAttr ?? ariaLabel;
   const columns = useMemo(() => columnsProp ?? extractColumnsFromChildren<T>(children), [columnsProp, children]);
   const captionId = useId();
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -654,25 +667,39 @@ export function AfTable<T extends Record<string, unknown> = Record<string, unkno
       </span>
       <div
         ref={wrapRef}
-        className={cn("af-table-wrap", (stickyHeader || isVirtualActive) && "af-table-wrap--sticky")}
+        className={cn(
+          "af-table-wrap",
+          (stickyHeader || isVirtualActive || scrollY !== undefined) && "af-table-wrap--sticky",
+        )}
         data-ping-left={pingLeft || undefined}
         data-ping-right={pingRight || undefined}
         role="region"
         aria-labelledby={captionId}
         tabIndex={0}
-        style={isVirtualActive ? { maxHeight: viewportHeight } : undefined}
+        style={
+          isVirtualActive
+            ? { maxHeight: viewportHeight }
+            : scrollY !== undefined
+              ? { maxHeight: scrollY, overflowY: "auto" }
+              : undefined
+        }
         onScroll={(event) => {
           if (isVirtualActive) setScrollTop(event.currentTarget.scrollTop);
           if (hasFixedColumns) updateScrollShadows();
         }}
       >
         <table
-          className={cn("af-table", tableClassName)}
-          style={resolvedTableStyle}
+          {...tableProps}
+          className={cn("af-table", tableProps?.className, tableClassName)}
+          style={
+            tableProps?.style && resolvedTableStyle
+              ? { ...tableProps.style, ...resolvedTableStyle }
+              : (resolvedTableStyle ?? tableProps?.style)
+          }
           data-hoverable={hoverable || undefined}
         >
           <caption id={captionId} className={cn("af-table__caption", hideCaption && "af-sr-only")}>
-            {caption ?? ariaLabel}
+            {caption ?? effectiveAriaLabel}
           </caption>
           <thead className="af-table__head">
             <tr ref={headRowRef}>

@@ -11,12 +11,15 @@ export type AfMessageType = "info" | "success" | "warning" | "error" | "loading"
 export type AfMessageOptions = {
   key?: string;
   type?: AfMessageType;
+  /** 可选短标题（与 `content` 同条展示）。 */
+  title?: ReactNode;
   content: ReactNode;
   duration?: number;
 };
 
 type MessageRecord = Required<Pick<AfMessageOptions, "type" | "content">> & {
   key: string;
+  title?: ReactNode;
   duration: number;
   leaving?: boolean;
 };
@@ -103,7 +106,7 @@ function pushMessage(opts: AfMessageOptions): () => void {
 
   clearKeyTimers(key);
 
-  const record: MessageRecord = { key, type, content: opts.content, duration, leaving: false };
+  const record: MessageRecord = { key, type, title: opts.title, content: opts.content, duration, leaving: false };
   const idx = bus.queue.findIndex((m) => m.key === key);
   if (idx >= 0) {
     bus.queue = bus.queue.map((m, i) => (i === idx ? record : m));
@@ -139,6 +142,14 @@ export const afMessage = {
     pushMessage({ ...normalizeArgs(content, duration), type: "error" }),
   loading: (content: ReactNode | AfMessageOptions, duration?: number) =>
     pushMessage({ ...normalizeArgs(content, duration), type: "loading" }),
+  /** 按唯一键平滑退场关闭指定轻提示（140ms 缩放淡出）。 */
+  dismiss: (key: string) => {
+    dismissMessage(key, false);
+  },
+  /** `dismiss` 的兼容别名。 */
+  dismissByKey: (key: string) => {
+    dismissMessage(key, false);
+  },
   destroy: (key?: string) => {
     if (key) {
       dismissMessage(key, true);
@@ -195,7 +206,10 @@ export function AfMessageHost({ container }: AfMessageHostProps = {}) {
           <span className="af-message__icon" data-type={item.type} aria-hidden="true">
             {item.type === "loading" ? <AfSpinner size={14} /> : <AfIcon name={ICON_BY_TYPE[item.type]} size={15} />}
           </span>
-          <span className="af-message__text">{item.content}</span>
+          <span className="af-message__text">
+            {item.title ? <strong className="af-message__title">{item.title}</strong> : null}
+            {item.content}
+          </span>
         </div>
       ))}
     </div>,

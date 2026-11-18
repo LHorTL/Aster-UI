@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import { afMessage } from "./components/overlay/Message";
+import { afModal } from "./components/overlay/modal-bus";
 import {
   AfLayerContext,
   AfLayerProvider,
@@ -81,6 +82,8 @@ export type AsterPluginSharedBundle<TUi = unknown> = {
   };
   /** 与宿主共享同一全局队列的命令式轻提示总线。 */
   message: typeof afMessage;
+  /** 与宿主共享同一全局队列的命令式模态确认框总线。 */
+  modal: typeof afModal;
   /** 供独立 `createRoot` 插件根节点包裹的桥接 Provider。 */
   PluginProvider: (props: AfPluginProviderProps) => JSX.Element;
 };
@@ -125,6 +128,8 @@ export type AsterPluginRuntime<TUi = unknown> = {
   getLayerContainer: () => HTMLElement | null;
   /** 与宿主共享同一队列的全局轻提示 API。 */
   readonly message: typeof afMessage;
+  /** 与宿主共享同一队列的全局模态确认框 API。 */
+  readonly modal: typeof afModal;
   /** 绑定当前 runtime 的插件 Provider 组件。 */
   PluginProvider: (props: Omit<AfPluginProviderProps, "runtime">) => JSX.Element;
   /** 将任意插件节点包裹在宿主主题与浮层桥接上下文中（适用于隔离 `ReactDOM.createRoot` 挂载）。 */
@@ -476,6 +481,7 @@ export function createAsterPluginRuntime<TUi = unknown>(
       getLayerContainer,
     },
     message: afMessage,
+    modal: afModal,
     PluginProvider: AfPluginProvider,
   };
 
@@ -492,6 +498,7 @@ export function createAsterPluginRuntime<TUi = unknown>(
     getPortalContainer,
     getLayerContainer,
     message: afMessage,
+    modal: afModal,
     PluginProvider: BoundPluginProvider,
     wrapElement: (node: ReactNode, pluginId?: string) => (
       <BoundPluginProvider pluginId={pluginId}>{node}</BoundPluginProvider>

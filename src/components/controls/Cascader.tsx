@@ -41,6 +41,10 @@ export type AfCascaderBaseProps = {
   placeholder?: string;
   /** 无障碍标签。 */
   label?: string;
+  /** 原生无障碍标签（与 `label` 等效，`aria-label` 优先）。 */
+  "aria-label"?: string;
+  /** 关联外部标题元素 id。 */
+  "aria-labelledby"?: string;
   /** 原生表单字段名（渲染隐藏域参与 FormData 提交）。 */
   name?: string;
   /** 尺寸。 */
@@ -51,6 +55,8 @@ export type AfCascaderBaseProps = {
   expandTrigger?: "click" | "hover";
   /** 是否允许框内关键字扁平检索路径。 */
   searchable?: boolean;
+  /** 框内搜索开关或自定义路径匹配器（兼容 `showSearch` 与 `showSearch={{ filter }}`）。 */
+  showSearch?: boolean | { filter?: (input: string, path: AfCascaderOption[]) => boolean };
   /** 受控搜索关键词。 */
   searchValue?: string;
   /** 搜索关键词变化回调。 */
@@ -73,6 +79,17 @@ export type AfCascaderBaseProps = {
   pathSeparator?: string;
   /** 自定义单选路径文本渲染。 */
   displayRender?: (labels: string[], selectedOptions: AfCascaderOption[]) => ReactNode;
+  /** 自定义已选路径触发器展示（接收选中节点数组）。 */
+  selectedRender?: (selectedOptions: AfCascaderOption[]) => ReactNode;
+  /** 自定义分栏节点渲染。 */
+  optionRender?: (
+    option: AfCascaderOption,
+    state: { active: boolean; selected: boolean; colIndex: number },
+  ) => ReactNode;
+  /** 浮层面板附加类名。 */
+  popupClassName?: string;
+  /** 单栏最大列表高度（px）。 */
+  listHeight?: number;
   /** 空数据文案。 */
   emptyText?: ReactNode;
   /** 受控浮层开合态。 */
@@ -267,6 +284,11 @@ type CascaderColumnProps = {
   selectedLeafKeys: Set<string>;
   loadingKeys: string[];
   expandTrigger: "click" | "hover";
+  optionRender?: (
+    option: AfCascaderOption,
+    state: { active: boolean; selected: boolean; colIndex: number },
+  ) => ReactNode;
+  listHeight?: number;
   canExpandOption: (opt: AfCascaderOption) => boolean;
   onFocusCell: (cell: FocusedCell) => void;
   onExpandPath: (nextPath: string[]) => void;
@@ -287,6 +309,8 @@ function CascaderColumn({
   selectedLeafKeys,
   loadingKeys,
   expandTrigger,
+  optionRender,
+  listHeight,
   canExpandOption,
   onFocusCell,
   onExpandPath,
@@ -305,6 +329,7 @@ function CascaderColumn({
       className="af-cascader__col"
       data-col-index={colIdx}
       data-has-focus={colHasFocus || undefined}
+      style={listHeight ? { maxHeight: listHeight } : undefined}
     >
       {colThumb ? (
         <span
@@ -407,8 +432,14 @@ function CascaderColumn({
             ) : null}
             {renderCascaderIcon(opt.icon)}
             <span className="af-cascader__item-main">
-              <span className="af-cascader__item-label">{opt.label}</span>
-              {opt.description ? <span className="af-cascader__item-desc">{opt.description}</span> : null}
+              {optionRender ? (
+                optionRender(opt, { active: isFocused, selected: isSelected, colIndex: colIdx })
+              ) : (
+                <>
+                  <span className="af-cascader__item-label">{opt.label}</span>
+                  {opt.description ? <span className="af-cascader__item-desc">{opt.description}</span> : null}
+                </>
+              )}
             </span>
             {isLoading ? (
               <AfSpinner size={12} />
@@ -433,11 +464,14 @@ function AfCascaderInner(props: AfCascaderProps, forwardedRef: Ref<HTMLDivElemen
     options,
     placeholder = "Select…",
     label,
+    "aria-label": ariaLabelProp,
+    "aria-labelledby": ariaLabelledByProp,
     name,
     size = "md",
     width = 200,
     expandTrigger = "click",
-    searchable = false,
+    searchable: searchableProp = false,
+    showSearch,
     searchValue,
     onSearch,
     changeOnSelect = false,
@@ -449,6 +483,10 @@ function AfCascaderInner(props: AfCascaderProps, forwardedRef: Ref<HTMLDivElemen
     invalid,
     pathSeparator = " / ",
     displayRender,
+    selectedRender,
+    optionRender,
+    popupClassName,
+    listHeight,
     emptyText = "No matches",
     open: openProp,
     defaultOpen = false,
@@ -458,6 +496,10 @@ function AfCascaderInner(props: AfCascaderProps, forwardedRef: Ref<HTMLDivElemen
     className,
     style,
   } = props;
+
+  const searchable = Boolean(searchableProp || showSearch);
+  const customSearchFilter = typeof showSearch === "object" ? showSearch.filter : undefined;
+  const effectiveAriaLabel = ariaLabelProp ?? label;
 
   const multiple = props.multiple === true;
   const maxTagCount = multiple ? (props as AfCascaderMultipleProps).maxTagCount : undefined;
@@ -557,9 +599,11 @@ function AfCascaderInner(props: AfCascaderProps, forwardedRef: Ref<HTMLDivElemen
     const kw = query.trim().toLowerCase();
     if (!searchable || !kw) return [];
     return flattenPaths(options, changeOnSelect && !multiple).filter((path) =>
-      path.some((o) => `${o.label} ${o.value}`.toLowerCase().includes(kw)),
+      customSearchFilter
+        ? customSearchFilter(query, path)
+        : path.some((o) => `${o.label} ${o.value}`.toLowerCase().includes(kw)),
     );
-  }, [options, searchable, query, changeOnSelect, multiple]);
+  }, [options, searchable, query, changeOnSelect, multiple, customSearchFilter]);
 
   const searchThumb = useMenuHighlight(searchListRef, searchActive, open && Boolean(searchable && query.trim()), flatSearchPaths.length);
 
@@ -838,7 +882,9 @@ function AfCascaderInner(props: AfCascaderProps, forwardedRef: Ref<HTMLDivElemen
     selectedSingleLabels.length > 0
       ? displayRender
         ? displayRender(selectedSingleLabels, selectedSingleOptions)
-        : selectedSingleLabels.join(pathSeparator)
+        : selectedRender
+          ? selectedRender(selectedSingleOptions)
+          : selectedSingleLabels.join(pathSeparator)
       : placeholder;
 
   return (
@@ -861,7 +907,8 @@ function AfCascaderInner(props: AfCascaderProps, forwardedRef: Ref<HTMLDivElemen
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={open ? popId : undefined}
-        aria-label={label}
+        aria-label={effectiveAriaLabel}
+        aria-labelledby={ariaLabelledByProp}
         aria-invalid={bad ? true : "false"}
         aria-required={fieldCtx?.required || undefined}
         aria-multiselectable={multiple || undefined}
@@ -995,9 +1042,9 @@ function AfCascaderInner(props: AfCascaderProps, forwardedRef: Ref<HTMLDivElemen
         open={open}
         anchorRef={triggerRef}
         role="listbox"
-        label={label ?? "级联面板"}
+        label={effectiveAriaLabel ?? "级联面板"}
         container={container}
-        className="af-cascader__pop"
+        className={cn("af-cascader__pop", popupClassName)}
         preserveNaturalWidth
         onPointerDownOutside={() => {
           setOpen(false);
@@ -1010,6 +1057,7 @@ function AfCascaderInner(props: AfCascaderProps, forwardedRef: Ref<HTMLDivElemen
           <div
             ref={searchListRef}
             className="af-cascader__search-list"
+            style={listHeight ? { maxHeight: listHeight } : undefined}
             onPointerLeave={() => setSearchActive(-1)}
           >
             {searchThumb ? (
@@ -1095,6 +1143,8 @@ function AfCascaderInner(props: AfCascaderProps, forwardedRef: Ref<HTMLDivElemen
                 selectedLeafKeys={selectedLeafKeys}
                 loadingKeys={loadingKeys}
                 expandTrigger={expandTrigger}
+                optionRender={optionRender}
+                listHeight={listHeight}
                 canExpandOption={canExpandOption}
                 onFocusCell={setFocusedCell}
                 onExpandPath={setExpandedPath}

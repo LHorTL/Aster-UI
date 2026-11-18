@@ -436,7 +436,7 @@ export function AfImagePreview({
 }
 
 /** 增强图片组件属性。 */
-export type AfImageProps = Omit<ImgHTMLAttributes<HTMLImageElement>, "width" | "height"> & {
+export type AfImageProps = Omit<ImgHTMLAttributes<HTMLImageElement>, "width" | "height" | "placeholder"> & {
   /** 宽（px 或 CSS 长度）。 */
   width?: number | string;
   /** 高（px 或 CSS 长度）。 */
@@ -445,6 +445,14 @@ export type AfImageProps = Omit<ImgHTMLAttributes<HTMLImageElement>, "width" | "
   radius?: number | string;
   /** 对象填充方式，默认 cover。 */
   fit?: CSSProperties["objectFit"];
+  /** `fit` 兼容别名。 */
+  objectFit?: CSSProperties["objectFit"];
+  /** 对象对齐位置。 */
+  objectPosition?: CSSProperties["objectPosition"];
+  /** 透传给底层 `<img>` 元素的附加属性。 */
+  imgProps?: Omit<ImgHTMLAttributes<HTMLImageElement>, "src" | "alt">;
+  /** 加载前或失败时的占位节点。 */
+  placeholder?: ReactNode;
   /** 是否开启点击灯箱预览，默认 true。 */
   preview?: boolean;
   /** 多图预览时传入完整图集。 */
@@ -464,7 +472,11 @@ export const AfImage = forwardRef<HTMLImageElement, AfImageProps>(function AfIma
     width,
     height,
     radius,
-    fit = "cover",
+    fit,
+    objectFit,
+    objectPosition,
+    imgProps,
+    placeholder,
     preview = true,
     previewImages,
     fallback,
@@ -482,6 +494,8 @@ export const AfImage = forwardRef<HTMLImageElement, AfImageProps>(function AfIma
   const [failed, setFailed] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
 
+  const resolvedFit = objectFit ?? fit ?? "cover";
+  const resolvedFallback = fallback ?? placeholder;
   const activeSrc = failed && fallbackSrc ? fallbackSrc : src;
   const canPreview = Boolean(preview && activeSrc && (!failed || fallbackSrc));
 
@@ -505,6 +519,7 @@ export const AfImage = forwardRef<HTMLImageElement, AfImageProps>(function AfIma
           if (canPreview) setPreviewOpen(true);
         }}
         onKeyDown={(event) => {
+          if (event.target !== event.currentTarget) return;
           if (canPreview && (event.key === "Enter" || event.key === " ")) {
             event.preventDefault();
             setPreviewOpen(true);
@@ -513,7 +528,7 @@ export const AfImage = forwardRef<HTMLImageElement, AfImageProps>(function AfIma
       >
         {failed && !fallbackSrc ? (
           <span className="af-image__fallback">
-            {fallback ?? (
+            {resolvedFallback ?? (
               <>
                 <AfIcon name="image" size={18} />
                 <span>图片不可用</span>
@@ -522,21 +537,24 @@ export const AfImage = forwardRef<HTMLImageElement, AfImageProps>(function AfIma
           </span>
         ) : (
           <img
+            {...imgProps}
+            {...rest}
             ref={ref}
             src={activeSrc}
             alt={alt}
             loading={loading}
-            className="af-image__img"
-            style={{ objectFit: fit }}
+            className={cn("af-image__img", imgProps?.className)}
+            style={{ objectFit: resolvedFit, objectPosition, ...imgProps?.style }}
             onLoad={(event) => {
               setFailed(false);
+              imgProps?.onLoad?.(event);
               onLoad?.(event);
             }}
             onError={(event) => {
               setFailed(true);
+              imgProps?.onError?.(event);
               onError?.(event);
             }}
-            {...rest}
           />
         )}
         {canPreview ? (
@@ -559,10 +577,24 @@ export const AfImage = forwardRef<HTMLImageElement, AfImageProps>(function AfIma
   );
 });
 
-/** 雪碧图切片属性（按帧索引切割展示序列图集）。 */
+/** 雪碧图矩形切片描述。 */
+export type AfSpriteSlice = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+/** 雪碧图切片属性（按帧索引或矩形切片切割展示图集）。 */
 export type AfSpriteImageProps = ComponentPropsWithoutRef<"div"> & {
   /** 雪碧图资源路径。 */
   src?: string;
+  /** 结构化切片矩形（传入时自动提取 `x / y / width / height`）。 */
+  sprite?: AfSpriteSlice;
+  /** 等比缩放倍率（默认 `1`，采用外层等比占位盒 + 内层 `transform: scale()` 零失真裁切）。 */
+  scale?: number;
+  /** 无障碍说明文本。 */
+  alt?: string;
   /** 目标切片宽（px）。 */
   width?: number;
   /** 目标切片高（px）。 */
@@ -580,8 +612,11 @@ export type AfSpriteImageProps = ComponentPropsWithoutRef<"div"> & {
 /** 雪碧图切片展示容器。 */
 export function AfSpriteImage({
   src = "",
-  width = 32,
-  height = 32,
+  sprite,
+  scale = 1,
+  alt,
+  width,
+  height,
   x,
   y,
   col = 0,
@@ -592,14 +627,55 @@ export function AfSpriteImage({
   style,
   ...rest
 }: AfSpriteImageProps = {}) {
-  const offsetX = x ?? col * width;
-  const offsetY = y ?? row * height;
+  const sliceW = sprite?.width ?? width ?? 32;
+  const sliceH = sprite?.height ?? height ?? 32;
+  const offsetX = sprite?.x ?? x ?? col * sliceW;
+  const offsetY = sprite?.y ?? y ?? row * sliceH;
+  const safeScale = Number.isFinite(scale) && scale > 0 ? scale : 1;
+
+  if (safeScale !== 1) {
+    return (
+      <div
+        className={cn("af-sprite-image", className)}
+        role={alt ? "img" : undefined}
+        aria-label={alt || undefined}
+        aria-hidden={alt ? undefined : rest["aria-hidden"]}
+        style={{
+          position: "relative",
+          width: Math.round(sliceW * safeScale * 100) / 100,
+          height: Math.round(sliceH * safeScale * 100) / 100,
+          overflow: "hidden",
+          flex: "none",
+          ...style,
+        }}
+        {...rest}
+      >
+        <span
+          aria-hidden="true"
+          style={{
+            display: "block",
+            width: sliceW,
+            height: sliceH,
+            backgroundImage: src ? `url(${src})` : undefined,
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: `-${offsetX}px -${offsetY}px`,
+            backgroundSize: sheetWidth && sheetHeight ? `${sheetWidth}px ${sheetHeight}px` : undefined,
+            transform: `scale(${safeScale})`,
+            transformOrigin: "top left",
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div
       className={cn("af-sprite-image", className)}
+      role={alt ? "img" : undefined}
+      aria-label={alt || undefined}
       style={{
-        width,
-        height,
+        width: sliceW,
+        height: sliceH,
         flex: "none",
         backgroundImage: src ? `url(${src})` : undefined,
         backgroundRepeat: "no-repeat",
@@ -612,12 +688,24 @@ export function AfSpriteImage({
   );
 }
 
-/** 分层叠加图属性。 */
-export type AfLayeredImageLayer = {
+/** 分层叠加图单层配置。 */
+export type AfLayeredImageInset =
+  | number
+  | {
+      top?: number | string;
+      right?: number | string;
+      bottom?: number | string;
+      left?: number | string;
+    };
+
+export type AfLayeredImageLayer = Omit<ImgHTMLAttributes<HTMLImageElement>, "src" | "alt" | "style"> & {
   src: string;
   alt?: string;
   opacity?: number;
   zIndex?: number;
+  fit?: CSSProperties["objectFit"];
+  inset?: AfLayeredImageInset;
+  style?: CSSProperties;
 };
 
 export type AfLayeredImageProps = ComponentPropsWithoutRef<"div"> & {
@@ -626,7 +714,7 @@ export type AfLayeredImageProps = ComponentPropsWithoutRef<"div"> & {
   height?: number | string;
 };
 
-/** 多层图像叠加合成器（保持定位贴合，常用于角色立绘/图层组合）。 */
+/** 多层图像叠加合成器（保持定位贴合，常用于角色立绘/装饰框/图层组合）。 */
 export function AfLayeredImage({
   layers = [],
   width,
@@ -635,29 +723,55 @@ export function AfLayeredImage({
   style,
   ...rest
 }: AfLayeredImageProps = {}) {
+  const hasExplicitSize = width !== undefined && height !== undefined;
   return (
     <div
       className={cn("af-layered-image", className)}
       style={{ position: "relative", overflow: "hidden", width, height, ...style }}
       {...rest}
     >
-      {layers.map((layer, index) => (
-        <img
-          key={`${layer.src}-${index}`}
-          src={layer.src}
-          alt={layer.alt ?? ""}
-          aria-hidden={!layer.alt || undefined}
-          style={{
-            position: index === 0 ? "relative" : "absolute",
-            inset: index === 0 ? undefined : 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "contain",
-            opacity: layer.opacity,
-            zIndex: layer.zIndex ?? index,
-          }}
-        />
-      ))}
+      {layers.map((layer, index) => {
+        const {
+          src,
+          alt = "",
+          opacity,
+          zIndex,
+          fit = "contain",
+          inset,
+          style: layerStyle,
+          ...imgRest
+        } = layer;
+        const hasCustomInset = inset !== undefined;
+        const useAbsolute = index > 0 || hasCustomInset || hasExplicitSize;
+        const insetStyles: CSSProperties =
+          typeof inset === "number"
+            ? { inset }
+            : inset
+              ? { top: inset.top, right: inset.right, bottom: inset.bottom, left: inset.left }
+              : useAbsolute
+                ? { inset: 0 }
+                : {};
+
+        return (
+          <img
+            key={`${src}-${index}`}
+            src={src}
+            alt={alt}
+            aria-hidden={!alt || undefined}
+            {...imgRest}
+            style={{
+              position: useAbsolute ? "absolute" : "relative",
+              ...insetStyles,
+              width: hasCustomInset ? undefined : "100%",
+              height: hasCustomInset ? undefined : "100%",
+              objectFit: fit,
+              opacity,
+              zIndex: zIndex ?? index,
+              ...layerStyle,
+            }}
+          />
+        );
+      })}
     </div>
   );
 }

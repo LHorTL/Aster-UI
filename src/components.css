@@ -935,6 +935,101 @@
   font-variant-numeric: tabular-nums;
 }
 
+.af-typo-text[data-ellipsis="true"] {
+  display: inline-block;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+
+.af-typo-text-copywrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.af-typo-text-copywrap[data-ellipsis="true"] > .af-typo-text {
+  flex: 1 1 auto;
+}
+
+.af-typo-text__copy {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--af-r-xs);
+  background: transparent;
+  color: var(--af-muted);
+  cursor: pointer;
+  transition:
+    background-color 120ms var(--af-ease),
+    color 120ms var(--af-ease);
+}
+
+.af-typo-text__copy:hover {
+  background: var(--af-hover);
+  color: var(--af-strong);
+}
+
+.af-typo-text__copy[data-copied="true"] {
+  color: var(--af-success);
+}
+
+.af-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.af-progress-row > .af-progress {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.af-progress-row__val {
+  flex-shrink: 0;
+  color: var(--af-muted);
+  font-size: var(--af-fs-sm);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.af-progress[data-indeterminate="true"] > .af-progress__fill {
+  width: 38%;
+  transform: translate3d(-100%, 0, 0);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .af-progress[data-indeterminate="true"] > .af-progress__fill {
+    animation: af-progress-indeterminate 1.25s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .af-progress[data-indeterminate="true"] > .af-progress__fill {
+    transform: translate3d(80%, 0, 0);
+  }
+}
+
+@keyframes af-progress-indeterminate {
+  0% {
+    transform: translate3d(-100%, 0, 0);
+  }
+  100% {
+    transform: translate3d(265%, 0, 0);
+  }
+}
+
 .af-typo-title {
   margin: 0;
   color: var(--af-strong);
@@ -1169,6 +1264,20 @@
 
 .af-message__icon[data-type="loading"] {
   color: var(--af-accent);
+}
+
+.af-message__title {
+  margin-right: 6px;
+  font-weight: 600;
+  color: var(--af-strong);
+}
+
+.af-drawer__extra {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 /* ===========================

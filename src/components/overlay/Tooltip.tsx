@@ -58,6 +58,8 @@ export type AfTooltipProps = Omit<HTMLAttributes<HTMLSpanElement>, "title" | "co
   onOpenChange?: (open: boolean) => void;
   /** 气泡额外类名。 */
   className?: string;
+  /** 气泡额外类名别名。 */
+  overlayClassName?: string;
   /** 可选指定挂载容器；省略时自动接入 AfLayer / Theme 浮层根，避免被 overflow:hidden 裁切。 */
   container?: HTMLElement | null;
   children: ReactNode;
@@ -94,6 +96,7 @@ export const AfTooltip = forwardRef<HTMLSpanElement, AfTooltipProps>(function Af
     defaultOpen = false,
     onOpenChange,
     className,
+    overlayClassName,
     container,
     children,
     onPointerDown,
@@ -368,7 +371,7 @@ export const AfTooltip = forwardRef<HTMLSpanElement, AfTooltipProps>(function Af
             <span
               ref={bubbleRef}
               id={tipId}
-              className={cn("af-tip__bubble af-tip__bubble--portal", className)}
+              className={cn("af-tip__bubble af-tip__bubble--portal", overlayClassName, className)}
               role="tooltip"
               data-side={coords?.actualSide ?? resolvedSide}
               data-ready={coords ? "true" : undefined}

@@ -1,6 +1,5 @@
 import { forwardRef, type ComponentPropsWithoutRef, type MouseEvent, type ReactNode } from "react";
-import { AfIcon } from "../../icons";
-import type { AffectIconKey } from "../../model";
+import { AfIcon, type AfIconName } from "../../icons";
 import { cn } from "../../primitives";
 
 /** 标签语义。 */
@@ -13,11 +12,15 @@ export type AfTagProps = ComponentPropsWithoutRef<"span"> & {
   tone?: AfTone;
   dot?: boolean;
   /** 前置图标名称或自定义节点。 */
-  icon?: AffectIconKey | ReactNode;
+  icon?: AfIconName | ReactNode;
   /** 是否显示移除按钮。 */
   closable?: boolean;
+  /** `closable` 兼容别名。 */
+  removable?: boolean;
   /** 点击移除按钮回调。 */
   onClose?: (event: MouseEvent<HTMLButtonElement>) => void;
+  /** `onClose` 兼容别名。 */
+  onRemove?: (event: MouseEvent<HTMLButtonElement>) => void;
   /** 移除按钮无障碍说明。 */
   closeLabel?: string;
   size?: AfTagSize;
@@ -25,6 +28,8 @@ export type AfTagProps = ComponentPropsWithoutRef<"span"> & {
   shape?: "rounded" | "pill";
   /** 外观变体：ring（默认发丝描边）或 soft（纯柔和底色无描边）。 */
   variant?: "ring" | "soft";
+  /** 是否保留发丝描边环（传 `false` 时自动切换至 `variant="soft"`）。 */
+  bordered?: boolean;
   children: ReactNode;
 };
 
@@ -35,34 +40,39 @@ export const AfTag = forwardRef<HTMLSpanElement, AfTagProps>(function AfTag(
     dot,
     icon,
     closable,
+    removable,
     onClose,
+    onRemove,
     closeLabel,
     size = "md",
     shape = "rounded",
-    variant = "ring",
+    variant,
+    bordered,
     className,
     children,
     ...rest
   },
   ref,
 ) {
+  const canClose = Boolean(closable ?? removable);
+  const resolvedVariant = variant ?? (bordered === false ? "soft" : "ring");
   const resolvedCloseLabel =
     closeLabel ?? (typeof children === "string" || typeof children === "number" ? `移除 ${children}` : "移除标签");
 
   return (
     <span
       ref={ref}
-      className={cn("af-tag", closable && "af-tag--closable", className)}
+      className={cn("af-tag", canClose && "af-tag--closable", className)}
       data-tone={tone}
       data-size={size}
       data-shape={shape !== "rounded" ? shape : undefined}
-      data-variant={variant !== "ring" ? variant : undefined}
+      data-variant={resolvedVariant !== "ring" ? resolvedVariant : undefined}
       {...rest}
     >
       {dot ? <span className="af-tag__dot" aria-hidden="true" /> : null}
       {icon ? (
         typeof icon === "string" ? (
-          <AfIcon name={icon as AffectIconKey} size={size === "xs" || size === "sm" ? 11 : 12} className="af-tag__icon" />
+          <AfIcon name={icon} size={size === "xs" || size === "sm" ? 11 : 12} className="af-tag__icon" />
         ) : (
           <span className="af-tag__icon" aria-hidden="true">
             {icon}
@@ -70,7 +80,7 @@ export const AfTag = forwardRef<HTMLSpanElement, AfTagProps>(function AfTag(
         )
       ) : null}
       <span className="af-tag__label">{children}</span>
-      {closable ? (
+      {canClose ? (
         <button
           type="button"
           className="af-tag__close"
@@ -78,6 +88,7 @@ export const AfTag = forwardRef<HTMLSpanElement, AfTagProps>(function AfTag(
           onClick={(event) => {
             event.stopPropagation();
             onClose?.(event);
+            onRemove?.(event);
           }}
         >
           <AfIcon name="x" size={10} />

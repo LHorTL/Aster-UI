@@ -1,6 +1,6 @@
 # Aster UI · affectUI Clean / Pro 设计规范与工程准则 (`DESIGN.md`)
 
-> 版本：`v0.5.0`（1:1 同步 [affectui.com/components](https://www.affectui.com/components)，全库 `268` 个组件展示规格：`215` 套 affectUI 1:1 + `53` 套 Aster 原生扩展）  
+> 版本：`v0.5.1`（1:1 同步 [affectui.com/components](https://www.affectui.com/components)，全库 `268` 个组件展示规格：`215` 套 affectUI 1:1 + `53` 套 Aster 原生扩展）  
 > 适用范围：`Aster UI`（`@fangxinyan/aster-ui`）组件库开发，以及现代桌面工作台与高密度 Web 应用的界面构建与存量组件迁移  
 > 目标：**用一套统一、克制、零拟态、零视觉噪音的 affectUI Clean / Pro 设计工程体系支撑全场景产品界面。**
 
@@ -288,8 +288,8 @@
 | `Modal` / `Dialog` / `Drawer` / `Popover` / `DropdownMenu` | `AfModal`（`AfDialog`）/ `AfDrawer` / `AfPopover` / `AfMenu`（`AfDropdownMenu`） | `AfModal/AfDrawer` 支持遮罩防误触关窗；`AfPopover` 新增 `flush` 与 `onEscapeKeyDown` 供复合组件无内边距组合 |
 | `Data & Agent Patterns (35)` | `AfBreakdownChart`、`AfAgentPlan`、`AfReviewCenter`、`AfUsageMeter` 等 35 套（含 `*Pattern` 别名） | 全部参数化可配（可选 `Props = {}` 默认演示态 + 业务事件回调），可直接从 `@fangxinyan/aster-ui` 引入 |
 | `Agents Pro & Blocks / Screens / Illustrations` | `AfRunControls`…`AfFlowBuilder`、14 套 Blocks、43 套 Screens 与 26 套交互插画 | 1:1 复刻 affectUI Pro 多智能体控制、业务区块、整页应用界面与交互场景插画，支持按需子路径样式引入 |
-| `confirm` / `AlertDialog` | `AfAlertDialog` + `AfConfirmProvider` / `useAfConfirm` | 命令式异步确认对话框 |
-| `message.info / success / warning / error / loading / destroy` | `afMessage`（别名 `asterMessage`） + `AfMessageHost` | 无需额外写宿主，`AsterThemeProvider` 已自动挂载 `<AfMessageHost container={portalRoot} />` |
-| `Icon`（常用工程图标别名如 `AppstoreOutlined`、`unorderedList`、`reload` 等） | `AfIcon` + `AF_ICON_ALIASES` + `resolveAfIconKey` | 直接传入常见语义或工程图标别名即可自动映射至统一的 16×16 线性图标 |
+| `confirm` / `AlertDialog` | `afModal`（`AfModal.confirm / info / success / warning / error`）+ `AfAlertDialog` + `useAfConfirm` | `AsterThemeProvider` 已自动挂载 `<AfModalHost />`，同时支持 `await AfModal.confirm(...)` 与 `dialog.destroy()` |
+| `message.info / success / warning / error / loading / dismissByKey / destroy` | `afMessage`（别名 `asterMessage`） + `AfMessageHost` | 无需额外写宿主，`AsterThemeProvider` 已自动挂载 `<AfMessageHost container={portalRoot} />`；支持 `title` 与平滑退场 `dismissByKey` |
+| `Icon`（常用工程图标别名如 `SettingOutlined`、`AppstoreOutlined`、`barChart`、`picture`、`sync` 等） | `AfIcon` + `AF_ICON_ALIASES` + `isAfIconName` + `resolveAfIconKey` | 直接传入常见语义或工程图标别名即可自动映射至统一的 16×16 线性图标 |
 | `TitleBar` / `WindowControls` | `AfTitleBar` / `AfWindowControls`（同步导出于 `@fangxinyan/aster-ui/core`） | Electron 无边框拖拽栏（自动 `drag` / `no-drag`、macOS 红绿灯安全间距） |
 | `ThemeProvider` / `useTheme` / `ThemePanel` | `AsterThemeProvider` / `useAsterTheme` / `AfThemePanel`（同步导出于 `@fangxinyan/aster-ui/core`） | 完整支持明暗、预设/自定义强调色、密度 `comfortable/compact`、圆角 `sm/md/lg`、自定义主题增删改查与 `resolveAsterThemeColors` 桥接 |

@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type FocusEventHandler,
   type KeyboardEvent,
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
@@ -116,12 +117,20 @@ export type AfNumberInputProps = {
   ariaLabel?: string;
   /** 原生 `aria-label`。 */
   "aria-label"?: string;
+  /** 关联外部说明元素 id。 */
+  "aria-describedby"?: string;
+  /** 原生校验状态标记。 */
+  "aria-invalid"?: boolean | "true" | "false";
   /** 控件 id。 */
   id?: string;
   /** 附加类名。 */
   className?: string;
   /** 内联样式。 */
   style?: CSSProperties;
+  /** 聚焦回调。 */
+  onFocus?: FocusEventHandler<HTMLInputElement>;
+  /** 失焦回调（在数值夹取提交后触发）。 */
+  onBlur?: FocusEventHandler<HTMLInputElement>;
   /** 回车回调；会在值提交后触发（IME 安全）。 */
   onPressEnter?: (event: KeyboardEvent<HTMLInputElement>) => void;
 };
@@ -178,9 +187,13 @@ export const AfNumberInput = forwardRef<HTMLInputElement, AfNumberInputProps>(fu
     label,
     ariaLabel,
     "aria-label": ariaLabelAttr,
+    "aria-describedby": ariaDescribedByAttr,
+    "aria-invalid": ariaInvalidAttr,
     id: idProp,
     className,
     style,
+    onFocus: onFocusProp,
+    onBlur: onBlurProp,
     onPressEnter,
   },
   forwardedRef,
@@ -190,7 +203,9 @@ export const AfNumberInput = forwardRef<HTMLInputElement, AfNumberInputProps>(fu
   const id = idProp ?? fieldCtx?.controlId ?? autoId;
   const disabled = Boolean(disabledProp || fieldCtx?.disabled);
   const hasError = Boolean(error);
-  const bad = Boolean(invalid || hasError || fieldCtx?.invalid);
+  const bad = Boolean(
+    invalid || ariaInvalidAttr === true || ariaInvalidAttr === "true" || hasError || fieldCtx?.invalid,
+  );
   const shaking = useFieldShake(bad);
   const resolvedRequired = requiredProp ?? fieldCtx?.required;
   const resolvedLargeMultiplier = largeStep !== undefined && step !== 0 ? largeStep / step : 10;
@@ -352,8 +367,9 @@ export const AfNumberInput = forwardRef<HTMLInputElement, AfNumberInputProps>(fu
   const atMin = min !== undefined && current !== null && current <= min;
   const atMax = max !== undefined && current !== null && current >= max;
   const describedBy =
-    [fieldCtx?.describedBy, hint ? hintId : undefined, hasError ? errorId : undefined].filter(Boolean).join(" ") ||
-    undefined;
+    [ariaDescribedByAttr, fieldCtx?.describedBy, hint ? hintId : undefined, hasError ? errorId : undefined]
+      .filter(Boolean)
+      .join(" ") || undefined;
 
   const valueText = useMemo(() => {
     if (current === null) return undefined;
@@ -490,11 +506,12 @@ export const AfNumberInput = forwardRef<HTMLInputElement, AfNumberInputProps>(fu
           value={text}
           onCompositionStart={ime.onCompositionStart}
           onCompositionEnd={ime.onCompositionEnd}
-          onFocus={() => {
+          onFocus={(event) => {
             editing.current = true;
             if (intlFormatter && !formatter && current !== null) {
               setText(defaultFormatNumber(current, precision));
             }
+            onFocusProp?.(event);
           }}
           onChange={(event) => {
             const raw = event.target.value;
@@ -507,7 +524,7 @@ export const AfNumberInput = forwardRef<HTMLInputElement, AfNumberInputProps>(fu
             const parsed = parseDisplay(raw);
             if (Number.isFinite(parsed)) emit(clamp(parsed));
           }}
-          onBlur={() => {
+          onBlur={(event) => {
             editing.current = false;
             const parsed = parseDisplay(text);
             if (text.trim() === "" || !Number.isFinite(parsed)) {
@@ -515,6 +532,7 @@ export const AfNumberInput = forwardRef<HTMLInputElement, AfNumberInputProps>(fu
             } else {
               commit(parsed, true);
             }
+            onBlurProp?.(event);
           }}
           onKeyDown={(event) => {
             if (event.key === "ArrowUp" || event.key === "ArrowDown") {

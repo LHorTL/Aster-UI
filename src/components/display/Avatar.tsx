@@ -29,6 +29,8 @@ export interface AfAvatarProps extends Omit<HTMLAttributes<HTMLSpanElement>, "ch
   seed?: string;
   /** 显式主题色（自动混合浅底色与前景色）。 */
   color?: string;
+  /** 显式首字母/短字符标记（优先级高于从 `name` 自动提取）。 */
+  initials?: string;
   /** 自定义回退节点。 */
   fallback?: ReactNode;
   /** 透传给底层 <img> 的附加属性。 */
@@ -157,6 +159,7 @@ export function AfAvatar({
   working = false,
   seed,
   color,
+  initials: initialsProp,
   fallback,
   imgProps,
   className,
@@ -171,9 +174,9 @@ export function AfAvatar({
   const resolvedShape = shape ?? (isAgent ? "square" : "circle");
   const { key: sizeKey, px } = resolveSize(size);
 
-  const seedKey = seed ?? name ?? "";
+  const seedKey = seed ?? name ?? initialsProp ?? "";
   const hue = !isAgent && !tone && !color && seedKey ? hashSeed(seedKey) % 8 : undefined;
-  const initials = initialsOf(name);
+  const initials = initialsProp ?? initialsOf(name);
   const showImage = Boolean(src && failedSrc !== src);
   const isImgReady = Boolean(src && loadedSrc === src);
   const label = alt ?? name;

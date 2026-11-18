@@ -24,6 +24,8 @@ export type AfCheckboxProps = {
   error?: ReactNode;
   /** 无文字标签时的无障碍名称。 */
   ariaLabel?: string;
+  /** 原生无障碍名称（与 `ariaLabel` 等效，`aria-label` 优先）。 */
+  "aria-label"?: string;
   /** 原生表单字段名。 */
   name?: string;
   /** 原生表单提交值。 */
@@ -59,6 +61,7 @@ export const AfCheckbox = forwardRef<HTMLInputElement, AfCheckboxProps>(function
     description,
     error,
     ariaLabel,
+    "aria-label": ariaLabelProp,
     name,
     value,
     required,
@@ -123,7 +126,7 @@ export const AfCheckbox = forwardRef<HTMLInputElement, AfCheckboxProps>(function
         type="checkbox"
         checked={isChecked}
         disabled={disabled}
-        aria-label={ariaLabel}
+        aria-label={ariaLabelProp ?? ariaLabel}
         aria-describedby={resolvedDescribedBy}
         aria-invalid={bad || undefined}
         aria-checked={indeterminate ? "mixed" : isChecked}

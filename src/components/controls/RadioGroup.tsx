@@ -24,6 +24,12 @@ export type AfRadioOption = {
 export type AfRadioGroupProps = {
   /** 无障碍名称（在 FormField 内使用时可省略）。 */
   label?: string;
+  /** 原生无障碍名称（与 `label` 等效，`aria-label` 优先）。 */
+  "aria-label"?: string;
+  /** 关联外部标题元素 id。 */
+  "aria-labelledby"?: string;
+  /** 关联外部说明元素 id。 */
+  "aria-describedby"?: string;
   /** 受控当前值。 */
   value?: string;
   /** 非受控初始值。 */
@@ -38,8 +44,12 @@ export type AfRadioGroupProps = {
   options: AfRadioOption[];
   /** 视觉形态：`list` 为默认列表，`card` 为发丝边框单选卡片。 */
   variant?: "list" | "card";
+  /** 尺寸档位。 */
+  size?: "sm" | "md";
   /** 排列方向，默认纵向。 */
   orientation?: "horizontal" | "vertical";
+  /** `orientation` 兼容别名。 */
+  direction?: "horizontal" | "vertical";
   /** 整组禁用。 */
   disabled?: boolean;
   /** 校验失败态。 */
@@ -54,6 +64,9 @@ export type AfRadioGroupProps = {
 export const AfRadioGroup = forwardRef<HTMLDivElement, AfRadioGroupProps>(function AfRadioGroup(
   {
     label,
+    "aria-label": ariaLabelProp,
+    "aria-labelledby": ariaLabelledByProp,
+    "aria-describedby": ariaDescribedByProp,
     value,
     defaultValue,
     onChange,
@@ -61,7 +74,9 @@ export const AfRadioGroup = forwardRef<HTMLDivElement, AfRadioGroupProps>(functi
     name: nameProp,
     options,
     variant = "list",
-    orientation = "vertical",
+    size = "md",
+    orientation,
+    direction,
     disabled: disabledProp,
     invalid,
     className,
@@ -72,6 +87,8 @@ export const AfRadioGroup = forwardRef<HTMLDivElement, AfRadioGroupProps>(functi
   const autoName = useId();
   const fieldCtx = useAfFormFieldControl();
   const groupName = nameProp ?? autoName;
+  const resolvedOrientation = orientation ?? direction ?? "vertical";
+  const resolvedDescribedBy = [ariaDescribedByProp, fieldCtx?.describedBy].filter(Boolean).join(" ") || undefined;
   const [current, setCurrent] = useControllableState<string>({
     value,
     defaultValue: defaultValue ?? options.find((opt) => !opt.disabled)?.value ?? "",
@@ -90,10 +107,12 @@ export const AfRadioGroup = forwardRef<HTMLDivElement, AfRadioGroupProps>(functi
       className={cn("af-radio-group", variant === "card" && "af-choice-cards", className)}
       style={style}
       role="radiogroup"
-      aria-label={label}
-      aria-describedby={fieldCtx?.describedBy}
+      aria-label={ariaLabelProp ?? label}
+      aria-labelledby={ariaLabelledByProp}
+      aria-describedby={resolvedDescribedBy}
       aria-invalid={bad || undefined}
-      data-orientation={orientation}
+      data-orientation={resolvedOrientation}
+      data-size={size !== "md" ? size : undefined}
       data-variant={variant}
       data-disabled={disabled || undefined}
       data-invalid={bad || undefined}

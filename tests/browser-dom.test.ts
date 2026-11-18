@@ -1864,6 +1864,7 @@ describe("Aster UI Real-Browser DOM, Portal Theme, Focus Trap & IME Behavior", (
         },
       };
 
+      window.__AsterRuntime = AsterRuntime;
       createRoot(document.getElementById("root")).render(<Harness />);
     `;
 
@@ -5893,6 +5894,92 @@ describe("Aster UI Real-Browser DOM, Portal Theme, Focus Trap & IME Behavior", (
       rightWheelSynced: true,
       rulerScrubMovedPlayhead: true,
       railListHiddenIdle: true,
+    });
+  });
+
+  it("v0.5.1 real-browser imperative AfModal.confirm (await & destroy) and afMessage.dismissByKey exit transitions", async () => {
+    const res = (await send("Runtime.evaluate", {
+      expression: `(async () => {
+        const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+        const { AfModal, afMessage } = window.__AsterRuntime;
+
+        // 1. Imperative AfModal.confirm resolves true on confirm click with async loading guard
+        let okCalled = false;
+        const p1 = AfModal.confirm({
+          title: "确认卸载扩展？",
+          content: "卸载后本地工作区缓存仍会保留。",
+          okText: "确认卸载",
+          cancelText: "保留",
+          tone: "danger",
+          onOk: async () => {
+            await wait(35);
+            okCalled = true;
+          },
+        });
+        await wait(30);
+        const dialogEl = document.querySelector(".af-modal__panel");
+        const renderedInPortal = Boolean(dialogEl && dialogEl.closest(".af-portal-root"));
+        const descPromoted = dialogEl?.querySelector(".af-modal__desc")?.textContent === "卸载后本地工作区缓存仍会保留。";
+        const okBtn = Array.from(dialogEl?.querySelectorAll(".af-modal__foot button") ?? []).find((b) =>
+          b.textContent?.includes("确认卸载"),
+        );
+        okBtn?.click();
+        const resolvedTrue = await p1;
+        await wait(220);
+
+        // 2. Imperative AfModal.confirm handle.destroy() closes cleanly and resolves false
+        const handle = AfModal.confirm({
+          title: "已存在同名条目",
+          content: "请选择替换或跳过。",
+        });
+        await wait(25);
+        const openBeforeDestroy = Boolean(document.querySelector(".af-modal__panel"));
+        handle.destroy();
+        const resolvedFalse = (await handle) === false;
+        await wait(220);
+        const unmountedAfterExit = !document.querySelector(".af-modal__panel");
+
+        // 3. afMessage title + dismissByKey triggers smooth [data-leaving] exit
+        afMessage.destroy();
+        await wait(20);
+        afMessage.open({ key: "undo-op", type: "info", title: "已归档", content: "支持随时撤销", duration: 0 });
+        await wait(25);
+        const msgEl = document.querySelector(".af-message");
+        const hasTitle = msgEl?.querySelector(".af-message__title")?.textContent === "已归档";
+        afMessage.dismissByKey("undo-op");
+        await wait(20);
+        const hadLeavingAttr = document.querySelector(".af-message")?.getAttribute("data-leaving") === "true";
+        await wait(180);
+        const msgRemoved = !document.querySelector(".af-message");
+
+        return {
+          renderedInPortal,
+          descPromoted,
+          okCalled,
+          resolvedTrue,
+          openBeforeDestroy,
+          resolvedFalse,
+          unmountedAfterExit,
+          hasTitle,
+          hadLeavingAttr,
+          msgRemoved,
+        };
+      })()`,
+      awaitPromise: true,
+      returnByValue: true,
+    })) as { result: { value: Record<string, unknown> } };
+
+    expect(res.result.value).toEqual({
+      renderedInPortal: true,
+      descPromoted: true,
+      okCalled: true,
+      resolvedTrue: true,
+      openBeforeDestroy: true,
+      resolvedFalse: true,
+      unmountedAfterExit: true,
+      hasTitle: true,
+      hadLeavingAttr: true,
+      msgRemoved: true,
     });
   });
 });

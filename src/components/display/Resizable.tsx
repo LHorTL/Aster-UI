@@ -911,10 +911,16 @@ export type AfSplitterProps = Omit<ComponentPropsWithoutRef<"div">, "onChange" |
   onChange?: (nextPx: number) => void;
   /** 主栏像素值变化回调别名。 */
   onSizeChange?: (nextPx: number) => void;
+  /** 拖拽实时尺寸变化回调（与 `onChange` 等效）。 */
+  onResize?: (nextPx: number) => void;
+  /** 拖拽松手、键盘步进或双击复位结束提交回调。 */
+  onResizeEnd?: (finalPx: number) => void;
   /** 主栏最小像素，默认 120。 */
   min?: number;
   /** 主栏最大像素，默认 720。 */
   max?: number;
+  /** 次栏最小像素尺寸（可选，默认 0）。 */
+  secondMin?: number;
   /** 哪一侧承接像素尺寸（默认 start：左或上；end：右或下）。 */
   side?: "start" | "end";
   /** 受控是否折叠主栏到 0px。 */
@@ -935,35 +941,62 @@ export type AfSplitterProps = Omit<ComponentPropsWithoutRef<"div">, "onChange" |
   first?: ReactNode;
   /** 第二面板。 */
   second?: ReactNode;
+  /** 第一面板容器附加类名。 */
+  firstPaneClassName?: string;
+  /** 第一面板容器附加样式。 */
+  firstPaneStyle?: CSSProperties;
+  /** 第二面板容器附加类名。 */
+  secondPaneClassName?: string;
+  /** 第二面板容器附加样式。 */
+  secondPaneStyle?: CSSProperties;
+  /** 拖拽分隔条附加类名。 */
+  handleClassName?: string;
+  /** 自定义拖拽分隔条内部握把节点。 */
+  handle?: ReactNode;
+  /** 拖拽分隔条透传 HTML 属性。 */
+  handleProps?: ComponentPropsWithoutRef<"div">;
 };
 
 function clampPixel(value: number, min: number, max: number) {
   return Math.round(Math.min(Math.max(value, min), max));
 }
 
-function AfSplitterBase({
-  direction = "horizontal",
-  value,
-  size,
-  defaultSize = 260,
-  onChange,
-  onSizeChange,
-  min = 120,
-  max = 720,
-  side = "start",
-  collapsed: collapsedProp,
-  defaultCollapsed = false,
-  collapsible = false,
-  onCollapseChange,
-  storageKey,
-  disabled = false,
-  label = "调整分栏宽度",
-  first,
-  second,
-  children,
-  className,
-  ...rest
-}: AfSplitterProps = {}) {
+const AfSplitterBase = forwardRef<HTMLDivElement, AfSplitterProps>(function AfSplitter(
+  {
+    direction = "horizontal",
+    value,
+    size,
+    defaultSize = 260,
+    onChange,
+    onSizeChange,
+    onResize,
+    onResizeEnd,
+    min = 120,
+    max = 720,
+    secondMin = 0,
+    side = "start",
+    collapsed: collapsedProp,
+    defaultCollapsed = false,
+    collapsible = false,
+    onCollapseChange,
+    storageKey,
+    disabled = false,
+    label = "调整分栏宽度",
+    first,
+    second,
+    firstPaneClassName,
+    firstPaneStyle,
+    secondPaneClassName,
+    secondPaneStyle,
+    handleClassName,
+    handle: customHandle,
+    handleProps,
+    children,
+    className,
+    ...rest
+  } = {},
+  forwardedRef,
+) {
   const fullStorageKey = storageKey ? `af-splitter:${storageKey}` : undefined;
   const stored = useMemo(
     () => readResizableStorage<{ px?: number; collapsed?: boolean }>(fullStorageKey),
@@ -977,6 +1010,7 @@ function AfSplitterBase({
     onChange: (next) => {
       onChange?.(next);
       onSizeChange?.(next);
+      onResize?.(next);
     },
   });
 
@@ -991,6 +1025,8 @@ function AfSplitterBase({
   const firstNode = first ?? childList[0] ?? null;
   const secondNode = second ?? childList[1] ?? null;
   const dragRef = useRef<{ originPos: number; originSize: number } | null>(null);
+  const latestPxRef = useRef(resolvedPx);
+  latestPxRef.current = isCollapsed ? 0 : resolvedPx;
   const firstPaneRef = useRef<HTMLDivElement>(null);
   const secondPaneRef = useRef<HTMLDivElement>(null);
 
@@ -1000,15 +1036,18 @@ function AfSplitterBase({
     }
   };
 
-  const commitPx = (next: number, nextCol = isCollapsed) => {
+  const commitPx = (next: number, nextCol = isCollapsed, emitEnd = false) => {
     const clamped = clampPixel(next, min, max);
+    latestPxRef.current = nextCol ? 0 : clamped;
     setInnerPx(clamped);
     if (nextCol !== isCollapsed) setIsCollapsed(nextCol);
     persistSplitter(clamped, nextCol);
+    if (emitEnd) onResizeEnd?.(nextCol ? 0 : clamped);
   };
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (disabled || (isCollapsed && !collapsible) || event.button !== 0) return;
+    handleProps?.onPointerDown?.(event);
+    if (event.defaultPrevented || disabled || (isCollapsed && !collapsible) || event.button !== 0) return;
     event.preventDefault();
     const target = event.currentTarget;
     target.setPointerCapture?.(event.pointerId);
@@ -1028,6 +1067,7 @@ function AfSplitterBase({
       if (collapsible && candidate < min) {
         if (candidate <= min / 2) {
           if (!isCollapsed) {
+            latestPxRef.current = 0;
             setIsCollapsed(true);
             persistSplitter(resolvedPx, true);
           }
@@ -1045,6 +1085,7 @@ function AfSplitterBase({
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", onUp);
       window.removeEventListener("pointercancel", onUp);
+      onResizeEnd?.(latestPxRef.current);
     };
 
     window.addEventListener("pointermove", onMove);
@@ -1053,30 +1094,32 @@ function AfSplitterBase({
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    handleProps?.onKeyDown?.(event);
     if (disabled || (isCollapsed && !collapsible) || event.defaultPrevented) return;
     const step = event.shiftKey ? 24 : 8;
     const sign = side === "end" ? -1 : 1;
     const isH = direction === "horizontal";
     if ((isH && event.key === "ArrowLeft") || (!isH && event.key === "ArrowUp")) {
       event.preventDefault();
-      commitPx(resolvedPx - step * sign, false);
+      commitPx(resolvedPx - step * sign, false, true);
     } else if ((isH && event.key === "ArrowRight") || (!isH && event.key === "ArrowDown")) {
       event.preventDefault();
-      commitPx(resolvedPx + step * sign, false);
+      commitPx(resolvedPx + step * sign, false, true);
     } else if (event.key === "Home") {
       event.preventDefault();
-      commitPx(min, false);
+      commitPx(min, false, true);
     } else if (event.key === "End") {
       event.preventDefault();
-      commitPx(max, false);
+      commitPx(max, false, true);
     } else if (event.key === "Enter") {
       event.preventDefault();
       if (collapsible) {
         const nextCol = !isCollapsed;
         setIsCollapsed(nextCol);
         persistSplitter(resolvedPx, nextCol);
+        onResizeEnd?.(nextCol ? 0 : resolvedPx);
       } else {
-        commitPx(defaultSize, false);
+        commitPx(defaultSize, false, true);
       }
     }
   };
@@ -1091,6 +1134,8 @@ function AfSplitterBase({
     if (secondPaneRef.current) secondPaneRef.current.inert = secondCollapsed;
   }, [firstCollapsed, secondCollapsed]);
 
+  const fluidMinProp = direction === "horizontal" ? { minWidth: secondMin } : { minHeight: secondMin };
+
   const primaryStyle: CSSProperties =
     side === "start"
       ? {
@@ -1099,8 +1144,9 @@ function AfSplitterBase({
           minHeight: 0,
           overflow: isCollapsed ? "hidden" : undefined,
           ...(isCollapsed ? { padding: 0, borderWidth: 0 } : null),
+          ...firstPaneStyle,
         }
-      : { flex: "1 1 0%", minWidth: 0, minHeight: 0 };
+      : { flex: "1 1 0%", minWidth: 0, minHeight: 0, ...fluidMinProp, ...firstPaneStyle };
   const secondaryStyle: CSSProperties =
     side === "end"
       ? {
@@ -1109,11 +1155,13 @@ function AfSplitterBase({
           minHeight: 0,
           overflow: isCollapsed ? "hidden" : undefined,
           ...(isCollapsed ? { padding: 0, borderWidth: 0 } : null),
+          ...secondPaneStyle,
         }
-      : { flex: "1 1 0%", minWidth: 0, minHeight: 0 };
+      : { flex: "1 1 0%", minWidth: 0, minHeight: 0, ...fluidMinProp, ...secondPaneStyle };
 
   return (
     <div
+      ref={forwardedRef}
       className={cn("af-resizable af-splitter", className)}
       data-direction={direction}
       data-collapsed={isCollapsed || undefined}
@@ -1121,7 +1169,7 @@ function AfSplitterBase({
     >
       <div
         ref={firstPaneRef}
-        className="af-splitter__pane"
+        className={cn("af-splitter__pane", firstPaneClassName)}
         data-role={side === "start" ? "primary" : "fluid"}
         data-collapsed={firstCollapsed || undefined}
         aria-hidden={firstCollapsed || undefined}
@@ -1131,30 +1179,32 @@ function AfSplitterBase({
       </div>
       {showSeparator ? (
         <div
+          {...handleProps}
           role="separator"
-          tabIndex={disabled ? -1 : 0}
-          aria-label={label}
+          tabIndex={disabled ? -1 : (handleProps?.tabIndex ?? 0)}
+          aria-label={handleProps?.["aria-label"] ?? label}
           aria-orientation={direction === "horizontal" ? "vertical" : "horizontal"}
           aria-valuenow={primaryBasis}
           aria-valuemin={collapsible ? 0 : min}
           aria-valuemax={max}
           aria-disabled={disabled || undefined}
-          className="af-resizable__handle af-splitter__handle"
+          className={cn("af-resizable__handle af-splitter__handle", handleProps?.className, handleClassName)}
           data-direction={direction}
           data-with-handle="true"
           data-disabled={disabled || undefined}
           onPointerDown={handlePointerDown}
           onKeyDown={handleKeyDown}
-          onDoubleClick={() => {
-            if (!disabled) commitPx(defaultSize, false);
+          onDoubleClick={(event) => {
+            handleProps?.onDoubleClick?.(event);
+            if (!event.defaultPrevented && !disabled) commitPx(defaultSize, false, true);
           }}
         >
-          <span className="af-resizable__grip" aria-hidden="true" />
+          {customHandle ?? <span className="af-resizable__grip" aria-hidden="true" />}
         </div>
       ) : null}
       <div
         ref={secondPaneRef}
-        className="af-splitter__pane"
+        className={cn("af-splitter__pane", secondPaneClassName)}
         data-role={side === "end" ? "primary" : "fluid"}
         data-collapsed={secondCollapsed || undefined}
         aria-hidden={secondCollapsed || undefined}
@@ -1164,7 +1214,7 @@ function AfSplitterBase({
       </div>
     </div>
   );
-}
+});
 
 /** 像素受控分栏器：支持受控 px、拖过半程自动折叠、双击复位与 `storageKey` 持久化（兼容 `Splitter` 组件契约）。 */
 export const AfSplitter = Object.assign(AfSplitterBase, {

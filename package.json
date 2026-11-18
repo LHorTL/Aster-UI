@@ -1,6 +1,6 @@
 {
   "name": "@fangxinyan/aster-ui",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "license": "MIT",
   "type": "module",
   "description": "Aster UI（星序）— 安静、精确的 React 组件库",

@@ -54,6 +54,14 @@ export type AfSelectBaseProps = {
   icon?: AfIconName | ReactNode;
   /** 无障碍名称（在 FormField 内使用时可省略）。 */
   label?: string;
+  /** 原生无障碍名称（与 `label` 等效，`aria-label` 优先）。 */
+  "aria-label"?: string;
+  /** 关联外部标题元素 id。 */
+  "aria-labelledby"?: string;
+  /** 关联外部说明元素 id。 */
+  "aria-describedby"?: string;
+  /** 触发器原生悬浮提示。 */
+  title?: string;
   /** 可选顶部可见字段标题（不影响既有仅传 `label` 作为 `aria-label` 的用法）。 */
   fieldLabel?: ReactNode;
   /** 可选标记（配合 `fieldLabel` 显示 `"可选"` 或自定义文案）。 */
@@ -74,6 +82,8 @@ export type AfSelectBaseProps = {
   disabled?: boolean;
   /** 是否启用框内搜索。 */
   searchable?: boolean;
+  /** `searchable` 兼容别名。 */
+  showSearch?: boolean;
   /** 受控搜索词；用于远程搜索。 */
   searchValue?: string;
   /** 搜索词变化回调。 */
@@ -88,10 +98,14 @@ export type AfSelectBaseProps = {
   renderOption?: (option: AfSelectOption, state: { selected: boolean; active: boolean }) => ReactNode;
   /** `renderOption` 历史宿主迁移兼容别名。 */
   optionRender?: (option: AfSelectOption, state: { selected: boolean; active: boolean }) => ReactNode;
+  /** 选项行右侧附加信息渲染（如快捷标签徽章）。 */
+  optionExtraRender?: (option: AfSelectOption) => ReactNode;
   /** 按选项动态计算禁用态（历史宿主迁移兼容属性）。 */
   getOptionDisabled?: (option: AfSelectOption) => boolean;
   /** 自定义单选触发器展示内容。 */
   renderValue?: (option: AfSelectOption) => ReactNode;
+  /** `renderValue` 兼容别名。 */
+  selectedRender?: (option: AfSelectOption) => ReactNode;
   /** 是否显示清除按钮。 */
   clearable?: boolean;
   /** `clearable` 历史宿主迁移兼容别名。 */
@@ -104,6 +118,16 @@ export type AfSelectBaseProps = {
   loading?: boolean;
   /** 无匹配项时的内容。 */
   emptyText?: ReactNode;
+  /** `emptyText` 兼容别名。 */
+  emptyContent?: ReactNode;
+  /** 下拉面板附加类名。 */
+  popupClassName?: string;
+  /** `popupClassName` 兼容别名。 */
+  dropdownClassName?: string;
+  /** 下拉面板附加内联样式。 */
+  popupStyle?: CSSProperties;
+  /** 下拉列表最大滚动高度（px）。 */
+  listHeight?: number;
   /** 受控浮层开合状态。 */
   open?: boolean;
   /** 非受控初始浮层开合状态。 */
@@ -182,6 +206,10 @@ function AfSelectInner(props: AfSelectProps, forwardedRef: Ref<HTMLDivElement>) 
     options,
     icon,
     label,
+    "aria-label": ariaLabelProp,
+    "aria-labelledby": ariaLabelledByProp,
+    "aria-describedby": ariaDescribedByProp,
+    title: titleProp,
     fieldLabel,
     optional,
     hint,
@@ -192,6 +220,7 @@ function AfSelectInner(props: AfSelectProps, forwardedRef: Ref<HTMLDivElement>) 
     size = "md",
     disabled: disabledProp,
     searchable,
+    showSearch,
     searchValue,
     onSearch,
     filterOption,
@@ -199,13 +228,20 @@ function AfSelectInner(props: AfSelectProps, forwardedRef: Ref<HTMLDivElement>) 
     onCreateOption,
     renderOption,
     optionRender,
+    optionExtraRender,
     getOptionDisabled,
-    renderValue: customRenderValue,
+    renderValue: customRenderValueProp,
+    selectedRender,
     clearable,
     allowClear,
     invalid,
     loading,
     emptyText = "No matches",
+    emptyContent,
+    popupClassName,
+    dropdownClassName,
+    popupStyle,
+    listHeight,
     open: openProp,
     defaultOpen = false,
     onOpenChange,
@@ -224,15 +260,18 @@ function AfSelectInner(props: AfSelectProps, forwardedRef: Ref<HTMLDivElement>) 
   const bad = Boolean(invalid || hasError || fieldCtx?.invalid);
   const shake = useFieldShake(bad);
   const resolvedDescribedBy =
-    [fieldCtx?.describedBy, hint && !hasError ? hintId : undefined, hasError ? errorId : undefined]
+    [ariaDescribedByProp, fieldCtx?.describedBy, hint && !hasError ? hintId : undefined, hasError ? errorId : undefined]
       .filter(Boolean)
       .join(" ") || undefined;
 
   const multiple = props.multiple === true;
-  const isSearchable = Boolean(searchable || creatable);
+  const isSearchable = Boolean(searchable || showSearch || creatable);
   const maxTagCount = multiple ? (props as AfSelectMultipleProps).maxTagCount : undefined;
   const maxCount = multiple ? (props as AfSelectMultipleProps).maxCount : undefined;
   const customRenderOption = renderOption ?? optionRender;
+  const customRenderValue = customRenderValueProp ?? selectedRender;
+  const effectiveEmptyText = emptyContent ?? emptyText;
+  const effectiveAriaLabel = ariaLabelProp ?? label ?? (typeof fieldLabel === "string" ? fieldLabel : undefined);
   const showClear = clearable ?? allowClear;
 
   const [singleValue, setSingleValue] = useControllableState<string>({
@@ -572,6 +611,7 @@ function AfSelectInner(props: AfSelectProps, forwardedRef: Ref<HTMLDivElement>) 
                 {option.description ? <span className="af-menu__desc">{option.description}</span> : null}
               </span>
             </span>
+            {optionExtraRender ? optionExtraRender(option) : null}
             {isSelected ? (
               <svg
                 className="af-icon af-menu__check"
@@ -632,11 +672,13 @@ function AfSelectInner(props: AfSelectProps, forwardedRef: Ref<HTMLDivElement>) 
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={open ? listboxId : undefined}
-        aria-label={label ?? (typeof fieldLabel === "string" ? fieldLabel : undefined)}
+        aria-label={effectiveAriaLabel}
+        aria-labelledby={ariaLabelledByProp}
         aria-describedby={resolvedDescribedBy}
         aria-invalid={bad ? true : "false"}
         aria-required={fieldCtx?.required || undefined}
         aria-multiselectable={multiple || undefined}
+        title={titleProp}
         tabIndex={disabled ? -1 : 0}
         aria-disabled={disabled || undefined}
         onPointerDown={(event) => {
@@ -768,9 +810,10 @@ function AfSelectInner(props: AfSelectProps, forwardedRef: Ref<HTMLDivElement>) 
         open={open}
         anchorRef={triggerRef}
         role="listbox"
-        label={label ?? "Options"}
+        label={effectiveAriaLabel ?? "Options"}
         container={container}
-        className="af-select__menu"
+        className={cn("af-select__menu", popupClassName, dropdownClassName)}
+        style={popupStyle}
         matchAnchorWidth
         onKeyDown={onKeyDown}
         onPointerDownOutside={() => {
@@ -778,7 +821,7 @@ function AfSelectInner(props: AfSelectProps, forwardedRef: Ref<HTMLDivElement>) 
           if (searchValue === undefined) setQuery("");
         }}
       >
-        <div className="af-menu__list" ref={listRef}>
+        <div className="af-menu__list" ref={listRef} style={listHeight ? { maxHeight: listHeight } : undefined}>
           {thumb ? (
             <span
               className="af-menu__thumb"
@@ -812,7 +855,7 @@ function AfSelectInner(props: AfSelectProps, forwardedRef: Ref<HTMLDivElement>) 
               {createDraftOption ? renderMenuItem(createDraftOption) : null}
             </>
           ) : (
-            <div className="af-select__empty">{emptyText}</div>
+            <div className="af-select__empty">{effectiveEmptyText}</div>
           )}
         </div>
       </AfPopover>

@@ -20,6 +20,20 @@ import {
   type AfPopoverSide,
 } from "../../primitives";
 
+export type AfPopoverPosition =
+  | "top"
+  | "bottom"
+  | "left"
+  | "right"
+  | "topLeft"
+  | "topRight"
+  | "bottomLeft"
+  | "bottomRight"
+  | "leftTop"
+  | "leftBottom"
+  | "rightTop"
+  | "rightBottom";
+
 type AfPopoverSharedProps = {
   /** 正交轴对齐方式。 */
   align?: "start" | "center" | "end";
@@ -27,6 +41,8 @@ type AfPopoverSharedProps = {
   preferredSide?: AfPopoverSide;
   /** `preferredSide` 的简写别名。 */
   side?: AfPopoverSide;
+  /** 复合方向简写（如 `"bottomRight"` 自动推导 `side="bottom"` + `align="end"`）。 */
+  placement?: AfPopoverPosition;
   /** 与锚点间距（px），默认 6。 */
   gap?: number;
   /** `gap` 的语义别名（affectUI API 对齐）。 */
@@ -45,6 +61,8 @@ type AfPopoverSharedProps = {
   onClose?: () => void;
   /** 额外类名。 */
   className?: string;
+  /** 浮层额外类名别名。 */
+  overlayClassName?: string;
   /** 额外内联样式。 */
   style?: CSSProperties;
   /** 元素 id（供 aria-controls 关联）。 */
@@ -165,8 +183,25 @@ export function AfPopover(props: AfPopoverProps) {
       ? props.anchorRef
       : ((props as AfPopoverParentProps).anchor ?? resolvedParentRef);
 
-  const align = props.align ?? "start";
-  const resolvedSide = props.side ?? props.preferredSide ?? "bottom";
+  const placementSide: AfPopoverSide | undefined = props.placement
+    ? props.placement.startsWith("top")
+      ? "top"
+      : props.placement.startsWith("bottom")
+        ? "bottom"
+        : props.placement.startsWith("left")
+          ? "left"
+          : "right"
+    : undefined;
+  const placementAlign: "start" | "center" | "end" | undefined = props.placement
+    ? props.placement.endsWith("Left") || props.placement.endsWith("Top")
+      ? "start"
+      : props.placement.endsWith("Right") || props.placement.endsWith("Bottom")
+        ? "end"
+        : "center"
+    : undefined;
+
+  const align = props.align ?? placementAlign ?? "start";
+  const resolvedSide = props.side ?? props.preferredSide ?? placementSide ?? "bottom";
   const gap = props.offset ?? props.gap ?? 6;
   const role = props.role ?? "dialog";
   const hasHeader = Boolean(props.title || props.description);
@@ -289,7 +324,7 @@ export function AfPopover(props: AfPopoverProps) {
             <div
               ref={popRef}
               id={popId}
-              className={cn("af-pop", props.className)}
+              className={cn("af-pop", props.overlayClassName, props.className)}
               role={role}
               tabIndex={props.focusOnOpen ? -1 : undefined}
               aria-label={props.label}

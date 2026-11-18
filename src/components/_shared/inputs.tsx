@@ -773,19 +773,25 @@ export type AfDatePickerProps = {
   isDateDisabled?: (date: Date) => boolean;
   placeholder?: string;
   label?: string;
+  "aria-label"?: string;
   showLabel?: boolean;
   hint?: ReactNode;
   error?: ReactNode;
   optional?: boolean;
   required?: boolean;
   clearable?: boolean;
+  allowClear?: boolean;
   today?: Date;
   weekStartsOn?: 0 | 1;
   /** 语言区域：`"en-US"`（默认）或 `"zh-CN"`。 */
   locale?: AfPickerLocale;
   /** 侧栏快捷日期预设（如今日、昨日、7 天前）。 */
   presets?: AfDatePickerPreset[];
+  /** 受控打开状态。 */
+  open?: boolean;
   defaultOpen?: boolean;
+  /** 打开状态变化回调。 */
+  onOpenChange?: (open: boolean) => void;
   /** Whether to show double-chevron year buttons in header (default false; Shift+PageUp/PageDown always works). */
   showYearNav?: boolean;
   /** Whether to show Today / Clear footer bar (default false). */

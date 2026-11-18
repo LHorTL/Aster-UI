@@ -39,6 +39,8 @@ export type AfDrawerProps = {
   title: ReactNode;
   /** 说明。 */
   description?: ReactNode;
+  /** 标题栏右侧附加操作槽（位于关闭按钮左侧）。 */
+  extra?: ReactNode;
   /** 正文；超出高度时独立滚动，标题与底部操作保持不动。 */
   children?: ReactNode;
   /** 底部常驻操作区。 */
@@ -59,10 +61,14 @@ export type AfDrawerProps = {
   closeOnBackdrop?: boolean;
   /** 按下 Escape 是否关闭，默认 true。 */
   closeOnEscape?: boolean;
+  /** 关闭退场完成后卸载子节点（内置 `useExitTransition` 已默认退场后卸载）。 */
+  destroyOnClose?: boolean;
   /** 限制在局部容器内展示。 */
   contained?: boolean;
   /** 可选指定挂载容器；省略时自动接入 AfLayer / Theme 浮层根。 */
   container?: HTMLElement | null;
+  /** 尺寸档位（`sm=360px` / `md=460px` / `lg=640px`）或自定义宽度/高度长度。 */
+  size?: "sm" | "md" | "lg" | number | string;
   /** 左右抽屉宽度（px 或 CSS 长度），默认 420。 */
   width?: number | string;
   /** 底部抽屉高度（px 或 CSS 长度），仅在 placement="bottom" 时生效。 */
@@ -73,6 +79,8 @@ export type AfDrawerProps = {
   bodyClassName?: string;
   /** 正文容器内联样式。 */
   bodyStyle?: CSSProperties;
+  /** 正文溢出滚动策略。 */
+  bodyOverflow?: "auto" | "hidden" | "visible";
   /** 面板加载态。 */
   loading?: boolean;
   /** 附加类名。 */
@@ -95,6 +103,7 @@ export function AfDrawer({
   trigger,
   title,
   description,
+  extra,
   children,
   footer,
   placement = "right",
@@ -107,11 +116,13 @@ export function AfDrawer({
   closeOnEscape = true,
   contained = false,
   container,
+  size,
   width,
   height,
   maskClassName,
   bodyClassName,
   bodyStyle,
+  bodyOverflow,
   loading = false,
   className,
   style,
@@ -194,8 +205,21 @@ export function AfDrawer({
     });
   };
 
-  const resolvedWidth = width === undefined ? undefined : typeof width === "number" ? `${width}px` : width;
-  const resolvedHeight = height === undefined ? undefined : typeof height === "number" ? `${height}px` : height;
+  const sizePresetPx = size === "sm" ? "360px" : size === "md" ? "460px" : size === "lg" ? "640px" : undefined;
+  const fallbackSize =
+    sizePresetPx ?? (size === undefined ? undefined : typeof size === "number" ? `${size}px` : size);
+  const rawWidth = width ?? (resolvedPlacement !== "bottom" ? fallbackSize : undefined);
+  const rawHeight = height ?? (resolvedPlacement === "bottom" ? fallbackSize : undefined);
+  const resolvedWidth = rawWidth === undefined ? undefined : typeof rawWidth === "number" ? `${rawWidth}px` : rawWidth;
+  const resolvedHeight =
+    rawHeight === undefined ? undefined : typeof rawHeight === "number" ? `${rawHeight}px` : rawHeight;
+  const mergedBodyStyle: CSSProperties | undefined =
+    bodyOverflow || bodyStyle
+      ? {
+          ...(bodyOverflow ? { overflowY: bodyOverflow } : null),
+          ...bodyStyle,
+        }
+      : undefined;
 
   const panelSizeStyle: CSSProperties | undefined =
     resolvedPlacement === "bottom"
@@ -258,6 +282,7 @@ export function AfDrawer({
                       </p>
                     ) : null}
                   </div>
+                  {extra ? <div className="af-drawer__extra">{extra}</div> : null}
                   {showCloseButton ? (
                     <button
                       type="button"
@@ -269,7 +294,7 @@ export function AfDrawer({
                     </button>
                   ) : null}
                 </header>
-                <div ref={bodyRef} className={cn("af-drawer__body", bodyClassName)} style={bodyStyle}>
+                <div ref={bodyRef} className={cn("af-drawer__body", bodyClassName)} style={mergedBodyStyle}>
                   {children}
                 </div>
                 {footer ? <footer className="af-drawer__foot">{footer}</footer> : null}

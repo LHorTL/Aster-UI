@@ -1892,4 +1892,123 @@ describe("Aster UI Package Contracts & Standalone Rendering", () => {
 
     expect(ssrErrors).toEqual([]);
   });
+
+  it("v0.5.1 增强契约：图标别名/校验函数、命令式 afModal、表单无障碍与多图层媒体原语全部同源可用", () => {
+    // 1. 图标校验与新增命名图标 / 别名
+    expect(AsterUI.isAfIconName("SettingOutlined")).toBe(true);
+    expect(AsterUI.isAfIconName("barChart")).toBe(true);
+    expect(AsterUI.isAfIconName("picture")).toBe(true);
+    expect(AsterUI.isAfIconName("sync")).toBe(true);
+    expect(AsterUI.isAfIconName("unknown-custom-icon-xyz")).toBe(false);
+    expect(AsterUI.resolveAfIconName("SettingOutlined")).toBe("settings");
+    expect(AsterUI.resolveAfIconName("barChart")).toBe("chart");
+    expect(AsterUI.resolveAfIconName("picture")).toBe("image");
+    expect(AsterUI.resolveAfIconName("sync")).toBe("refresh");
+    expect(typeof AsterUI.SettingOutlined).toBe("function");
+    expect(AsterCore.SettingOutlined).toBe(AsterUI.SettingOutlined);
+    expect(AsterUI.NAMED_ICON_MAP.SettingOutlined).toBe(AsterUI.SettingOutlined);
+
+    // 2. 命令式 afModal / AfModal.confirm 与插件运行时桥接
+    expect(typeof AsterUI.afModal.confirm).toBe("function");
+    expect(AsterUI.AfModal.confirm).toBe(AsterUI.afModal.confirm);
+    expect(AsterRuntime.afModal).toBe(AsterUI.afModal);
+    expect(AsterCore.afModal).toBe(AsterUI.afModal);
+    expect(typeof AsterUI.afMessage.dismissByKey).toBe("function");
+    expect(AsterUI.AfRadio.Group).toBe(AsterUI.AfRadioGroup);
+
+    const rt = AsterRuntime.createAsterPluginRuntime({ ui: AsterRuntime });
+    expect(rt.modal).toBe(AsterUI.afModal);
+    expect(rt.shared.modal).toBe(AsterUI.afModal);
+
+    // 3. 增强属性全链路 SSR 零报错渲染验证
+    const html = renderToStaticMarkup(
+      <AsterThemeProvider initialMode="light">
+        <AsterUI.SettingOutlined size={16} />
+        <AsterUI.AfSelect
+          aria-label="选择目标实例"
+          showSearch
+          value="s1"
+          selectedRender={(opt) => <b>{opt.label}</b>}
+          optionExtraRender={(opt) => <em>{opt.value}</em>}
+          options={[{ value: "s1", label: "主节点" }]}
+        />
+        <AsterUI.AfCascader
+          aria-label="选择区服"
+          showSearch={{ filter: (kw, path) => path.some((p) => p.label.includes(kw)) }}
+          value={["r1", "s1"]}
+          selectedRender={(opts) => <span>{opts.map((o) => o.label).join(" · ")}</span>}
+          options={[{ value: "r1", label: "电信区", children: [{ value: "s1", label: "长安城" }] }]}
+        />
+        <AsterUI.AfCheckbox aria-label="同意协议" defaultChecked />
+        <AsterUI.AfRadio.Group
+          aria-label="同步方向"
+          direction="horizontal"
+          size="sm"
+          options={[
+            { value: "push", label: "推送" },
+            { value: "pull", label: "拉取" },
+          ]}
+        />
+        <AsterUI.AfNumberInput aria-label="超时毫秒" defaultValue={500} onBlur={() => {}} />
+        <AsterUI.AfSlider aria-label="音量调节" defaultValue={60} />
+        <AsterUI.AfDatePicker aria-label="截止日期" allowClear open={false} />
+        <AsterUI.AfTabs
+          aria-label="配置分区"
+          items={[{ key: "general", label: "常规", icon: "SettingOutlined", content: "面板正文" }]}
+        />
+        <AsterUI.AfTag tone="accent" bordered={false} removable>
+          免描边可移除标签
+        </AsterUI.AfTag>
+        <AsterUI.AfAvatar initials="FX" size={28} />
+        <AsterUI.AfProgress aria-label="上传进度" value={30} max={60} showValue />
+        <AsterUI.AfText ellipsis copyable>
+          支持省略截断与右侧一键复制的行内文本
+        </AsterUI.AfText>
+        <AsterUI.AfSpriteImage
+          src="https://example.com/sheet.png"
+          sprite={{ x: 16, y: 32, width: 120, height: 60 }}
+          scale={0.5}
+          alt="图集横幅"
+        />
+        <AsterUI.AfLayeredImage
+          width={123}
+          height={96}
+          layers={[
+            { src: "https://example.com/frame.png", fit: "none", inset: { top: 20, left: 0, right: 0, bottom: 0 } },
+            { src: "https://example.com/head.png", fit: "none", style: { width: 96, height: 108 }, zIndex: 1 },
+          ]}
+        />
+        <AsterUI.AfSplitter
+          size={220}
+          secondMin={120}
+          firstPaneClassName="pane-a"
+          secondPaneClassName="pane-b"
+          handleClassName="custom-handle"
+        >
+          <div>左栏</div>
+          <div>右栏</div>
+        </AsterUI.AfSplitter>
+        <AsterUI.AfTablePro
+          aria-label="寄售明细"
+          scroll={{ x: 640, y: 240 }}
+          pagination={false}
+          columns={[{ key: "id", title: "编号", dataIndex: "id" }]}
+          data={[{ id: "ORD-01" }]}
+        />
+      </AsterThemeProvider>,
+    );
+
+    expect(html).toContain('aria-label="选择目标实例"');
+    expect(html).toContain("电信区 · 长安城");
+    expect(html).toContain('aria-label="同意协议"');
+    expect(html).toContain('data-orientation="horizontal"');
+    expect(html).toContain('aria-label="配置分区"');
+    expect(html).toContain('data-variant="soft"');
+    expect(html).toContain(">FX<");
+    expect(html).toContain("50%");
+    expect(html).toContain("af-typo-text__copy");
+    expect(html).toContain('aria-label="图集横幅"');
+    expect(html).toContain("pane-a");
+    expect(html).toContain("寄售明细");
+  });
 });
