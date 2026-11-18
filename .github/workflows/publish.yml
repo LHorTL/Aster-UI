@@ -122,8 +122,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-          registry-url: 'https://registry.npmjs.org'
           cache: npm
+
+      - name: Ensure latest npm CLI for OIDC Trusted Publishing
+        run: npm install -g npm@latest
 
       - run: npm ci
       - run: npm run lint:arch
@@ -137,12 +139,10 @@ jobs:
       - name: Pack validated package
         run: npm pack --pack-destination "$RUNNER_TEMP"
 
-      - name: Publish validated tarball to npm
+      - name: Publish validated tarball to npm via OIDC Trusted Publisher
         run: |
           version="${{ needs.check.outputs.version }}"
           npm publish "$RUNNER_TEMP/fangxinyan-aster-ui-$version.tgz" --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create Git tag and GitHub Release
         env:
