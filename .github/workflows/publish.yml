@@ -124,9 +124,6 @@ jobs:
           node-version: '24'
           cache: npm
 
-      - name: Ensure latest npm CLI for OIDC Trusted Publishing
-        run: npm install -g npm@latest
-
       - run: npm ci
       - run: npm run lint:arch
       - run: npm run build
