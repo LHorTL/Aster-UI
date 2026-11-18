@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'package.json'
+      - '.github/workflows/publish.yml'
     tags:
       - 'v*'
   workflow_dispatch:
@@ -126,8 +127,8 @@ jobs:
 
       - run: npm ci
       - run: npm run lint:arch
-      - run: npm run typecheck
       - run: npm run build
+      - run: npm run typecheck
       - run: npm run check:pkg
       - run: npm test
       - run: npm run build:showcase

@@ -161,7 +161,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json --noEmit",
     "lint:arch": "node scripts/lint-architecture.mjs",
     "check:pkg": "node scripts/check-package.mjs",
-    "prepublishOnly": "npm run lint:arch && npm run typecheck && npm run build && npm run check:pkg && npm run test",
+    "prepublishOnly": "npm run lint:arch && npm run build && npm run typecheck && npm run check:pkg && npm run test",
     "new:component": "node scripts/new-component.mjs",
     "test": "vitest run",
     "visual:update": "node scripts/visual-regression.mjs --update",

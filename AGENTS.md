@@ -96,7 +96,7 @@
 每次改动组件或样式后，必须全部通过以下检查（Windows `pwsh` 下可串联执行）：
 
 ```powershell
-npm.cmd run lint:arch && npm.cmd run typecheck && npm.cmd run build && npm.cmd run check:pkg && npx.cmd vitest run && npm.cmd run build:showcase
+npm.cmd run lint:arch && npm.cmd run build && npm.cmd run typecheck && npm.cmd run check:pkg && npx.cmd vitest run && npm.cmd run build:showcase
 ```
 
 涉及组件外观、边框或布局变更时，还需运行 `node scripts/visual-regression.mjs` 并在 `#f7f7f7` 浅色点阵画布与 `#0e0e0e` 深色画布下核验四周 `1px` 发丝环完整闭合、零裁切、零亚像素消失。
