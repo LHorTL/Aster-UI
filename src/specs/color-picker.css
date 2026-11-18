@@ -1,0 +1,36 @@
+.af-cp-spec {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 360px;
+  padding: 16px;
+  border-radius: var(--af-r-lg);
+  background: var(--af-surface);
+  box-shadow: var(--af-shadow-card);
+}
+
+.af-cp-spec__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.af-cp-spec__row > span:first-child {
+  width: 84px;
+  flex: none;
+  color: var(--af-page-muted);
+  font-size: var(--af-fs-sm);
+}
+
+.af-cp-spec__row code {
+  color: var(--af-page-faint);
+  font-family: var(--af-mono);
+  font-size: var(--af-fs-xs);
+}
+
+.af-cp-spec__hint {
+  margin: 2px 0 0;
+  color: var(--af-page-faint);
+  font-size: var(--af-fs-xs);
+  line-height: 16px;
+}

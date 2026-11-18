@@ -1,0 +1,543 @@
+/* Aster UI 展示站：独立页面外壳，只依赖组件库 token。 */
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--af-canvas, #f7f7f7);
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body,
+body:has(.af[data-theme="dark"]) {
+  background: #0e0e10;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.ast {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--af-canvas);
+  color: var(--af-page-ink);
+  font-family: var(--af-font);
+  font-size: var(--af-fs-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+.ast-gal {
+  height: 100%;
+  min-height: 0;
+}
+
+/* ---------- 顶部品牌区 ---------- */
+
+.ast-head {
+  align-items: flex-start;
+  gap: 32px;
+  padding: 24px 32px 18px;
+  background: var(--af-panel);
+}
+
+.ast-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ast-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 10px;
+}
+
+.ast-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--af-solid);
+  color: var(--af-on-solid);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  box-shadow: var(--af-solid-shadow);
+}
+
+.ast-brandtext {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ast-brandtext strong {
+  color: var(--af-page-strong);
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.ast-brandtext small {
+  color: var(--af-page-faint);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ast-intro h1 {
+  margin: 0;
+  max-width: 620px;
+  color: var(--af-page-strong);
+  font-size: 24px;
+  font-weight: 620;
+  line-height: 32px;
+  letter-spacing: -0.03em;
+}
+
+.ast-intro p {
+  max-width: 640px;
+  margin: 5px 0 0;
+  color: var(--af-page-muted);
+  font-size: var(--af-fs-body);
+  line-height: 20px;
+}
+
+.ast-headside {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  padding-top: 2px;
+}
+
+.ast-counts {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ast-counts span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: var(--af-r-xs);
+  background: var(--af-wash);
+  color: var(--af-page-muted);
+  font-size: var(--af-fs-xs);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.ast-counts b {
+  color: var(--af-page-strong);
+  font-weight: 600;
+}
+
+.ast-theme {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--af-r-input);
+  background: var(--af-surface);
+  box-shadow: var(--af-shadow-hairline);
+  color: var(--af-page-ink);
+  font: inherit;
+  font-size: var(--af-fs-sm);
+  cursor: pointer;
+  transition:
+    background-color var(--af-dur-fast) ease,
+    box-shadow var(--af-dur-fast) ease;
+}
+
+.ast-theme:hover {
+  background: var(--af-wash);
+  box-shadow: var(--af-shadow-hairline-hover);
+}
+
+/* ---------- 侧栏 ---------- */
+
+.ast-side {
+  background: var(--af-surface-sunken);
+  box-shadow: inset -0.5px 0 0 var(--af-page-line);
+}
+
+.ast-side .af-gal__nav {
+  padding-bottom: 8px;
+}
+
+.ast-sidefoot {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: auto;
+  padding: 14px 12px 4px;
+  box-shadow: inset 0 0.5px 0 var(--af-page-line);
+  color: var(--af-page-faint);
+  font-size: 10.5px;
+  line-height: 15px;
+}
+
+.ast-sidefoot b {
+  color: var(--af-page-muted);
+  font-weight: 550;
+}
+
+/* ---------- 主预览区 ---------- */
+
+.ast-main {
+  background: var(--af-panel);
+}
+
+.ast-meta {
+  padding: 24px 32px 12px;
+}
+
+.ast-meta .af-gal__titleline h2 {
+  font-size: 22px;
+  line-height: 30px;
+}
+
+.ast-meta .af-gal__meta p {
+  max-width: 760px;
+}
+
+.ast-scroller {
+  padding: 8px 28px 24px;
+}
+
+.ast-stagecard {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100%;
+  border-radius: var(--af-r-lg);
+  background: var(--af-canvas);
+  box-shadow: inset 0 0 0 0.5px var(--af-page-line);
+}
+
+.ast-stagelabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+  padding: 0 12px;
+  box-shadow: inset 0 -0.5px 0 var(--af-page-line);
+  color: var(--af-page-faint);
+  font-size: 10.5px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.ast-stagelabel span:last-child {
+  color: var(--af-page-faint);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.ast-stagecard .af-gal-stage {
+  flex: 1;
+  min-height: 260px;
+  margin: 0;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--af-page-line) 80%, transparent) 1px, transparent 0) 0 0 / 14px 14px;
+}
+
+.ast-foot {
+  padding: 10px 32px 14px;
+  box-shadow: inset 0 0.5px 0 var(--af-page-line);
+  background: var(--af-panel);
+}
+
+/* 窄屏：展示站优先保证预览完整，侧栏缩到图标式密度 */
+@media (max-width: 1080px) {
+  .ast-head {
+    gap: 16px;
+    padding: 18px 20px 14px;
+  }
+
+  .ast-intro h1 {
+    font-size: 20px;
+    line-height: 27px;
+  }
+
+  .ast-headside {
+    align-items: flex-end;
+  }
+
+  .ast-counts span:nth-child(2),
+  .ast-counts span:nth-child(3) {
+    display: none;
+  }
+
+  .ast-side {
+    width: 216px;
+  }
+
+  .ast-meta {
+    padding: 18px 20px 10px;
+  }
+
+  .ast-scroller {
+    padding: 6px 18px 18px;
+  }
+}
+
+/* 展示站必须占满整行，不能被内容宽度撑成左对齐 */
+.ast-gal {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+}
+
+/* ---------- 主题配置弹层 ---------- */
+
+.ast-theme-wrap {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.ast-theme-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.14);
+}
+
+@keyframes ast-theme-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.975);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.ast-theme-pop {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 20;
+  width: 282px;
+  padding: 12px;
+  border-radius: var(--af-r-pop);
+  background: var(--af-overlay);
+  box-shadow: var(--af-shadow-pop);
+  transform-origin: top right;
+  animation: ast-theme-pop-in 180ms var(--af-ease, cubic-bezier(0.22, 1, 0.36, 1)) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ast-theme-pop {
+    animation: none;
+  }
+}
+
+.ast-theme-row {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.ast-theme-row + .ast-theme-row {
+  margin-top: 12px;
+  padding-top: 12px;
+  box-shadow: inset 0 0.5px 0 var(--af-line);
+}
+
+.ast-theme-label {
+  color: var(--af-page-muted);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ast-theme-modes {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--af-r-input);
+  background: var(--af-track-soft);
+}
+
+.ast-theme-modes button {
+  flex: 1;
+  height: 26px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--af-page-muted);
+  font: inherit;
+  font-size: var(--af-fs-xs);
+  cursor: pointer;
+  transition:
+    background-color var(--af-dur-fast) ease,
+    color var(--af-dur-fast) ease;
+}
+
+.ast-theme-modes button:hover {
+  color: var(--af-page-strong);
+}
+
+.ast-theme-modes button[data-active] {
+  background: var(--af-surface);
+  box-shadow: var(--af-shadow-hairline);
+  color: var(--af-page-strong);
+}
+
+.ast-swatches {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.ast-swatch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.18);
+  transition: transform var(--af-dur-fast) var(--af-ease-pop);
+}
+
+.ast-swatch:hover {
+  transform: scale(1.08);
+}
+
+.ast-swatch[data-active] {
+  box-shadow:
+    0 0 0 1.5px var(--af-surface),
+    0 0 0 2.5px var(--af-accent);
+}
+
+.ast-swatch--custom {
+  overflow: hidden;
+  background: conic-gradient(from 40deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #ff6b6b);
+}
+
+.ast-swatch--custom span {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+
+.ast-swatch--custom input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.ast-theme-hint {
+  margin: 10px 0 0;
+  color: var(--af-page-faint);
+  font-size: 10.5px;
+  line-height: 15px;
+}
+
+/* ---------- 视觉回归 / 嵌入预览 ---------- */
+
+.ast--embed {
+  display: block;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--af-canvas);
+}
+
+.ast-embed {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.ast-embed .ast-main,
+.ast-embed .af-gal__main {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  background: var(--af-panel);
+}
+
+.ast-embed .ast-scroller,
+.ast-embed .af-gal__scroller {
+  flex: 1;
+  min-height: 0;
+  padding: 0;
+  overflow: auto;
+}
+
+.ast-embed .ast-stagecard {
+  min-height: 100%;
+  border-radius: 0;
+}
+
+.ast-embed .ast-stagelabel {
+  display: none;
+}
+
+.ast-embed .ast-stagecard .af-gal-stage {
+  flex: 1;
+  min-height: 100%;
+  padding: 28px;
+}
+
+/* 追加样式后重新保证头部不被内容撑开 */
+.ast-head {
+  flex-wrap: wrap;
+}
+
+/* 主题面板里的自定义颜色入口：外圈是色轮，内圈显示当前自定义色 */
+.ast-colorpicker-custom .af-colorpicker__trigger {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 40deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #ff6b6b);
+  box-shadow:
+    inset 0 0 0 0.5px rgba(0, 0, 0, 0.18),
+    var(--af-shadow-hairline);
+}
+
+.ast-colorpicker-custom .af-colorpicker__swatch {
+  width: 12px;
+  height: 12px;
+  background: var(--cp-color);
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.86);
+}

@@ -1,0 +1,11 @@
+/* Aster UI 核心基础组件样式入口（Tokens + Controls + Overlays + Display + Tabs + ContextMenu + ColorPicker + Core Shell） */
+@import "./tokens.css";
+@import "./ui.css";
+@import "./components.css";
+@import "./components/shell/core-shell.css";
+@import "./tabs.css";
+@import "./context-menu.css";
+@import "./color-picker.css";
+@import "./promoted-controls.css";
+@import "./p04-core.css";
+@import "./components/overlay/overlays.css";

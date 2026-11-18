@@ -1,0 +1,23 @@
+/* Aster UI 全量组件样式入口（Core + Pro + Motion + Domain Patterns） */
+@import "./core.css";
+@import "./ui-pro.css";
+@import "./motion.css";
+@import "./patterns/inputs.css";
+@import "./patterns/chat.css";
+@import "./patterns/data.css";
+@import "./patterns/agents-a.css";
+@import "./patterns/agents-b.css";
+@import "./patterns/agents-c.css";
+@import "./patterns/agents-d.css";
+@import "./patterns/project.css";
+@import "./patterns/store.css";
+@import "./patterns/workbench.css";
+@import "./patterns/shell-extra.css";
+@import "./components/screens-onboarding/screens-onboarding.css";
+@import "./components/screens-settings/screens-settings.css";
+@import "./components/screens-agent-runs/screens-agent-runs.css";
+@import "./components/screens-workspace/screens-workspace.css";
+@import "./components/screens-chat/screens-chat.css";
+@import "./components/screens-agent-ops/screens-agent-ops.css";
+@import "./components/illustrations-a/illustrations-a.css";
+@import "./components/illustrations-b/illustrations-b.css";

@@ -1,0 +1,405 @@
+/* Aster UI · Color Picker (affectUI 1:1 parity) */
+
+.af-colorpicker {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  font-family: var(--af-font);
+}
+
+.af-colorpicker__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.af-colorpicker__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px 0 6px;
+  border: 0;
+  border-radius: var(--af-r-sm);
+  background: var(--af-surface);
+  box-shadow: var(--af-shadow-hairline);
+  color: var(--af-ink);
+  font: inherit;
+  font-size: var(--af-fs-sm);
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background-color var(--af-dur-fast) ease,
+    box-shadow var(--af-dur-fast) ease;
+}
+
+.af-colorpicker__trigger:active {
+  transform: none;
+}
+
+.af-colorpicker__trigger[data-size="md"] {
+  height: 32px;
+  padding: 0 10px 0 8px;
+  gap: 7px;
+  border-radius: var(--af-r-input);
+}
+
+.af-colorpicker__trigger:hover:not(:disabled) {
+  box-shadow: var(--af-shadow-hairline-hover);
+}
+
+.af-colorpicker__trigger:focus-visible {
+  outline: none;
+}
+
+:is(.af[data-modality="keyboard"], .af:not([data-modality])) .af-colorpicker__trigger:focus-visible {
+  outline: 2px solid var(--af-focus);
+  outline-offset: 1px;
+}
+
+.af-colorpicker__trigger:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+/* Checkerboard pattern for Alpha preview & slider */
+.af-colorpicker__swatch[data-alpha],
+.af-colorpicker__preview[data-alpha],
+.af-colorpicker__alpha,
+.af-colorpicker__preset {
+  background-color: #ffffff;
+  background-image:
+    linear-gradient(45deg, rgba(0, 0, 0, 0.12) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(0, 0, 0, 0.12) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(0, 0, 0, 0.12) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(0, 0, 0, 0.12) 75%);
+  background-size: 8px 8px;
+  background-position:
+    0 0,
+    0 4px,
+    4px -4px,
+    -4px 0;
+}
+
+.af-colorpicker__trigger--swatch {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: var(--af-shadow-hairline);
+}
+
+.af-colorpicker__trigger--swatch[data-size="sm"] {
+  width: 20px;
+  height: 20px;
+}
+
+.af-colorpicker__trigger--swatch:hover:not(:disabled) {
+  box-shadow: var(--af-shadow-hairline-hover);
+}
+
+.af-colorpicker__swatch {
+  position: relative;
+  display: inline-block;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.14);
+}
+
+.af-colorpicker__trigger--swatch .af-colorpicker__swatch {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.af-colorpicker__preview {
+  position: relative;
+  display: inline-block;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.14);
+}
+
+.af-colorpicker__swatch-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--cp-color);
+}
+
+.af-colorpicker__hex {
+  color: var(--af-ink);
+  font-family: var(--af-font);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 20px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+.af-colorpicker__pop {
+  position: absolute;
+  z-index: 90;
+  width: 256px;
+  padding: 12px;
+  border-radius: var(--af-r-pop);
+  background: var(--af-overlay);
+  box-shadow: var(--af-shadow-pop);
+  font-family: var(--af-font);
+  opacity: 0;
+  transform: translateY(-4px) scale(0.97);
+  transform-origin: top right;
+  transition:
+    opacity 145ms ease,
+    transform 165ms var(--af-ease);
+}
+
+.af-colorpicker__sv {
+  position: relative;
+  width: 100%;
+  height: 148px;
+  border-radius: 6px;
+  cursor: crosshair;
+  background:
+    linear-gradient(to top, #000, transparent),
+    linear-gradient(to right, #fff, hsl(var(--cp-h) 100% 50%));
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.1);
+  touch-action: none;
+  outline: none;
+}
+
+:is(.af[data-modality="keyboard"], .af:not([data-modality])) :is(
+  .af-colorpicker__sv,
+  .af-colorpicker__hue,
+  .af-colorpicker__alpha,
+  .af-colorpicker__preset
+):focus-visible {
+  outline: 2px solid var(--af-focus);
+  outline-offset: 2px;
+}
+
+.af-colorpicker__svmarker {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--cp-color);
+  box-shadow:
+    inset 0 0 0 2px #ffffff,
+    0 0 0 0.5px rgba(0, 0, 0, 0.28),
+    0 1px 3px rgba(0, 0, 0, 0.24);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.af-colorpicker__hue,
+.af-colorpicker__alpha {
+  position: relative;
+  height: 10px;
+  margin-top: 12px;
+  border-radius: var(--af-r-pill);
+  cursor: pointer;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.12);
+  touch-action: none;
+  outline: none;
+}
+
+.af-colorpicker__hue {
+  background: linear-gradient(90deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+}
+
+.af-colorpicker__alpha {
+  overflow: visible;
+}
+
+.af-colorpicker__alpha-gradient {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, var(--cp-solid));
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+}
+
+.af-colorpicker__huemarker,
+.af-colorpicker__alphamarker {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: hsl(var(--cp-h) 100% 50%);
+  box-shadow:
+    inset 0 0 0 2px #ffffff,
+    0 0 0 0.5px rgba(0, 0, 0, 0.28),
+    0 1px 3px rgba(0, 0, 0, 0.22);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.af-colorpicker__alphamarker {
+  background: var(--cp-color);
+}
+
+.af-colorpicker__fields {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.af-colorpicker__hexbox {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+  height: 28px;
+  padding: 0 9px;
+  border-radius: 6px;
+  background: var(--af-surface);
+  box-shadow: var(--af-shadow-hairline);
+  transition: box-shadow var(--af-dur-fast) ease;
+}
+
+.af-colorpicker__hexbox:hover {
+  box-shadow: var(--af-shadow-hairline-hover);
+}
+
+.af-colorpicker__hexbox:focus-within {
+  box-shadow: 0 0 0 1px var(--af-field-ring-focus), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+}
+
+.af-colorpicker__hexbox[data-invalid="true"] {
+  background: var(--af-danger-field);
+  box-shadow: none;
+}
+
+.af-colorpicker__hash {
+  flex: none;
+  color: var(--af-faint);
+  font-family: var(--af-font);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 20px;
+  user-select: none;
+}
+
+.af-colorpicker__hexinput {
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none !important;
+  color: var(--af-ink);
+  font-family: var(--af-font);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 28px;
+  font-variant-numeric: tabular-nums;
+  outline: none !important;
+}
+
+.af-colorpicker__rgb {
+  flex: none;
+  color: var(--af-muted);
+  font-family: var(--af-font);
+  font-size: 12px;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.af-colorpicker__presets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2px;
+  margin-top: 12px;
+}
+
+.af-colorpicker__preset {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  outline: none;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.14);
+  transition:
+    transform var(--af-dur-fast) var(--af-ease-pop),
+    box-shadow var(--af-dur-fast) ease;
+}
+
+.af-colorpicker__preset:active {
+  transform: none;
+}
+
+.af-colorpicker__preset-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--cp-preset);
+}
+
+.af-colorpicker__preset:hover {
+  transform: scale(1.08);
+}
+
+.af-colorpicker__preset[aria-checked="true"] {
+  box-shadow:
+    0 0 0 1.5px var(--af-overlay),
+    0 0 0 3px var(--cp-preset);
+}
+
+.af-colorpicker__pop[data-side="top"] {
+  transform: translateY(4px) scale(0.97);
+}
+
+.af-colorpicker__pop[data-state="open"] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.af-colorpicker__pop[data-state="exit"] {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-3px) scale(0.985);
+  transition-duration: 110ms;
+}
+
+.af-colorpicker__pop[data-side="top"][data-state="exit"] {
+  transform: translateY(3px) scale(0.985);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .af-colorpicker__pop {
+    transition-duration: 1ms !important;
+  }
+}
+
+.af-colorpicker__trigger[data-invalid],
+.af-colorpicker__trigger[data-invalid]:hover:not(:disabled) {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--af-danger) 55%, transparent);
+}

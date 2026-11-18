@@ -1,0 +1,309 @@
+.af-tabs {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-family: var(--af-font);
+}
+
+.af-tabs[data-fill] {
+  height: 100%;
+  min-height: 0;
+}
+
+.af-tabs__bar {
+  position: relative;
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
+  box-shadow: var(--af-divider-hairline);
+  isolation: isolate;
+}
+
+.af-tabs__bar[data-centered] {
+  justify-content: center;
+}
+
+.af-tabs__indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: auto;
+  height: 1.5px;
+  border-radius: 1px;
+  background: var(--af-ink);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* affectUI 标志性前缘拉伸阻尼曲线：前缘 160ms 先行探出，尾缘 225ms 平滑收拢，零过冲 */
+.af-tabs[data-ready="true"] .af-tabs__indicator {
+  transition:
+    left 200ms var(--af-ease-glide),
+    right 200ms var(--af-ease-glide);
+}
+
+.af-tabs[data-ready="true"] .af-tabs__indicator[data-dir="right"] {
+  transition:
+    right 160ms var(--af-ease-glide),
+    left 225ms var(--af-ease-glide);
+}
+
+.af-tabs[data-ready="true"] .af-tabs__indicator[data-dir="left"] {
+  transition:
+    left 160ms var(--af-ease-glide),
+    right 225ms var(--af-ease-glide);
+}
+
+/* 容器尺寸 ResizeObserver 重算时 0ms 同步贴合，禁止带过渡滞后追赶 */
+.af-tabs[data-resizing="true"] .af-tabs__indicator {
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .af-tabs[data-ready="true"] .af-tabs__indicator {
+    transition-duration: 1ms !important;
+  }
+}
+
+.af-tabs__tab {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 2px;
+  border: 0;
+  border-radius: var(--af-r-sm);
+  background: transparent;
+  color: var(--af-text);
+  font: inherit;
+  font-size: var(--af-fs-md);
+  font-weight: 500;
+  line-height: 20px;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    color var(--af-dur-fast) ease,
+    background-color var(--af-dur-fast) ease;
+}
+
+.af-tabs__tab:active {
+  transform: none;
+}
+
+.af-tabs__tab:hover:not(:disabled):not([data-selected]) {
+  color: var(--af-ink);
+}
+
+.af-tabs__tab[data-selected] {
+  color: var(--af-strong);
+}
+
+.af-tabs__tab:disabled {
+  color: var(--af-faint);
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.af-tabs__content {
+  min-width: 0;
+  padding-top: 14px;
+  color: var(--af-text);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .af-tabs__content[data-entering="true"] {
+    animation: af-tabs-panel-in 180ms var(--af-ease);
+  }
+}
+
+@keyframes af-tabs-panel-in {
+  from {
+    opacity: 0.38;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.af[data-modality="keyboard"] .af-tabs__content:focus-visible,
+.af:not([data-modality]) .af-tabs__content:focus-visible {
+  outline: 2px solid var(--af-focus);
+  outline-offset: -2px;
+  border-radius: var(--af-r-sm);
+}
+
+.af-tabs[data-fill] .af-tabs__content {
+  flex: 1;
+  min-height: 0;
+  margin: 0 -4px -4px;
+  padding: 14px 4px 4px;
+  overflow: auto;
+}
+
+/* Pill 形态：页面级胶囊页签，浅灰轨道填充平滑滑动（恒定 font-weight: 500 零宽度跳动） */
+.af-tabs[data-variant="pill"] .af-tabs__bar {
+  display: inline-flex;
+  align-self: flex-start;
+  gap: 2px;
+  padding: 0;
+  box-shadow: none;
+  border-radius: var(--af-r-input);
+  background: transparent;
+}
+
+.af-tabs[data-variant="pill"] .af-tabs__bar[data-centered] {
+  align-self: center;
+}
+
+.af-tabs[data-variant="pill"] .af-tabs__tab {
+  min-height: 32px;
+  padding: 0 10px;
+  border-radius: var(--af-r-input);
+  font-size: var(--af-fs-md);
+  font-weight: 500;
+}
+
+.af-tabs[data-variant="pill"] .af-tabs__tab:hover:not(:disabled):not([data-selected]) {
+  background: var(--af-wash);
+}
+
+.af-tabs[data-variant="pill"] .af-tabs__indicator {
+  top: 0;
+  bottom: 0;
+  height: auto;
+  border-radius: var(--af-r-input);
+  background: var(--af-track-soft);
+}
+
+/* Segmented 形态：30px 灰托盘 + 白滑块发丝阴影滑动 */
+.af-tabs[data-variant="segmented"] .af-tabs__bar {
+  display: inline-flex;
+  align-self: flex-start;
+  gap: 2px;
+  padding: 2px;
+  box-shadow: none;
+  border-radius: var(--af-r-input);
+  background: var(--af-track);
+}
+
+.af-tabs[data-variant="segmented"] .af-tabs__bar[data-centered] {
+  align-self: center;
+}
+
+.af-tabs[data-variant="segmented"] .af-tabs__tab {
+  min-height: 26px;
+  padding: 0 10px;
+  border-radius: calc(var(--af-r-input) - 2px);
+  font-size: var(--af-fs-md);
+  font-weight: 500;
+}
+
+.af-tabs[data-variant="segmented"] .af-tabs__tab:hover:not(:disabled):not([data-selected]) {
+  background: var(--af-wash);
+}
+
+.af-tabs[data-variant="segmented"] .af-tabs__indicator {
+  top: 2px;
+  bottom: 2px;
+  height: auto;
+  border-radius: calc(var(--af-r-input) - 2px);
+  background: var(--af-thumb);
+  box-shadow: var(--af-shadow-hairline);
+}
+
+/* Tabs 扩展能力：右侧操作区、图标、计数徽章、可关闭标签与保活隐藏 */
+.af-tabs__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+.af-tabs[data-variant="line"] .af-tabs__head {
+  box-shadow: var(--af-divider-hairline);
+}
+
+.af-tabs[data-variant="line"] .af-tabs__head > .af-tabs__bar {
+  flex: 1;
+  box-shadow: none;
+}
+
+.af-tabs__extra {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+}
+
+.af-tabs__icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+.af-tabs__icon > svg {
+  display: block;
+  flex: none;
+}
+
+.af-tabs__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 16px;
+  min-width: 16px;
+  padding: 0 5px;
+  border-radius: var(--af-r-pill);
+  background: var(--af-wash);
+  color: var(--af-muted);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.af-tabs__tab[data-selected] .af-tabs__count {
+  background: var(--af-track-soft);
+  color: var(--af-strong);
+}
+
+.af-tabs__close {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-left: 1px;
+  border-radius: 4px;
+  color: var(--af-faint);
+  line-height: 0;
+  transition:
+    background-color 90ms ease,
+    color 90ms ease;
+}
+
+.af-tabs__close > svg {
+  display: block;
+  flex: none;
+}
+
+.af-tabs__close:hover {
+  background: var(--af-hover);
+  color: var(--af-ink);
+}
+
+.af-tabs__content[hidden] {
+  display: none;
+}

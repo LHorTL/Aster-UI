@@ -1,0 +1,3 @@
+/* Aster UI 壳层与窗口框架完整样式（含核心 TitleBar / ThemePanel 与扩展壳层） */
+@import "../components/shell/core-shell.css";
+@import "./shell-extra.css";

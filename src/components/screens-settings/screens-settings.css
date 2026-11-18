@@ -1,0 +1,1569 @@
+/*
+ * Affect Pro Screens — Settings Suite (9 Workspace & Personal Settings Pages)
+ * Architecture invariants (lint:arch):
+ * - 100% Flexbox layout (0 display: grid / inline-grid)
+ * - 0 zebra striping (hairline 0.5px / 1px dividers only)
+ * - Reduced-motion guards on all animations & blur effects
+ * - 100% --af-* design tokens from src/tokens.css (light & dark compatible)
+ */
+
+/* Showcase stage framing: keeps standalone screen cleanly bounded in gallery while 100% fluid in apps */
+.af-gal-stage[data-group="Screens"] > .af-ss {
+  width: 100%;
+  max-width: 1220px;
+  height: 940px;
+  min-height: 760px;
+  border-radius: var(--af-r-lg);
+  overflow: hidden;
+  box-shadow: var(--af-shadow-card);
+}
+
+.af-ss code,
+.af-ss pre {
+  font-family: var(--af-mono);
+}
+
+.af-ss {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 580px;
+  background: var(--af-sidebar);
+  color: var(--af-page-ink);
+  font-family: var(--af-font);
+  font-size: var(--af-fs-body);
+  line-height: 20px;
+  overflow: hidden;
+}
+
+/* ============================================================================
+ * 1. Left Settings Sidebar (.af-ss__side)
+ * ========================================================================== */
+
+.af-ss__side {
+  display: flex;
+  flex: 0 0 244px;
+  width: 244px;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: 10px 10px 8px;
+  background: var(--af-sidebar);
+  transition:
+    margin-left 360ms var(--af-ease),
+    opacity 220ms ease;
+}
+
+.af-ss[data-collapsed="true"] .af-ss__side {
+  margin-left: -244px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.af-ss__side-head {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  height: 34px;
+  padding: 0 2px;
+  margin-bottom: 6px;
+}
+
+.af-ss__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 8px 0 5px;
+  border: 0;
+  border-radius: var(--af-r-md);
+  background: transparent;
+  color: var(--af-page-strong);
+  font: inherit;
+  font-size: var(--af-fs-body);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition:
+    background-color var(--af-dur-hover-in) ease,
+    color var(--af-dur-hover-in) ease,
+    transform var(--af-dur-fast) var(--af-ease);
+}
+
+.af-ss :is(button, input, select, textarea) {
+  font-family: inherit;
+}
+
+.af-ss__back:hover {
+  background: var(--af-hover);
+}
+
+.af-ss__back:active {
+  background: var(--af-press);
+}
+
+.af[data-modality="keyboard"] .af-ss__back:not([data-pointer-focus="true"]):focus-visible,
+.af:not([data-modality]) .af-ss__back:not([data-pointer-focus="true"]):focus-visible,
+.af[data-modality="keyboard"] .af-ss__icon-btn:not([data-pointer-focus="true"]):focus-visible,
+.af:not([data-modality]) .af-ss__icon-btn:not([data-pointer-focus="true"]):focus-visible,
+.af[data-modality="keyboard"] .af-ss__search:not([data-pointer-focus="true"]):focus-visible,
+.af:not([data-modality]) .af-ss__search:not([data-pointer-focus="true"]):focus-visible,
+.af[data-modality="keyboard"] .af-ss__nav-item:not([data-pointer-focus="true"]):focus-visible,
+.af:not([data-modality]) .af-ss__nav-item:not([data-pointer-focus="true"]):focus-visible,
+.af[data-modality="keyboard"] .af-ss__user-btn:not([data-pointer-focus="true"]):focus-visible,
+.af:not([data-modality]) .af-ss__user-btn:not([data-pointer-focus="true"]):focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--af-focus);
+}
+
+.af-ss__icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--af-r-md);
+  background: transparent;
+  color: var(--af-icon);
+  cursor: pointer;
+  flex: none;
+  transition:
+    background-color var(--af-dur-hover-in) ease,
+    color var(--af-dur-hover-in) ease;
+}
+
+.af-ss__icon-btn:hover {
+  background: var(--af-hover);
+  color: var(--af-page-strong);
+}
+
+.af-ss__search {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  height: 30px;
+  padding: 0 8px 0 9px;
+  margin-bottom: 10px;
+  border: 0;
+  border-radius: var(--af-r-md);
+  background: var(--af-surface);
+  box-shadow: var(--af-shadow-hairline);
+  color: var(--af-page-muted);
+  font: inherit;
+  font-size: var(--af-fs-sm);
+  line-height: 16px;
+  cursor: pointer;
+  transition:
+    box-shadow var(--af-dur-fast) ease,
+    color var(--af-dur-fast) ease;
+}
+
+.af-ss__search:hover {
+  box-shadow: var(--af-shadow-hairline-hover);
+  color: var(--af-page-ink);
+}
+
+.af-ss__search-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.af-ss__kbd {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--af-r-xs);
+  background: var(--af-wash);
+  color: var(--af-page-faint);
+  font-family: var(--af-font);
+  font-size: 10.5px;
+  font-weight: 500;
+}
+
+.af-ss__nav {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 2px 0 8px;
+  scrollbar-width: thin;
+}
+
+.af-ss__group {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.af-ss__group-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px 4px;
+  color: var(--af-page-faint);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.af-ss__nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  height: 30px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: var(--af-r-md);
+  background: transparent;
+  color: var(--af-page-ink);
+  font: inherit;
+  font-size: var(--af-fs-md);
+  font-weight: 450;
+  line-height: 20px;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color var(--af-dur-hover-in) ease,
+    color var(--af-dur-hover-in) ease;
+}
+
+.af-ss__nav-item:hover {
+  background: var(--af-hover);
+  color: var(--af-page-strong);
+}
+
+.af-ss__nav-item[data-active="true"] {
+  background: var(--af-selected);
+  color: var(--af-page-strong);
+  font-weight: 560;
+}
+
+.af-ss__nav-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.af-ss__nav-icon {
+  display: block;
+  color: var(--af-icon);
+  flex: none;
+  line-height: 0;
+  transition: color var(--af-dur-hover-in) ease;
+}
+
+.af-ss__nav-item[data-active="true"] .af-ss__nav-icon,
+.af-ss__nav-item:hover .af-ss__nav-icon {
+  color: var(--af-page-strong);
+}
+
+.af-ss__side-foot {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  padding-top: 8px;
+  box-shadow: inset 0 1px 0 var(--af-page-line);
+}
+
+.af-ss__user-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 34px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: var(--af-r-md);
+  background: transparent;
+  color: var(--af-page-strong);
+  font: inherit;
+  font-size: var(--af-fs-sm);
+  font-weight: 500;
+  line-height: 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--af-dur-hover-in) ease;
+}
+
+.af-ss__user-btn:hover {
+  background: var(--af-hover);
+}
+
+.af-ss__user-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ============================================================================
+ * 2. Main Inset Content Canvas (.af-ss__main)
+ * ========================================================================== */
+
+.af-ss__main {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  margin: 6px 6px 6px 0;
+  border-radius: 14px;
+  background: var(--af-panel);
+  box-shadow: 0 0 0 1px var(--af-ring), 0 1px 3px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.af-ss[data-collapsed="true"] .af-ss__main {
+  margin-left: 6px;
+}
+
+.af-ss__reopen {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 4;
+}
+
+.af-ss__mobile-bar {
+  display: none;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 44px;
+  padding: 0 14px;
+  box-shadow: inset 0 -1px 0 var(--af-page-line);
+}
+
+.af-ss__scroll {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 30px 36px 48px;
+}
+
+.af-ss__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  width: 100%;
+  max-width: 660px;
+  margin: 0 auto;
+}
+
+.af-ss__inner[data-wide="true"] {
+  max-width: 780px;
+}
+
+.af-ss[data-page="preferences"] .af-ss__inner {
+  gap: 40px;
+  padding-top: 8px;
+}
+
+.af-ss[data-page="preferences"] .af-ss__sec {
+  gap: 14px;
+}
+
+/* ============================================================================
+ * 3. Page Header, Sections & Hairline Setting Rows
+ * ========================================================================== */
+
+.af-ss__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.af-ss__head-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.af-ss__title {
+  margin: 0;
+  color: var(--af-page-strong);
+  font-size: var(--af-fs-title);
+  font-weight: 640;
+  line-height: 28px;
+  letter-spacing: -0.022em;
+}
+
+.af-ss__lead {
+  margin: 0;
+  color: var(--af-page-muted);
+  font-size: var(--af-fs-body);
+  line-height: 20px;
+}
+
+.af-ss__sec {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.af-ss__sec-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.af-ss__sec-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.af-ss__sec-title {
+  margin: 0;
+  color: var(--af-page-strong);
+  font-size: var(--af-fs-section);
+  font-weight: 600;
+  line-height: 21px;
+  letter-spacing: -0.012em;
+}
+
+.af-ss__sec-title[data-danger="true"] {
+  color: var(--af-danger);
+}
+
+.af-ss__sec-desc {
+  margin: 0;
+  color: var(--af-page-muted);
+  font-size: var(--af-fs-sm);
+  line-height: 18px;
+}
+
+.af-ss__sec-extra {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+
+/* Hairline card grouping rows cleanly without raw 1px CSS borders */
+.af-ss__card {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--af-r-card);
+  background: var(--af-surface);
+  box-shadow: var(--af-shadow-card);
+  overflow: hidden;
+}
+
+.af-ss__card[data-overflow="visible"] {
+  overflow: visible;
+}
+
+.af-ss__card[data-danger="true"] {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--af-danger) 24%, var(--af-card-ring)),
+    0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.af-ss__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 13px 16px;
+  min-height: 52px;
+}
+
+.af-ss__row + .af-ss__row,
+.af-ss__row + .af-ss__subrow,
+.af-ss__subrow + .af-ss__row,
+.af-ss__subrow + .af-ss__subrow {
+  box-shadow: var(--af-divider-hairline-top);
+}
+
+.af-ss__row[data-align="start"] {
+  align-items: flex-start;
+}
+
+.af-ss__row-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 160px;
+}
+
+.af-ss__row-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--af-page-strong);
+  font-size: var(--af-fs-md);
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.af-ss__row-hint {
+  margin: 0;
+  color: var(--af-page-muted);
+  font-size: var(--af-fs-sm);
+  line-height: 17px;
+}
+
+.af-ss__row-ctrl {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex: none;
+  min-width: 0;
+}
+
+.af-ss__row-ctrl[data-wide="true"] {
+  width: 260px;
+  max-width: 100%;
+}
+
+/* Conditional rising subrow (e.g. digest time, quiet hours, manage cookies, confirm forms) */
+.af-ss__subrow {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--af-surface-sunken);
+  animation: af-ss-rise 190ms var(--af-ease);
+}
+
+@keyframes af-ss-rise {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Prefix input (e.g. app.affect.com/acme) */
+.af-ss__prefix-field {
+  display: flex;
+  align-items: center;
+  width: 260px;
+  max-width: 100%;
+  height: var(--af-h-md);
+  border-radius: var(--af-r-input);
+  background: var(--af-surface);
+  box-shadow: var(--af-field-shadow);
+  overflow: hidden;
+  transition: box-shadow var(--af-dur-fast) ease;
+}
+
+.af-ss__prefix-field:focus-within {
+  box-shadow: var(--af-field-shadow-focus);
+}
+
+.af-ss__prefix-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 0 0 10px;
+  background: transparent;
+  color: var(--af-page-faint);
+  font-size: var(--af-fs-md);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.af-ss__prefix-input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0 9px 0 1px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--af-page-strong);
+  font: inherit;
+  font-size: var(--af-fs-md);
+}
+
+/* Read-only copyable field (SAML Entity ID / ACS URL / TXT record) */
+.af-ss__ro-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+}
+
+.af-ss__ro-input {
+  width: 240px;
+  max-width: 100%;
+  height: 30px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: var(--af-r-md);
+  background: var(--af-surface-sunken);
+  box-shadow: var(--af-shadow-hairline);
+  color: var(--af-page-ink);
+  font-family: var(--af-mono);
+  font-size: 11.5px;
+  outline: none;
+}
+
+.af-ss__ro-input:focus {
+  box-shadow: var(--af-field-shadow-focus);
+}
+
+/* Workspace square monogram icon — neutral bordered surface tile matching AffectUI */
+.af-ss__ws-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--af-surface-sunken);
+  color: var(--af-page-strong);
+  box-shadow: inset 0 0 0 1px var(--af-line-strong);
+  font-size: 13.5px;
+  font-weight: 620;
+  overflow: hidden;
+  flex: none;
+}
+
+/* Blue AM avatar badge matching AffectUI sidebar & Profile picture */
+.af-ss__user-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--af-accent) 16%, var(--af-surface));
+  color: var(--af-accent-ink);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  flex: none;
+  overflow: hidden;
+}
+
+.af-ss__user-badge[data-size="lg"] {
+  width: 32px;
+  height: 32px;
+  font-size: 11.5px;
+}
+
+.af-ss__user-badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Info / Blue callout banners (Profile, Members, Security) */
+.af-ss__banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 13px;
+  border-radius: var(--af-r-lg);
+  background: var(--af-surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--af-card-ring);
+  color: var(--af-page-muted);
+  font-size: var(--af-fs-sm);
+  line-height: 18px;
+}
+
+.af-ss__banner[data-tone="info"] {
+  background: color-mix(in srgb, var(--af-accent) 9%, var(--af-surface));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--af-accent) 26%, transparent);
+  color: var(--af-accent-ink);
+}
+
+.af-ss__banner-link {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 550;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+/* Scrolling drum model selector in Models -> How Auto works */
+.af-ss__drum {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 3px;
+  min-width: 188px;
+  padding: 6px 8px;
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 26%, #000 74%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 26%, #000 74%, transparent 100%);
+}
+
+.af-ss__drum-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 7px;
+  color: var(--af-page-faint);
+  font-size: 12px;
+  font-weight: 480;
+  white-space: nowrap;
+  transition:
+    background-color 220ms var(--af-ease),
+    color 220ms var(--af-ease),
+    opacity 220ms var(--af-ease),
+    box-shadow 220ms var(--af-ease);
+}
+
+.af-ss__drum-item[data-near="true"] {
+  color: var(--af-page-muted);
+}
+
+.af-ss__drum-item[data-active="true"] {
+  background: var(--af-surface);
+  box-shadow: var(--af-shadow-card);
+  color: var(--af-page-strong);
+  font-weight: 600;
+}
+
+/* 3-column vertical Chat Tool cards in Preferences */
+.af-ss__tool-cards {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.af-ss__tool-card {
+  display: flex;
+  flex: 1 1 180px;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px;
+  border: 0;
+  border-radius: var(--af-r-card);
+  background: var(--af-surface);
+  box-shadow: var(--af-shadow-card);
+  color: var(--af-page-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    box-shadow var(--af-dur-fast) ease,
+    background-color var(--af-dur-fast) ease;
+}
+
+.af-ss__tool-card:hover {
+  box-shadow: var(--af-shadow-card-hover);
+}
+
+.af-ss__tool-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.af-ss__tool-card[aria-checked="true"] .af-ss__tile-check {
+  background: var(--af-accent);
+  box-shadow: none;
+  color: var(--af-on-accent);
+}
+
+.af-ss__tool-card:not([aria-checked="true"]) .af-ss__tile-check {
+  box-shadow: inset 0 0 0 1px var(--af-line-strong);
+}
+
+.af-ss__ws-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ============================================================================
+ * 4. Auto Model Explainer & Animated Model Wheel (Models & Preferences)
+ * ========================================================================== */
+
+.af-ss__auto-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 13px 16px;
+  background: var(--af-surface-sunken);
+  box-shadow: var(--af-divider-hairline-top);
+  flex-wrap: wrap;
+}
+
+.af-ss__auto-copy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 220px;
+}
+
+.af-ss__auto-title {
+  color: var(--af-page-strong);
+  font-size: var(--af-fs-sm);
+  font-weight: 600;
+}
+
+.af-ss__auto-list {
+  margin: 0;
+  padding-left: 16px;
+  color: var(--af-page-muted);
+  font-size: var(--af-fs-sm);
+  line-height: 18px;
+}
+
+.af-ss__wheel {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px 10px;
+  border-radius: var(--af-r-lg);
+  background: var(--af-surface);
+  box-shadow: var(--af-shadow-hairline);
+  min-width: 192px;
+}
+
+.af-ss__wheel-tier {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 7px;
+  border-radius: var(--af-r-sm);
+  font-size: 11.5px;
+  color: var(--af-page-muted);
+  transition:
+    background-color var(--af-dur) var(--af-ease),
+    color var(--af-dur) var(--af-ease);
+}
+
+.af-ss__wheel-tier[data-active="true"] {
+  background: var(--af-accent-soft);
+  color: var(--af-page-strong);
+  font-weight: 550;
+}
+
+.af-ss__wheel-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--af-r-pill);
+  background: var(--af-faint);
+  flex: none;
+  transition:
+    background-color var(--af-dur) ease,
+    transform var(--af-dur) var(--af-ease-pop);
+}
+
+.af-ss__wheel-tier[data-active="true"] .af-ss__wheel-dot {
+  background: var(--af-accent);
+  transform: scale(1.25);
+}
+
+/* ============================================================================
+ * 5. Semantic Hairline Tables, KPI Strips, Tiles & Cards
+ * ========================================================================== */
+
+.af-ss__kpis {
+  display: flex;
+  flex-wrap: wrap;
+  border-radius: var(--af-r-card);
+  background: var(--af-surface);
+  box-shadow: var(--af-shadow-card);
+  overflow: hidden;
+}
+
+.af-ss__kpi {
+  display: flex;
+  flex: 1 1 160px;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  min-width: 0;
+}
+
+.af-ss__kpi + .af-ss__kpi {
+  box-shadow: inset 1px 0 0 var(--af-line-strong);
+}
+
+.af-ss__kpi-label {
+  color: var(--af-page-muted);
+  font-size: var(--af-fs-sm);
+  font-weight: 500;
+}
+
+.af-ss__kpi-val {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  color: var(--af-page-strong);
+  font-size: var(--af-fs-2xl);
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.af-ss__kpi-sub {
+  color: var(--af-page-faint);
+  font-size: var(--af-fs-sm);
+  font-weight: 450;
+}
+
+.af-ss__meter {
+  width: 100%;
+  height: 5px;
+  border-radius: var(--af-r-pill);
+  background: var(--af-track);
+  overflow: hidden;
+}
+
+.af-ss__meter-fill {
+  height: 100%;
+  border-radius: var(--af-r-pill);
+  background: var(--af-accent);
+  transition: width 320ms var(--af-ease);
+}
+
+.af-ss__meter-fill[data-warn="true"] {
+  background: var(--af-warning);
+}
+
+.af-ss__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.af-ss__toolbar-left,
+.af-ss__toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.af-ss__bulk-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 14px;
+  border-radius: var(--af-r-lg);
+  background: var(--af-accent-soft);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--af-accent) 28%, transparent);
+  color: var(--af-page-strong);
+  font-size: var(--af-fs-sm);
+  animation: af-ss-rise 160ms var(--af-ease);
+  flex-wrap: wrap;
+}
+
+.af-ss__table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--af-r-card);
+  background: var(--af-surface);
+  box-shadow: var(--af-shadow-card);
+}
+
+.af-ss__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--af-fs-md);
+  font-variant-numeric: tabular-nums;
+}
+
+.af-ss__table th {
+  height: 36px;
+  padding: 0 14px;
+  background: var(--af-surface-sunken);
+  box-shadow: var(--af-divider-hairline);
+  color: var(--af-page-muted);
+  font-size: var(--af-fs-xs);
+  font-weight: 560;
+  line-height: 16px;
+  text-align: left;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.af-ss__table td {
+  height: 50px;
+  padding: 8px 14px;
+  box-shadow: var(--af-divider-hairline);
+  color: var(--af-page-ink);
+  line-height: 20px;
+  vertical-align: middle;
+}
+
+.af-ss__table th:has(> .af-check),
+.af-ss__table td:has(> .af-check) {
+  line-height: 0;
+  vertical-align: middle;
+}
+
+.af-ss__table tbody tr:last-child td {
+  box-shadow: none;
+}
+
+.af-ss__table tbody tr {
+  transition: background-color var(--af-dur-hover-in) ease;
+}
+
+.af-ss__table tbody tr:hover {
+  background: var(--af-wash);
+}
+
+.af-ss__plan-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--af-surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--af-line);
+  color: var(--af-page-ink);
+  font-family: var(--af-font);
+  font-size: 12px;
+  font-weight: 520;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--af-dur-hover-in) ease, color var(--af-dur-hover-in) ease;
+}
+
+.af-ss__plan-pill svg {
+  opacity: 0.65;
+  flex-shrink: 0;
+}
+
+.af-ss__plan-pill[data-plan="Business"] {
+  background: var(--af-accent-soft);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--af-accent) 22%, transparent);
+  color: var(--af-accent);
+}
+
+.af-ss__plan-pill[data-plan="Free"] {
+  background: transparent;
+  color: var(--af-page-muted);
+}
+
+.af-ss__plan-pill:hover {
+  background: var(--af-wash);
+}
+
+.af-ss__plan-pill[data-plan="Business"]:hover {
+  background: color-mix(in srgb, var(--af-accent) 16%, transparent);
+}
+
+.af-ss__th-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 4px;
+  margin-left: -4px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--af-page-muted);
+  font-family: var(--af-font);
+  font-size: var(--af-fs-xs);
+  font-weight: 560;
+  line-height: 16px;
+  cursor: pointer;
+  transition: color var(--af-dur-hover-in) ease, background-color var(--af-dur-hover-in) ease;
+}
+
+.af-ss__th-trigger:hover {
+  background: var(--af-wash);
+  color: var(--af-page-ink);
+}
+
+.af-ss__person {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.af-ss__person-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.af-ss__person-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--af-page-strong);
+  font-weight: 520;
+  line-height: 18px;
+}
+
+.af-ss__person-email {
+  color: var(--af-page-muted);
+  font-size: var(--af-fs-xs);
+  line-height: 16px;
+}
+
+/* 2x2 Flexbox tiles (Preferences Chat Tools, Billing Split Cards & Usage Meters) */
+.af-ss__tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.af-ss__tile {
+  display: flex;
+  flex: 1 1 calc(50% - 5px);
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 230px;
+  padding: 13px 14px;
+  border: 0;
+  border-radius: var(--af-r-card);
+  background: var(--af-surface);
+  box-shadow: var(--af-shadow-card);
+  color: var(--af-page-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    box-shadow var(--af-dur-fast) ease,
+    background-color var(--af-dur-fast) ease,
+    transform var(--af-dur-fast) var(--af-ease);
+}
+
+.af-ss__tile:hover {
+  box-shadow: var(--af-shadow-card-hover);
+}
+
+.af-ss__tile:active:not([aria-checked="true"]) {
+  background: var(--af-wash);
+}
+
+.af-ss__tile[aria-checked="true"] {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--af-accent) 52%, var(--af-card-ring)),
+    0 1px 3px rgba(0, 0, 0, 0.04);
+  background: color-mix(in srgb, var(--af-accent-soft) 45%, var(--af-surface));
+}
+
+.af[data-modality="keyboard"] .af-ss__tile:focus-visible,
+.af:not([data-modality]) .af-ss__tile:focus-visible {
+  outline: none;
+  box-shadow: var(--af-field-shadow-focus);
+}
+
+.af-ss__tile-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: var(--af-icon);
+  flex: none;
+  line-height: 0;
+}
+
+.af-ss__tile-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  background: var(--af-surface);
+  box-shadow: var(--af-shadow-hairline);
+  color: transparent;
+  flex: none;
+  line-height: 0;
+  margin-top: 1px;
+  transition:
+    background-color var(--af-dur-fast) ease,
+    color var(--af-dur-fast) ease;
+}
+
+.af-ss__tile[aria-checked="true"] .af-ss__tile-check {
+  background: var(--af-accent);
+  box-shadow: none;
+  color: var(--af-on-accent);
+}
+
+/* Provider collapsible card in Models */
+.af-ss__prov-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  border: 0;
+  background: transparent;
+  color: var(--af-page-strong);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--af-dur-hover-in) ease;
+}
+
+.af-ss__prov-head:hover {
+  background: var(--af-wash);
+}
+
+.af[data-modality="keyboard"] .af-ss__prov-head:not([data-pointer-focus="true"]):focus-visible,
+.af:not([data-modality]) .af-ss__prov-head:not([data-pointer-focus="true"]):focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--af-focus);
+}
+
+.af-ss__prov-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: var(--af-surface-sunken);
+  box-shadow: var(--af-shadow-hairline);
+  color: var(--af-page-strong);
+  font-size: 11.5px;
+  font-weight: 650;
+  flex: none;
+}
+
+.af-ss__chev {
+  display: block;
+  flex: none;
+  color: var(--af-icon);
+  transition: transform 200ms var(--af-ease);
+}
+
+.af-ss__prov-head[aria-expanded="true"] .af-ss__chev {
+  transform: rotate(180deg);
+}
+
+/* Hover-reveal remove action (always visible on focus-within and touch) */
+.af-ss__hover-rm {
+  opacity: 0;
+  transition: opacity var(--af-dur-fast) ease;
+}
+
+.af-ss__row:hover .af-ss__hover-rm,
+.af-ss__row:focus-within .af-ss__hover-rm,
+.af-ss__hover-rm:focus-visible {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .af-ss__hover-rm {
+    opacity: 1;
+  }
+}
+
+/* Billing 3-column Flexbox plan cards */
+.af-ss__plans {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.af-ss__plan {
+  display: flex;
+  flex: 1 1 210px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px;
+  border-radius: var(--af-r-card);
+  background: var(--af-surface);
+  box-shadow: var(--af-shadow-card);
+}
+
+.af-ss__plan[data-current="true"] {
+  box-shadow:
+    0 0 0 1.5px var(--af-page-strong),
+    0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.af-ss__plan-price {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  color: var(--af-page-strong);
+  font-size: var(--af-fs-metric);
+  font-weight: 680;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.025em;
+}
+
+.af-ss__plan-features {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--af-page-ink);
+  font-size: var(--af-fs-sm);
+  line-height: 16px;
+}
+
+.af-ss__plan-features li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+/* Pill filter tabs (Models filter / Privacy Shared chats tablist / Members tabs) */
+.af-ss__pills {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--af-r-btn);
+  background: var(--af-track);
+}
+
+.af-ss__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--af-page-muted);
+  font: inherit;
+  font-size: var(--af-fs-sm);
+  font-weight: 500;
+  line-height: 16px;
+  cursor: pointer;
+  transition:
+    background-color var(--af-dur-fast) ease,
+    color var(--af-dur-fast) ease,
+    box-shadow var(--af-dur-fast) ease;
+}
+
+.af-ss__pill:hover {
+  color: var(--af-page-strong);
+}
+
+.af-ss__pill[data-active="true"],
+.af-ss__pill[aria-selected="true"],
+.af-ss__pill[aria-checked="true"] {
+  background: var(--af-thumb);
+  box-shadow: var(--af-thumb-shadow);
+  color: var(--af-page-strong);
+}
+
+/* ============================================================================
+ * 6. Empty State, Skeleton Shapes & Status Toast
+ * ========================================================================== */
+
+.af-ss__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 28px 20px;
+  border-radius: var(--af-r-card);
+  background: var(--af-surface-sunken);
+  box-shadow: var(--af-shadow-hairline);
+  text-align: center;
+}
+
+.af-ss__empty-title {
+  color: var(--af-page-strong);
+  font-size: var(--af-fs-md);
+  font-weight: 560;
+}
+
+.af-ss__empty-desc {
+  max-width: 320px;
+  margin: 0;
+  color: var(--af-page-muted);
+  font-size: var(--af-fs-sm);
+}
+
+.af-ss__skel {
+  display: inline-block;
+  border-radius: var(--af-r-sm);
+  background: linear-gradient(
+    90deg,
+    var(--af-track) 0%,
+    var(--af-hover) 50%,
+    var(--af-track) 100%
+  );
+  background-size: 200% 100%;
+  animation: af-ss-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes af-ss-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+.af-ss__toast {
+  position: absolute;
+  right: 20px;
+  bottom: 18px;
+  z-index: 12;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 340px;
+  padding: 8px 13px;
+  border-radius: var(--af-r-pill);
+  background: var(--af-solid);
+  color: var(--af-on-solid);
+  box-shadow: var(--af-shadow-pop);
+  font-size: var(--af-fs-sm);
+  font-weight: 500;
+  line-height: 16px;
+  pointer-events: none;
+  animation: af-ss-toast-in 220ms var(--af-ease-pop);
+}
+
+.af-ss__toast-dot {
+  color: var(--af-success);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  line-height: 0;
+}
+
+.af-ss :is(.af-ss__back, .af-ss__icon-btn, .af-ss__search, .af-ss__user-btn, .af-ss__pill, .af-ss__tile-icon, .af-ss__tile-check, .af-ss__toast-dot, .af-ss__plan-features li) svg {
+  display: block;
+  flex: none;
+}
+
+@keyframes af-ss-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Inline mini-form inside cards (Invite / Add domain / Add CIDR / Add API key) */
+.af-ss__inline-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  background: var(--af-surface-sunken);
+  box-shadow: var(--af-divider-hairline-top);
+  animation: af-ss-rise 180ms var(--af-ease);
+}
+
+/* ============================================================================
+ * 7. Responsive (< 760px mobile shell, < 600px stacked form rows) & Reduced Motion
+ * ========================================================================== */
+
+@media (max-width: 760px) {
+  .af-ss__side {
+    display: none;
+  }
+  .af-ss__main {
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .af-ss__mobile-bar {
+    display: flex;
+  }
+  .af-ss__scroll {
+    padding: 22px 18px 48px;
+  }
+  .af-ss__reopen {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .af-ss__row:not([data-inline-mobile="true"]) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .af-ss__row:not([data-inline-mobile="true"]) .af-ss__row-ctrl {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .af-ss__row-ctrl[data-wide="true"],
+  .af-ss__prefix-field,
+  .af-ss__ro-input {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .af-ss__side,
+  .af-ss__meter-fill,
+  .af-ss__wheel-tier,
+  .af-ss__wheel-dot,
+  .af-ss__chev {
+    transition: none;
+  }
+  .af-ss__subrow,
+  .af-ss__bulk-bar,
+  .af-ss__inline-form,
+  .af-ss__toast,
+  .af-ss__skel {
+    animation: none;
+  }
+}

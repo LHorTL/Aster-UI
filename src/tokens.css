@@ -1,0 +1,469 @@
+/*
+ * Affect 风格设计 token（第八轮：按 affectUI Clean 精确值与 Pro App 屏幕实测校准）。
+ *
+ * 两套文字色：
+ * - 组件层 --af-strong/ink/text/muted/faint/icon 使用黑/白透明度阶梯，与 affectUI 免费 Clean 组件逐值一致；
+ * - 页面层 --af-page-* 使用 Pro App 屏幕实测的实色四档，用于工作台、设置等整页文字。
+ *
+ * 控件尺度沿用 Pro App 屏幕：按钮/输入 32px、卡片 14、主面板 18、浮层 12、弹窗 16。
+ * 免费 Clean 组件的 24/28/32 尺度仅作为组件预览里的“紧凑档”注明，不改变整页密度。
+ * 全部以 --af- 前缀隔离，不与宿主应用的自有 CSS 变量冲突。
+ */
+
+/* Inter 可变字体只内嵌拉丁子集（OFL-1.1，见 assets/INTER-LICENSE.txt）；中文回落到系统雅黑 UI */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: block;
+  src: url("../assets/inter-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+.af,
+[data-af-theme] {
+  color-scheme: light;
+  /* ---- 表面：灰托盘窗口 → 白色主面板 → 面板内卡片；浮层最亮 ---- */
+  --af-canvas-solid: #f7f7f7;
+  --af-canvas: #f7f7f7;
+  --af-sidebar: #f7f7f7;
+  --af-panel: #ffffff;
+  --af-surface: #ffffff;
+  --af-surface-sunken: #fafafa;
+  --af-overlay: #ffffff;
+  /* 窗口级抽屉与媒体预览的遮罩。 */
+  --af-sheet-mask: rgba(0, 0, 0, 0.28);
+  /* 托盘卡外壳：比面板暗一级的灰，里面再嵌白卡 */
+  --af-tray: #f4f4f4;
+  /* 主面板四周的 1px 描边环（无 CSS border） */
+  --af-ring: rgba(0, 0, 0, 0.08);
+  /* 页面级发丝线与卡片描边（半透明正片叠底，确保在 #fff 与 #f7f7f7 画布上均有清晰边界） */
+  --af-page-line: #f0f0f0;
+  --af-card-ring: rgba(0, 0, 0, 0.08);
+
+  /* ---- 组件文字：只用黑/白的不同透明度，与免费 Clean 组件一致 ---- */
+  --af-strong: #000000;
+  --af-ink: rgba(0, 0, 0, 0.88);
+  --af-text: rgba(0, 0, 0, 0.61);
+  --af-muted: rgba(0, 0, 0, 0.45);
+  --af-faint: rgba(0, 0, 0, 0.27);
+  --af-icon: rgba(0, 0, 0, 0.447);
+
+  /* ---- 页面文字：Pro App 屏幕实测四级实色 ---- */
+  --af-page-strong: #171717;
+  --af-page-ink: #404040;
+  --af-page-muted: #737373;
+  --af-page-faint: #a3a3a3;
+
+  /* ---- 线与填充：分隔线、轻底色、悬停、按下、选中 ---- */
+  --af-line: rgba(0, 0, 0, 0.06);
+  --af-line-strong: rgba(0, 0, 0, 0.1);
+  --af-wash: rgba(0, 0, 0, 0.03);
+  --af-hover: rgba(0, 0, 0, 0.06);
+  --af-press: rgba(0, 0, 0, 0.08);
+  /* 列表滑动悬停底块变量 */
+  --af-ht-x: 0px;
+  --af-ht-y: 0px;
+  --af-ht-w: 0px;
+  --af-ht-h: 0px;
+  --af-ht-r: 6px;
+  --af-ht-bg: var(--af-hover);
+  /* 选中项（侧栏、列表、胶囊页签）：很淡的中性叠色，不是浮起白片 */
+  --af-selected: rgba(0, 0, 0, 0.06);
+  --af-track: rgba(0, 0, 0, 0.06);
+  --af-track-soft: rgba(0, 0, 0, 0.04);
+  --af-switch-off: rgba(0, 0, 0, 0.14);
+  /* 输入框描边：静止 10%，鼠标聚焦只提亮到 16%；键盘聚焦另加外圈 */
+  --af-field-ring: rgba(0, 0, 0, 0.1);
+  --af-field-ring-focus: rgba(0, 0, 0, 0.16);
+
+  /* ---- 主操作：Pro App 屏幕的近黑按钮（顶部内高光 + 描边环） ---- */
+  --af-solid: #262626;
+  --af-solid-hover: #333333;
+  --af-on-solid: #fcfcfc;
+  --af-solid-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 0 0 0.5px #171717, 0 1px 2px rgba(0, 0, 0, 0.18);
+
+  /* ---- 强调色：Clean 实测，浅色 rgba(0,96,226,.765)，深色 #4d8dff ---- */
+  --af-accent: #0060e2;
+  --af-on-accent: #ffffff;
+  --af-accent-ink: rgba(0, 96, 226, 0.765);
+  --af-accent-soft: rgba(0, 96, 226, 0.08);
+  /* 键盘焦点：Clean 为强调色 35%，2px，外偏 1px */
+  --af-focus: rgba(0, 96, 226, 0.35);
+  /* 数据配色：占比类只用一个强调色，按排名降透明度；末项固定灰 */
+  --af-data-1: color-mix(in srgb, var(--af-accent) 76%, transparent);
+  --af-data-2: color-mix(in srgb, var(--af-accent) 50%, transparent);
+  --af-data-3: color-mix(in srgb, var(--af-accent) 32%, transparent);
+  --af-data-4: color-mix(in srgb, var(--af-accent) 18%, transparent);
+  --af-data-rest: rgba(0, 0, 0, 0.14);
+  --af-data-compare: rgba(0, 0, 0, 0.22);
+  /* 多序列折线：末尾序列固定灰，色相只用于区分序列 */
+  --af-series-1: #2f6bff;
+  --af-series-2: #ec4899;
+  --af-series-3: #8b5cf6;
+  --af-series-4: #14b8a6;
+  --af-series-5: #a3a3a3;
+
+  /* ---- 语义色：Clean 精确值 ---- */
+  --af-success: #1a9a52;
+  --af-success-soft: rgba(26, 154, 82, 0.08);
+  --af-warning: #e8a20c;
+  --af-warning-soft: rgba(232, 162, 12, 0.08);
+  --af-danger: #e5484d;
+  --af-danger-soft: rgba(229, 72, 77, 0.08);
+  --af-danger-soft-hover: rgba(229, 72, 77, 0.12);
+  /* 校验失败的输入框：整块淡红底，去掉描边 */
+  --af-danger-field: rgba(229, 72, 77, 0.1);
+  --af-info: var(--af-accent);
+  --af-info-soft: var(--af-accent-soft);
+  --af-purple: #8b5cf6;
+  --af-purple-soft: rgba(139, 92, 246, 0.1);
+  --af-doc-pdf: #ef4444;
+  --af-doc-xls: #16a34a;
+  --af-doc-doc: #2563eb;
+  --af-connector: rgba(0, 0, 0, 0.12);
+
+  /* ---- 阴影：发丝描边 + 极轻投影（Clean 精确三层，严禁写裸 1px CSS border） ---- */
+  --af-shadow-hairline: 0 0 0 0.5px rgba(0, 0, 0, 0.07), 0 1px 1px -0.5px rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --af-shadow-hairline-hover: 0 0 0 0.5px rgba(0, 0, 0, 0.12), 0 1px 1px -0.5px rgba(0, 0, 0, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.06);
+  --af-field-shadow: var(--af-shadow-hairline);
+  --af-field-shadow-hover: var(--af-shadow-hairline-hover);
+  --af-field-shadow-focus: 0 0 0 0.5px var(--af-field-ring-focus), 0 0 0 3px var(--af-focus), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --af-divider-hairline: inset 0 -1px 0 var(--af-line);
+  --af-divider-hairline-top: inset 0 1px 0 var(--af-line);
+  /* 阴影描边卡：Pro 屏幕为 1px #ebebeb 环 + 一层轻投影，卡片不写 CSS border */
+  --af-shadow-card: 0 0 0 1px var(--af-card-ring), 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --af-shadow-card-hover: 0 0 0 1px rgba(0, 0, 0, 0.09), 0 1px 2px 0 rgba(0, 0, 0, 0.04), 0 4px 12px -6px rgba(0, 0, 0, 0.08);
+  --af-shadow-pop: 0 0 0 0.5px rgba(0, 0, 0, 0.08), 0 12px 28px -10px rgba(0, 0, 0, 0.16), 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --af-shadow-modal: 0 0 0 0.5px rgba(0, 0, 0, 0.08), 0 24px 64px -16px rgba(0, 0, 0, 0.22), 0 2px 6px 0 rgba(0, 0, 0, 0.05);
+  --af-thumb: #ffffff;
+  --af-thumb-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.14);
+
+  /* ---- 圆角：控件 9~10，卡片 14，主面板与托盘卡 18；浮层 12，弹窗 16 ---- */
+  --af-r-xs: 4px;
+  --af-r-sm: 6px;
+  --af-r-chip: 6px;
+  --af-r-md: 8px;
+  --af-r-input: 9px;
+  --af-r-btn: 10px;
+  --af-r-pop: 12px;
+  --af-r-lg: 14px;
+  --af-r-card: 14px;
+  --af-r-panel: 18px;
+  --af-r-xl: 18px;
+  --af-r-modal: 16px;
+  --af-r-pill: 999px;
+
+  /* ---- 尺寸：控件 28 / 32 / 36，同一行的控件必须同高；表格行 44 密 / 52 疏 ---- */
+  --af-h-xs: 24px;
+  --af-h-sm: 28px;
+  --af-h-md: 32px;
+  --af-h-lg: 36px;
+  --af-row-h: 44px;
+  --af-row-h-loose: 52px;
+
+  /* ---- 间距：4 的倍数 ---- */
+  --af-1: 4px;
+  --af-2: 8px;
+  --af-3: 12px;
+  --af-4: 16px;
+  --af-5: 20px;
+  --af-6: 24px;
+  --af-8: 32px;
+
+  /* ---- 字体：控件 13，正文 13.5，区块 15，页面标题 22；数字一律等宽 ---- */
+  --af-font: "Inter", "InterVariable", "Segoe UI Variable Text", "Segoe UI", "PingFang SC", "Microsoft YaHei UI",
+    "Microsoft YaHei", ui-sans-serif, system-ui, sans-serif;
+  --af-mono: "JetBrains Mono", "SF Mono", "Cascadia Mono", Consolas, "Liberation Mono", ui-monospace, monospace;
+  --af-fs-overline: 10px;
+  --af-fs-xs: 11px;
+  --af-fs-sm: 12px;
+  --af-fs-md: 13px;
+  --af-fs-body: 13.5px;
+  --af-fs-lg: 14px;
+  --af-fs-section: 15px;
+  --af-fs-xl: 16px;
+  --af-fs-2xl: 20px;
+  --af-fs-title: 22px;
+  --af-fs-metric: 26px;
+  --af-fs-metric-lg: 28px;
+
+  /* ---- 动效：一条主缓动 + 一条回弹；悬停 90~160ms，位移 240~420ms，布局 300~520ms ---- */
+  --af-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --af-ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --af-ease-enter: cubic-bezier(0.25, 1, 0.5, 1);
+  --af-ease-swap: cubic-bezier(0.85, 0, 0.15, 1);
+  --af-ease-glide: cubic-bezier(0.25, 0.9, 0.3, 1);
+  --af-ease-spring: cubic-bezier(0.32, 0.72, 0.24, 1);
+  --af-dur-hover-in: 90ms;
+  --af-dur-hover-out: 160ms;
+  --af-dur-fast: 140ms;
+  --af-dur-glide: 220ms;
+  --af-dur: 240ms;
+  --af-dur-morph: 320ms;
+  --af-dur-toast: 440ms;
+  --af-dur-move: 420ms;
+  --af-dur-layout: 480ms;
+  --af-dur-slow: 480ms;
+  --af-dur-draw: 1100ms;
+  --af-press-scale: 0.97;
+
+  color: var(--af-ink);
+  font-family: var(--af-font);
+  font-size: var(--af-fs-md);
+  line-height: 20px;
+  -webkit-font-smoothing: antialiased;
+  /* cv11 单层 a、ss03 圆角标点，让 Inter 更柔和 */
+  font-feature-settings: "cv11", "ss03";
+}
+
+/* 零权兜底：阻断 Chromium 在 lang="zh-CN" 下将裸 code/kbd/samp/pre 回退至 NSimSun 宋体 */
+.af :where(code, kbd, samp, pre) {
+  font-family: var(--af-mono);
+}
+
+/* ---- 强调色备选：评审时切换比较，默认蓝色 ---- */
+.af[data-accent="violet"],
+[data-af-accent="violet"] {
+  --af-accent: #7c5cff;
+  --af-accent-ink: rgba(124, 92, 255, 0.85);
+  --af-accent-soft: rgba(124, 92, 255, 0.1);
+  --af-focus: rgba(124, 92, 255, 0.35);
+}
+.af[data-accent="green"],
+[data-af-accent="green"] {
+  --af-accent: #0f9f7f;
+  --af-accent-ink: rgba(15, 159, 127, 0.85);
+  --af-accent-soft: rgba(15, 159, 127, 0.1);
+  --af-focus: rgba(15, 159, 127, 0.35);
+}
+.af[data-accent="orange"],
+[data-af-accent="orange"] {
+  --af-accent: #e2620c;
+  --af-accent-ink: rgba(226, 98, 12, 0.85);
+  --af-accent-soft: rgba(226, 98, 12, 0.1);
+  --af-focus: rgba(226, 98, 12, 0.35);
+}
+
+/* 暗色：层层提亮（窗口 14 → 面板 20 → 卡片 27），靠描边环分层，几乎不用投影 */
+.af[data-theme="dark"],
+[data-af-theme="dark"] {
+  color-scheme: dark;
+  --af-canvas-solid: #0e0e0e;
+  --af-canvas: #0e0e0e;
+  --af-sidebar: #0e0e0e;
+  --af-panel: #141414;
+  --af-surface: #1b1b1b;
+  --af-surface-sunken: #161616;
+  --af-overlay: #202020;
+  --af-sheet-mask: rgba(0, 0, 0, 0.55);
+  --af-tray: #191919;
+  --af-ring: rgba(255, 255, 255, 0.08);
+  --af-page-line: #242427;
+  --af-card-ring: rgba(255, 255, 255, 0.08);
+
+  --af-strong: #ffffff;
+  --af-ink: rgba(255, 255, 255, 0.9);
+  --af-text: rgba(255, 255, 255, 0.62);
+  --af-muted: rgba(255, 255, 255, 0.46);
+  --af-faint: rgba(255, 255, 255, 0.3);
+  --af-icon: rgba(255, 255, 255, 0.5);
+
+  --af-page-strong: #f4f4f5;
+  --af-page-ink: #d4d4d8;
+  --af-page-muted: #a1a1aa;
+  --af-page-faint: #71717a;
+
+  --af-line: rgba(255, 255, 255, 0.08);
+  --af-line-strong: rgba(255, 255, 255, 0.12);
+  --af-wash: rgba(255, 255, 255, 0.04);
+  --af-hover: rgba(255, 255, 255, 0.08);
+  --af-press: rgba(255, 255, 255, 0.1);
+  --af-selected: rgba(255, 255, 255, 0.08);
+  --af-track: rgba(255, 255, 255, 0.08);
+  --af-track-soft: rgba(255, 255, 255, 0.05);
+  --af-switch-off: rgba(255, 255, 255, 0.18);
+  --af-field-ring: rgba(255, 255, 255, 0.1);
+  --af-field-ring-focus: rgba(255, 255, 255, 0.18);
+
+  --af-solid: #f2f2f2;
+  --af-solid-hover: #ffffff;
+  --af-on-solid: #141414;
+  --af-solid-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.08), 0 0 0 0.5px rgba(255, 255, 255, 0.15), 0 1px 2px rgba(0, 0, 0, 0.4);
+
+  --af-accent: #4d8dff;
+  --af-accent-ink: #4d8dff;
+  --af-accent-soft: rgba(77, 141, 255, 0.14);
+  --af-focus: rgba(77, 141, 255, 0.5);
+  --af-data-rest: rgba(255, 255, 255, 0.16);
+  --af-data-compare: rgba(255, 255, 255, 0.26);
+  --af-series-1: #4d8dff;
+  --af-series-2: #f472b6;
+  --af-series-3: #a78bfa;
+  --af-series-4: #2dd4bf;
+  --af-series-5: #8b8b92;
+
+  --af-success: #3ec27a;
+  --af-success-soft: rgba(62, 194, 122, 0.14);
+  --af-warning: #f0b232;
+  --af-warning-soft: rgba(240, 178, 50, 0.14);
+  --af-danger: #ff6369;
+  --af-danger-soft: rgba(255, 99, 105, 0.14);
+  --af-danger-soft-hover: rgba(255, 99, 105, 0.2);
+  --af-danger-field: rgba(255, 99, 105, 0.14);
+  --af-purple: #a78bfa;
+  --af-purple-soft: rgba(167, 139, 250, 0.16);
+  --af-connector: rgba(255, 255, 255, 0.14);
+
+  --af-shadow-hairline: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 0 0 0.5px rgba(255, 255, 255, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --af-shadow-hairline-hover: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 0 0.5px rgba(255, 255, 255, 0.16), 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --af-field-shadow: var(--af-shadow-hairline);
+  --af-field-shadow-hover: var(--af-shadow-hairline-hover);
+  --af-field-shadow-focus: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 0 0.5px var(--af-field-ring-focus), 0 0 0 3px var(--af-focus), 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --af-divider-hairline: inset 0 -1px 0 var(--af-line);
+  --af-divider-hairline-top: inset 0 1px 0 var(--af-line);
+  /* 深色卡片顶部 1px 极淡高光，模拟光从上方照来 */
+  --af-shadow-card: inset 0 1px 0 rgba(255, 255, 255, 0.035), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --af-shadow-card-hover: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 0 0 1px rgba(255, 255, 255, 0.12);
+  --af-shadow-pop: 0 0 0 0.5px rgba(255, 255, 255, 0.11), 0 12px 28px -10px rgba(0, 0, 0, 0.6), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --af-shadow-modal: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 0 0 0.5px rgba(255, 255, 255, 0.11), 0 28px 72px -16px rgba(0, 0, 0, 0.7);
+  --af-thumb: #3a3a3a;
+  --af-thumb-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.af[data-theme="dark"][data-accent="violet"],
+[data-af-theme="dark"][data-af-accent="violet"],
+.af[data-theme="dark"][data-af-accent="violet"],
+[data-af-theme="dark"][data-accent="violet"] {
+  --af-accent: #8e7cf0;
+  --af-accent-ink: #a99bf5;
+  --af-accent-soft: rgba(142, 124, 240, 0.16);
+  --af-focus: rgba(142, 124, 240, 0.5);
+}
+.af[data-theme="dark"][data-accent="green"],
+[data-af-theme="dark"][data-af-accent="green"],
+.af[data-theme="dark"][data-af-accent="green"],
+[data-af-theme="dark"][data-accent="green"] {
+  --af-accent: #2ebd9f;
+  --af-accent-ink: #4cd4b5;
+  --af-accent-soft: rgba(46, 189, 159, 0.16);
+  --af-focus: rgba(46, 189, 159, 0.5);
+}
+.af[data-theme="dark"][data-accent="orange"],
+[data-af-theme="dark"][data-af-accent="orange"],
+.af[data-theme="dark"][data-af-accent="orange"],
+[data-af-theme="dark"][data-accent="orange"] {
+  --af-accent: #ff8b3e;
+  --af-accent-ink: #ffa057;
+  --af-accent-soft: rgba(255, 139, 62, 0.16);
+  --af-focus: rgba(255, 139, 62, 0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .af,
+  [data-af-theme] {
+    --af-dur-hover-in: 1ms;
+    --af-dur-hover-out: 1ms;
+    --af-dur-fast: 1ms;
+    --af-dur-glide: 1ms;
+    --af-dur: 1ms;
+    --af-dur-morph: 1ms;
+    --af-dur-toast: 1ms;
+    --af-dur-move: 1ms;
+    --af-dur-layout: 1ms;
+    --af-dur-slow: 1ms;
+    --af-dur-draw: 1ms;
+  }
+}
+
+/* 统一全屏视口浮层宿主：位于 .af 主题根内部以继承全部 CSS 变量与自定义强调色，同时脱离局部滚动裁切 */
+/* 紧凑密度：供工作台 / 侧栏 / 高密度表格切换 */
+.af[data-density="compact"],
+[data-af-density="compact"] {
+  --af-h-xs: 22px;
+  --af-h-sm: 24px;
+  --af-h-md: 28px;
+  --af-h-lg: 32px;
+  --af-row-h: 36px;
+  --af-row-h-loose: 44px;
+}
+
+/* 圆角档位：小圆角（sm）/ 默认中圆角（md）/ 大圆角（lg） */
+.af[data-radius="sm"],
+[data-af-radius="sm"] {
+  --af-r-xs: 2px;
+  --af-r-sm: 4px;
+  --af-r-md: 6px;
+  --af-r-input: 6px;
+  --af-r-btn: 7px;
+  --af-r-pop: 8px;
+  --af-r-lg: 10px;
+  --af-r-card: 10px;
+}
+
+.af[data-radius="lg"],
+[data-af-radius="lg"] {
+  --af-r-xs: 6px;
+  --af-r-sm: 8px;
+  --af-r-md: 10px;
+  --af-r-input: 12px;
+  --af-r-btn: 12px;
+  --af-r-pop: 14px;
+  --af-r-lg: 18px;
+  --af-r-card: 18px;
+}
+
+/* 文档级主题宿主（target="document"）：同步 html 画布底色与前景色，阻断首帧白屏闪烁 */
+html.af,
+html[data-af-theme] {
+  background-color: var(--af-canvas);
+  color: var(--af-ink);
+}
+
+/* 透明窗口模式（transparent=true）：供悬浮球、贴边通知、截图选区、透明子窗口使用，保持根画布透明且不破坏浮层实底 */
+.af:not([data-af-transparent="true"]) {
+  --af-canvas: var(--af-canvas-solid);
+  --af-sidebar: var(--af-canvas-solid);
+}
+
+.af[data-af-transparent="true"],
+[data-af-transparent="true"] {
+  --af-canvas: transparent;
+  --af-sidebar: transparent;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+html.af[data-af-transparent="true"] body,
+html[data-af-transparent="true"] body {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.af[data-af-transparent="true"] .af-portal-root,
+[data-af-transparent="true"] .af-portal-root {
+  --af-canvas: var(--af-canvas-solid);
+  --af-sidebar: var(--af-canvas-solid);
+  background: transparent;
+}
+
+.af-portal-root {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  pointer-events: none;
+}
+
+:where(.af-portal-root) > * {
+  pointer-events: auto;
+  -webkit-app-region: no-drag;
+}
+
+/* 强制高对比度模式（Forced Colors Mode）：为以 box-shadow 实现焦点环的控件提供原生 outline 兜底 */
+@media (forced-colors: active) {
+  .af :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid Highlight !important;
+    outline-offset: 2px !important;
+  }
+}
