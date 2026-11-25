@@ -35,8 +35,6 @@ const PATTERN_NAMES = [
   "inputs",
   "project",
   "shell",
-  "store",
-  "workbench",
 ];
 
 const SCREEN_CSS_NAMES = [

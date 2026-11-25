@@ -4,6 +4,7 @@ import { AfColorPicker } from "../color-picker";
 import { AfIcon } from "../icons";
 import { baseSpecs } from "../specs/base";
 import { controlsSpecs } from "../specs/controls-specs";
+import { layoutGuideSpecs } from "../specs/layout-guide";
 import { overlaysSpecs } from "../specs/overlays-specs";
 import { p04CoreSpecs } from "../specs/p04-core";
 import { advancedSpecs } from "../specs/advanced";
@@ -15,10 +16,7 @@ import { agentsASpecs } from "../specs/agents-a";
 import { agentsBSpecs } from "../specs/agents-b";
 import { agentsCSpecs } from "../specs/agents-c";
 import { agentsDSpecs } from "../specs/agents-d";
-import { p2StoreSpecs } from "../specs/p2-stores";
-import { p3WorkbenchSpecs } from "../specs/p3-workbench";
 import { projectSpecs } from "../specs/project";
-import { p1ShellSpecs } from "../specs/p1-shells";
 import { shellSpecs } from "../specs/shell";
 import { motionSpecs } from "../specs/motion";
 import { screenOnboardingSpecs } from "../specs/screen-onboarding";
@@ -39,6 +37,7 @@ const allSpecs: ComponentSpec[] = (() => {
   const seen = new Set<string>();
   return [
     // Override spec arrays (controlsSpecs, overlaysSpecs) register BEFORE baseSpecs
+    ...layoutGuideSpecs,
     ...controlsSpecs,
     ...overlaysSpecs,
     ...p04CoreSpecs,
@@ -52,10 +51,7 @@ const allSpecs: ComponentSpec[] = (() => {
     ...agentsBSpecs,
     ...agentsCSpecs,
     ...agentsDSpecs,
-    ...p2StoreSpecs,
-    ...p3WorkbenchSpecs,
     ...projectSpecs,
-    ...p1ShellSpecs,
     ...shellSpecs,
     ...motionSpecs,
     ...screenOnboardingSpecs,
@@ -390,7 +386,7 @@ export function Showcase() {
           </nav>
           <div className="ast-sidefoot">
             <span>
-              <b>Aster UI</b> v0.5.0
+              <b>Aster UI</b> v0.5.1
             </span>
             <span>{allSpecs.length} extracted components</span>
           </div>

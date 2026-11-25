@@ -1,9 +1,9 @@
-# Aster UI（星序）`v0.5.0`
+# Aster UI（星序）`v0.5.1`
 
-1:1 对齐 [affectUI](https://www.affectui.com/components) Clean / Pro 交互、动效、无障碍与像素细节规范的 React 组件库（全库共 **268** 个独立组件与场景规格）。  
-面向现代桌面工作台、AI 智能体协同、高信息密度 SaaS 与开发者工具，完整覆盖轻量化基础控件底座、复合业务模式、整页级应用界面、动态主题系统与 Electron 无边框窗口原语。
+1:1 对齐 [affectUI](https://www.affectui.com/components) Clean / Pro 交互、动效、无障碍与像素细节规范的通用 React 组件库（全库共 **259** 个独立组件与场景规格）。  
+面向现代桌面工作台、AI 智能体协同、高信息密度 SaaS 与开发者工具，完整覆盖**基础布局与间距原语**、轻量化基础控件底座、复合业务模式、整页级应用界面、动态主题系统与 Electron 无边框窗口原语。
 
-> **设计规范单一事实来源**：开发新界面或定制组件前，请先阅读 [**DESIGN.md — affectUI Clean / Pro 设计规范与工程准则**](./DESIGN.md)。
+> **核心文档**：开发新界面前请阅读 [**DESIGN.md — 视觉令牌、基础组件间距与工程准则**](./DESIGN.md) 与 [**COMPONENTS.md — 全量组件清单与选型索引**](./COMPONENTS.md)。
 
 ## 预览
 
@@ -11,16 +11,16 @@
 
 ![Aster UI 深色预览](assets/showcase-dark.png)
 
-## v0.5.0 核心特性
+## v0.5.1 核心特性
 
-- **268 个组件与场景规格全景矩阵**：
-  - **基础控件与输入导航**：覆盖 `AfButton`、`AfInput`、`AfSelect`、`AfCombobox`、`AfCascader`、`AfDatePicker`、`AfDateRangePicker`、`AfTimePicker`（含 `parseNaturalTime`）、`AfForm`、`AfTable` / `AfTablePro`、`AfTabs`、`AfTree`、`AfSteps`、`AfDiffView`、`AfMeterBar`、`AfStat`、`AfDescriptions`、`AfRating`、`AfColorPicker`、`AfModal`、`AfDrawer`、`AfPopover`、`AfContextMenu`、`AfCommandPalette` 等全套可无障碍交互原语，以及 `AfFilterMenu`、`AfPromptLibrary`、`AfStepperForm`、`AfBillingSchedule`、`AfIntegrationSettings` 等复合输入模式。
+- **259 个纯净通用组件与场景规格矩阵**：
+  - **基础布局与语义间距原语（`@fangxinyan/aster-ui/core`）**：内置 `AfPage`、`AfPageHeader`、`AfSection`、`AfStack`、`AfInline`、`AfColumns`、`AfToolbar`、`AfListRow`、`AfSpacer` 与九级 `--af-space-*` 语义间距令牌，自动响应 `comfortable / compact` 密度缩放，解决纯基础组件拼装缺少间距与对齐规范的问题。
+  - **基础控件与输入导航**：覆盖 `AfButton`、`AfInput`、`AfSelect`、`AfCombobox`、`AfCascader`、`AfDatePicker`、`AfDateRangePicker`、`AfDateTimeRangePicker`、`AfTimePicker`（含 `parseNaturalTime`）、`AfHotkeyInput`、`AfForm`、`AfTable` / `AfTablePro`、`AfTabs`、`AfTree`、`AfSteps`、`AfDiffView`、`AfMeterBar`、`AfStat`、`AfDescriptions`、`AfAppMark`、`AfOverflowTagList`、`AfCountdown`、`AfQrCodeCard`、`AfRating`、`AfColorPicker`、`AfModal`（含 `afModal` 命令式总线）、`AfDrawer`、`AfPopover`、`AfContextMenu`、`AfCommandPalette` 与桌面核心原语 `AfTitleBar` / `AfWindowControls` / `AfThemePanel`。
   - **AI 对话、数据展示与反馈**：覆盖 `AfChatComposer`、`AfAiAnswer`、`AfCitedAnswer`、`AfModelPicker`、`AfThinkingState` / `AfThinkingLoader`、`AfToolCallCard` / `AfToolCallGroup`、`AfBreakdownChart`、`AfUsageMeter`、`AfExperimentCard`、`AfDecisionInbox`、`AfNotificationStack`、`AfToaster` / `afToast` 与全局 `afMessage`。
-  - **多智能体协同与治理（Agents Clean & Pro）**：完整收录 `AfAgentGraph`、`AfAgentLanes`、`AfAgentQueue`、`AfAgentTree`、`AfAutonomyDial`、`AfApprovalCard`、`AfReviewCenter`、`AfRunControls`、`AfDiffTimeline`、`AfRateLimitPlanner`、`AfConflictRadar`、`AfCostWaterfall`、`AfJudgeBracket`、`AfRootCauseTree`、`AfToolAccessMap`、`AfAgentCrew`、`AfAgentSequence`、`AfFlowBuilder` 等智能体编排与审计组件。
+  - **多智能体协同与治理（Agents Clean & Pro）**：完整收录 49 套智能体编排与审计组件（`AfAgentGraph`、`AfAgentLanes`、`AfAgentQueue`、`AfAgentTree`、`AfAutonomyDial`、`AfApprovalCard`、`AfReviewCenter`、`AfRunControls`、`AfDiffTimeline`、`AfRateLimitPlanner`、`AfConflictRadar`、`AfCostWaterfall`、`AfJudgeBracket`、`AfRootCauseTree`、`AfToolAccessMap`、`AfAgentCrew`、`AfAgentSequence`、`AfFlowBuilder` 等）。
   - **14 套高阶业务区块（Blocks）**：`AfLogoMarquee`、`AfTestimonialWall`、`AfKpiBoard`、`AfMetricsDashboard`、`AfInvoiceCredit`、`AfPricingPlans`、`AfAgentGallery`、`AfAppDirectory`、`AfClientContext`、`AfLiveSession`、`AfMissionControl`、`AfMissionTimeline`、`AfRunInspector`、`AfTaskBoard`。
   - **43 套整页级应用界面（Screens）**：涵盖双壳层（`AfAppShellInset`、`AfAppShellFlat`）、5 套引导流（`AfOnboarding*`）、9 套系统设置页（`AfSettings*`）、7 套工作空间页（`AfAnalytics`、`AfCrm`、`AfEvals`、`AfFiles`、`AfFolder`、`AfIntegrations`、`AfKanban`）、7 套 AI 助手对话页（`AfAssistant*`、`AfAgentChat*`、`AfAgentRun`、`AfAgentThread`）、7 套智能体运维治理页（`AfAgentActivity`、`AfAgentMemory`、`AfAgentPermissions`、`AfAgentSchedules`、`AfAgentSkills`、`AfAgentUsage`、`AfAgents`）与 6 套编排工作流页（`AfAgentInboxBoard`、`AfAgentOrchestration`、`AfAgentRunDetail`、`AfAgentTasks`、`AfInbox`、`AfWorkflowBuilder`）。
-  - **18 套桌面工作台与宿主壳层组件**：`AfTitleBar`、`AfWindowControls`、`AfThemePanel`、`AfAppDock`、`AfDesktopTools`、`AfInstallerWizard`、`AfSettingsLayout`、`AfProjectKpiCard`、`AfProjectQuotaRow`、`AfProjectSessionList`、`AfProjectAppRow`、`AfProjectStoreCard`、`AfProjectDownloadRow`、`AfProjectNotificationCenter`、`AfProjectStorageCard`、`AfProjectProxyRuleRow`、`AfProjectEmptyState`、`AfProjectUpdateStack`、`AfProjectFilterToolbar`。
-  - **8 套标志性动效原语 & 26 套交互式场景插画**：内置 `AfBlurCrossfade`、`AfNumberTicker`、`AfShimmerLoader`（及 `AfShimmerText` / `AfShimmerSkeleton`）、`AfTextReveal`、`AfGridBackground`、`AfGradientText`、`AfGradientFloor`、`AfTiltCard` 动效组件，以及 `illustrations-a`（13 套）与 `illustrations-b`（13 套）共 26 套高帧率交互式插画。
+  - **8 套标志性动效原语 & 26 套交互式场景插画**：内置 `AfBlurCrossfade`、`AfNumberTicker`、`AfShimmerLoader`（及 `AfShimmerText` / `AfShimmerSkeleton`）、`AfTextReveal`、`AfGridBackground`、`AfGradientText`、`AfGradientFloor`、`AfTiltCard`，以及 `illustrations-a`（13 套）与 `illustrations-b`（13 套）共 26 套交互式插画。
 - **双入口架构与 ESM + CJS 按需摇树（Tree-Shaking）**：
   - **模块结构保留构建**：输出 `dist/esm/**/*.js` + `.d.ts` 与 `dist/cjs/**/*.cjs` + `.d.cts`（保留完整中文 JSDoc 类型注释），原生兼容 `NodeNext`、`Bundler` 与 `Node10` 模块解析及组件级 Tree-Shaking。
   - **独立轻量核心包 `@fangxinyan/aster-ui/core`**：映射至 `dist/esm/ui.js` 与 `dist/cjs/ui.cjs`，内置完整基础控件、`AsterThemeProvider` / `useAsterTheme`、`AfTitleBar` / `AfWindowControls` / `AfThemePanel`、`cn` 与安全异步剪贴板原语 `copyToClipboard`，零依赖图表或重型复合模式。
@@ -215,6 +215,7 @@ npm run visual:theme:check # 复验 5 种强调色 × 2 主题矩阵
 
 ## 进一步阅读
 
-- [**DESIGN.md**](./DESIGN.md)：affectUI Clean / Pro 视觉令牌、布局与动效规范、无障碍铁律及组件 API 速查对照表。
+- [**DESIGN.md**](./DESIGN.md)：affectUI Clean / Pro 视觉令牌、基础组件间距与布局配方、无障碍铁律及组件 API 速查对照表。
+- [**COMPONENTS.md**](./COMPONENTS.md)：全量组件分层目录与选型索引。
 - [**CHANGELOG.md**](./CHANGELOG.md)：版本演进记录与发布说明。
 - [**INTER-LICENSE.txt**](./assets/INTER-LICENSE.txt)：内嵌 Inter 可变字体开源许可说明。

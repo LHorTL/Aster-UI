@@ -545,10 +545,9 @@ for (const file of [...tsFiles, ...cssFiles]) {
   }
 }
 
-// Rule 16 ~ Rule 20: Anti-Recurrence Engineering Gates for Custom Component Suites
-const CUSTOM_SUITE_FILE_RE = /^src\/components\/(?:project|shell|store|workbench)\//;
-const CUSTOM_SUITE_CSS_RE =
-  /^(?:src\/components\/shell\/shell-hosts\.css|src\/patterns\/(?:shell-extra|store|workbench)\.css)$/;
+// Rule 16 ~ Rule 20: Anti-Recurrence Engineering Gates for Composite & Shell Suites
+const CUSTOM_SUITE_FILE_RE = /^src\/components\/(?:project|shell)\//;
+const CUSTOM_SUITE_CSS_RE = /^src\/components\/shell\/core-shell\.css$/;
 
 // Rule 16: No `data-flip-key` typo & linear `useAnimatedList` must wire ref + `data-flip`
 for (const file of [...tsFiles, ...cssFiles]) {

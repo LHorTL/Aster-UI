@@ -73,9 +73,6 @@ const {
   AfNumberInput,
   AfNumberTicker,
   AfPagination,
-  AfProjectEmptyState,
-  AfProjectFilterToolbar,
-  AfProjectKpiCard,
   AfPromptLibrary,
   AfRadio,
   AfRadioGroup,
@@ -143,14 +140,14 @@ const {
 } = AsterUI;
 
 describe("Aster UI Package Contracts & Standalone Rendering", () => {
-  it("exports parameterized host components in aster-ui and re-exports them in aster-ui/examples", () => {
-    expect(typeof AsterUI.AfProjectStoreCard).toBe("function");
+  it("exports parameterized composite patterns in aster-ui and re-exports them in aster-ui/examples", () => {
+    expect(typeof AsterUI.AfTaskBoardPattern).toBe("function");
     expect(typeof AsterUI.AfAgentCursorsPattern).toBe("function");
     expect(typeof AsterUI.AfBreakdownChartPattern).toBe("function");
 
     expect(typeof AsterExamples.AfAgentCursorsPattern).toBe("function");
     expect(typeof AsterExamples.AfBreakdownChartPattern).toBe("function");
-    expect(typeof AsterExamples.AfProjectStoreCard).toBe("function");
+    expect(typeof AsterExamples.AfTaskBoardPattern).toBe("function");
 
     // Verify all new base primitives and hooks are exported from the primary entry
     expect(typeof AfAlertDialog).toBe("function");
@@ -209,9 +206,6 @@ describe("Aster UI Package Contracts & Standalone Rendering", () => {
         <AfStepperForm initialStep={1} />
         <AfApprovalCardPattern title="自定义审批" timeoutSeconds={45} />
         <AfToolCallCardPattern items={[{ id: "1", name: "lint_arch", summary: "检查架构门禁", status: "success", args: {} }]} />
-        <AfProjectKpiCard items={[{ id: "k1", label: "构建耗时", value: "180ms", trend: "-24%", spark: [4, 3, 2, 1] }]} />
-        <AfProjectEmptyState title="暂无自定义记录" description="请先新建条目" />
-        <AfProjectFilterToolbar keyword="token" status="running" />
         <AfCitedAnswer pagesRead={5} />
         <AfThinkingState done />
         <AfPromptLibrary title="团队模板" />
@@ -821,20 +815,6 @@ describe("Aster UI Package Contracts & Standalone Rendering", () => {
       AfPaintedIcon,
       AimOutlined,
       AfChartTooltipSurface,
-      AfSettingsLayout,
-      AfAppDock,
-      AfDesktopTools,
-      AfInstallerWizard,
-      AfAppShell,
-      AfProjectQuotaRow,
-      AfProjectSessionList,
-      AfProjectAppRow,
-      AfProjectStoreCard,
-      AfProjectDownloadRow,
-      AfProjectNotificationCenter,
-      AfProjectStorageCard,
-      AfProjectProxyRuleRow,
-      AfProjectUpdateStack,
     } = AsterUI;
 
     const hostHtml = renderToStaticMarkup(
@@ -850,20 +830,6 @@ describe("Aster UI Package Contracts & Standalone Rendering", () => {
         </AfSurface>
         <AfTitleBar title="Host Window" draggable={false} actions={<button type="button">设置</button>} />
         <AfThemePanel compact description="紧凑主题设置" defaultCreateThemeName="工作区方案" />
-        <AfSettingsLayout />
-        <AfAppDock />
-        <AfDesktopTools />
-        <AfInstallerWizard />
-        <AfAppShell />
-        <AfProjectQuotaRow />
-        <AfProjectSessionList />
-        <AfProjectAppRow />
-        <AfProjectStoreCard />
-        <AfProjectDownloadRow />
-        <AfProjectNotificationCenter />
-        <AfProjectStorageCard />
-        <AfProjectProxyRuleRow />
-        <AfProjectUpdateStack />
       </AsterThemeProvider>,
     );
 
@@ -872,19 +838,6 @@ describe("Aster UI Package Contracts & Standalone Rendering", () => {
     expect(hostHtml).toContain("10-21 用量");
     expect(hostHtml).toContain('data-draggable="false"');
     expect(hostHtml).toContain('data-compact="true"');
-    expect(hostHtml).toContain("af-pj-settings");
-    expect(hostHtml).toContain("af-shell-dock");
-    expect(hostHtml).toContain("af-shell-tools");
-    expect(hostHtml).toContain("af-shell-installer");
-    expect(hostHtml).toContain("af-pj-quota");
-    expect(hostHtml).toContain("af-pj-sessions");
-    expect(hostHtml).toContain("af-pj-apps");
-    expect(hostHtml).toContain("af-pj-store");
-    expect(hostHtml).toContain("af-pj-downloads");
-    expect(hostHtml).toContain("af-pj-notify");
-    expect(hostHtml).toContain("af-pj-storage");
-    expect(hostHtml).toContain("af-pj-proxy");
-    expect(hostHtml).toContain("af-pj-updates");
   });
 
   it("exports and SSR-renders all v0.5 Wave-1 new components, 14 Blocks, 43 Screens, and 26 Illustrations without SSR warnings", () => {
@@ -1250,9 +1203,6 @@ describe("Aster UI Package Contracts & Standalone Rendering", () => {
       AfAgentPlan,
       AfKanban,
       AfAppShellFlat,
-      AfProjectDownloadRow,
-      AfProjectNotificationCenter,
-      AfProjectUpdateStack,
     } = AsterUI;
 
     const dragAndListMarkup = renderToStaticMarkup(
@@ -1262,9 +1212,6 @@ describe("Aster UI Package Contracts & Standalone Rendering", () => {
         <AfAgentPlan />
         <AfKanban />
         <AfAppShellFlat />
-        <AfProjectDownloadRow simulateProgress={false} />
-        <AfProjectNotificationCenter />
-        <AfProjectUpdateStack />
       </AsterThemeProvider>,
     );
 
@@ -1435,17 +1382,6 @@ describe("Aster UI Package Contracts & Standalone Rendering", () => {
             ]}
           />
           <AsterCore.AfSparkline interactive values={[12, 19, 15, 28, 34]} labels={["1m", "2m", "3m", "4m", "5m"]} />
-          <AsterUI.AfProjectAppRow
-            apps={[
-              {
-                id: "custom-app",
-                name: "Custom SVG App",
-                state: "running",
-                version: "1.0.0",
-                icon: customSvg,
-              },
-            ]}
-          />
         </AsterThemeProvider>,
       );
 
@@ -1473,7 +1409,7 @@ describe("Aster UI Package Contracts & Standalone Rendering", () => {
     expect(ssrErrors).toEqual([]);
   });
 
-  it("exports all P1 Electron multi-window primitives & shell hosts across aster-ui / runtime / primitives with zero-arg SSR", () => {
+  it("exports all Electron multi-window, auto-scroll, and canvas-zoom primitives across aster-ui / runtime / core / primitives with zh-CN Dropzone localization", () => {
     const primHooks = [
       "useWindowAutoSize",
       "useWindowPointerDrag",
@@ -1482,6 +1418,9 @@ describe("Aster UI Package Contracts & Standalone Rendering", () => {
       "useTwoPhaseWindowTransition",
       "useReversibleEdgePeek",
       "useHoverIsolatedTimers",
+      "useAutoScrollStick",
+      "useCanvasZoomPan",
+      "computeCursorAnchoredPan",
     ] as const;
 
     for (const hookName of primHooks) {
@@ -1497,12 +1436,6 @@ describe("Aster UI Package Contracts & Standalone Rendering", () => {
       );
     }
 
-    expect(AsterUI.normalizeInstallDirectory("D:\\", "AsterStudio")).toBe("D:\\AsterStudio");
-    expect(AsterUI.normalizeInstallDirectory("e:", "AsterStudio")).toBe("E:\\AsterStudio");
-    expect(AsterUI.normalizeInstallDirectory("D:\\CustomApps\\Aster", "AsterStudio")).toBe(
-      "D:\\CustomApps\\Aster",
-    );
-
     expect(
       AsterUI.hitTestPoint([{ x: 10, y: 20, width: 100, height: 50, right: 110, bottom: 70 }], 50, 40),
     ).toBe(true);
@@ -1510,221 +1443,11 @@ describe("Aster UI Package Contracts & Standalone Rendering", () => {
       AsterUI.hitTestPoint([{ x: 10, y: 20, width: 100, height: 50, right: 110, bottom: 70 }], 150, 40),
     ).toBe(false);
 
-    const p1Components = [
-      "AfAppDock",
-      "AfDesktopTools",
-      "AfEdgeNotificationOverlay",
-      "AfInstallerWizard",
-      "AfRunningProcessesDialog",
-      "AfViewportFitStage",
-      "AfSubwindowChrome",
-      "AfRecoveryLockShell",
-    ] as const;
-
-    const ssrErrors: string[] = [];
-    const origError = console.error;
-    console.error = (...args: unknown[]) => {
-      ssrErrors.push(args.map(String).join(" "));
-    };
-
-    try {
-      for (const compName of p1Components) {
-        const Comp = (AsterUI as unknown as Record<string, React.ComponentType>)[compName];
-        expect(typeof Comp).toBe("function");
-        expect((AsterRuntime as Record<string, unknown>)[compName]).toBe(Comp);
-        const html = renderToStaticMarkup(
-          <AsterThemeProvider initialMode="dark">
-            <Comp />
-          </AsterThemeProvider>,
-        );
-        expect(html.length).toBeGreaterThan(80);
-      }
-
-      const customHtml = renderToStaticMarkup(
-        <AsterThemeProvider>
-          <AsterUI.AfAppDock variant="compact" storeBadgeCount={5} onOpenStore={() => {}} onOpenSettings={() => {}} />
-          <AsterUI.AfInstallerWizard stage="welcome" />
-          <AsterUI.AfInstallerWizard stage="configure" availableSpaceMb={90} requiredSpaceMb={200} />
-          <AsterUI.AfInstallerWizard stage="installing" indeterminate />
-          <AsterUI.AfInstallerWizard stage="error" />
-          <AsterUI.AfSubwindowChrome variant="popover" arrowSide="bottom" />
-          <AsterUI.AfSubwindowChrome variant="overlay" />
-        </AsterThemeProvider>,
-      );
-
-      expect(customHtml).toContain('data-variant="compact"');
-      expect(customHtml).toContain('data-insufficient="true"');
-      expect(customHtml).toContain("af-shell-installer__indeterminate");
-      expect(customHtml).toContain("af-subwin--popover");
-      expect(customHtml).toContain("af-subwin--overlay");
-    } finally {
-      console.error = origError;
-    }
-
-    expect(ssrErrors).toEqual([]);
-  });
-
-  it("exports all P2-1 & P2-2 Store Suite components across aster-ui / runtime / patterns/store with zero-arg SSR", async () => {
-    const storePattern = await import("@fangxinyan/aster-ui/patterns/store");
-    const storeNames = [
-      "AfStoreHeaderBar",
-      "AfProjectStoreCard",
-      "AfStoreAppDetailDrawer",
-      "AfStoreUpdatesWorkspace",
-      "AfProjectDownloadRow",
-      "AfStoreTaskShelf",
-      "AfStoreAuthModal",
-      "AfStoreHeroStage",
-      "AfStorePlatformMatrix",
-    ] as const;
-
-    const ssrErrors: string[] = [];
-    const origError = console.error;
-    console.error = (...args: unknown[]) => {
-      ssrErrors.push(args.map(String).join(" "));
-    };
-
-    try {
-      for (const name of storeNames) {
-        const Comp = (AsterUI as unknown as Record<string, React.ComponentType>)[name];
-        expect(typeof Comp).toBe("function");
-        expect((AsterRuntime as Record<string, unknown>)[name]).toBe(Comp);
-        expect((storePattern as Record<string, unknown>)[name]).toBe(Comp);
-        const html = renderToStaticMarkup(
-          <AsterThemeProvider initialMode="light">
-            <Comp />
-          </AsterThemeProvider>,
-        );
-        expect(html.length).toBeGreaterThan(80);
-      }
-
-      expect(typeof AsterUI.detectClientStorePlatform).toBe("function");
-
-      const statesHtml = renderToStaticMarkup(
-        <AsterThemeProvider>
-          <AsterUI.AfProjectStoreCard
-            onSelect={() => {}}
-            apps={[
-              { id: "s1", name: "A", icon: "grid", desc: "d", version: "1.0.0", state: "queued" },
-              { id: "s2", name: "B", icon: "grid", desc: "d", version: "1.0.0", state: "verifying" },
-              { id: "s3", name: "C", icon: "grid", desc: "d", version: "1.0.0", state: "incompatible", visibility: "private" },
-            ]}
-          />
-          <AsterUI.AfProjectDownloadRow
-            tasks={[
-              { id: "t1", app: "X", icon: "bolt", version: "1.0", size: "1 MB", speed: "-", state: "failed", progress: 40 },
-            ]}
-          />
-        </AsterThemeProvider>,
-      );
-
-      expect(statesHtml).toContain('data-store-state="queued"');
-      expect(statesHtml).toContain('data-store-state="verifying"');
-      expect(statesHtml).toContain('data-store-state="incompatible"');
-      expect(statesHtml).toContain('data-task-state="failed"');
-    } finally {
-      console.error = origError;
-    }
-
-    expect(ssrErrors).toEqual([]);
-  });
-
-  it("P2-3 管理后台套件与 useAutoScrollStick 四端同源导出且零参 SSR 无报错", async () => {
-    const storePattern = await import("@fangxinyan/aster-ui/patterns/store");
-    const AsterCore = await import("@fangxinyan/aster-ui/core");
-    const AsterPrimitives = await import("@fangxinyan/aster-ui/primitives");
-
-    expect(typeof AsterUI.useAutoScrollStick).toBe("function");
-    expect(AsterCore.useAutoScrollStick).toBe(AsterUI.useAutoScrollStick);
-    expect(AsterPrimitives.useAutoScrollStick).toBe(AsterUI.useAutoScrollStick);
-    expect(AsterRuntime.useAutoScrollStick).toBe(AsterUI.useAutoScrollStick);
-
-    expect(AsterUI.bumpSemverVersion("2.4.1", "patch")).toBe("2.4.2");
-    expect(AsterUI.bumpSemverVersion("2.4.1", "minor")).toBe("2.5.0");
-    expect(AsterUI.bumpSemverVersion("v2.4.1", "major")).toBe("3.0.0");
-    expect(AsterUI.formatStageMs(6420)).toBe("6.42s");
-
-    const adminNames = [
-      "AfReleaseChangelogEditor",
-      "AfChunkedPackagePublisher",
-      "AfAppGrantEditor",
-      "AfJobStageTimer",
-      "AfLogTailViewer",
-    ] as const;
-
-    const ssrErrors: string[] = [];
-    const origError = console.error;
-    console.error = (...args: unknown[]) => {
-      ssrErrors.push(args.map(String).join(" "));
-    };
-
-    try {
-      for (const name of adminNames) {
-        const Comp = (AsterUI as unknown as Record<string, React.ComponentType>)[name];
-        expect(typeof Comp).toBe("function");
-        expect((AsterRuntime as Record<string, unknown>)[name]).toBe(Comp);
-        expect((storePattern as Record<string, unknown>)[name]).toBe(Comp);
-        const html = renderToStaticMarkup(
-          <AsterThemeProvider initialMode="light">
-            <Comp />
-          </AsterThemeProvider>,
-        );
-        expect(html.length).toBeGreaterThan(80);
-      }
-
-      const pubHtml = renderToStaticMarkup(
-        <AsterThemeProvider>
-          <AsterUI.AfChunkedPackagePublisher />
-        </AsterThemeProvider>,
-      );
-      expect(pubHtml).toContain("fs.userDictionary");
-      expect(pubHtml).toContain("线上 v2.4.1 → 待发布 v2.4.2");
-
-      const removedPermHtml = renderToStaticMarkup(
-        <AsterThemeProvider>
-          <AsterUI.AfChunkedPackagePublisher
-            manifestDiff={{
-              previousManifestText: '{ "version": "1.0.0", "permissions": ["clipboard.read", "fs.temp"] }',
-              nextManifestText: '{ "version": "1.0.1", "permissions": ["clipboard.read"] }',
-            }}
-          />
-        </AsterThemeProvider>,
-      );
-      expect(removedPermHtml).toContain("收敛 1 项权限声明");
-    } finally {
-      console.error = origError;
-    }
-
-    expect(ssrErrors).toEqual([]);
-  });
-
-  it("P2-4 数字资产交易市场全套组件三端同源导出、双向阶梯费率计算准确且零参 SSR 无报错", async () => {
-    const storePattern = await import("@fangxinyan/aster-ui/patterns/store");
-
-    const feeMid = AsterUI.calculateConsignmentFee(4280);
-    expect(feeMid.serviceFee).toBe(149.8);
-    expect(feeMid.netPayout).toBe(4130.2);
-
-    const feeCap = AsterUI.calculateConsignmentFee(35000);
-    expect(feeCap.serviceFee).toBe(500);
-    expect(feeCap.netPayout).toBe(34500);
-
-    const solved = AsterUI.solveListingPriceFromNet(4130);
-    expect(AsterUI.calculateConsignmentFee(solved).netPayout).toBeGreaterThanOrEqual(4130);
-
-    // High-value capped tier (>= 20,000, ¥500 fee cap) closed-form exact reverse solver
-    const solvedHigh = AsterUI.solveListingPriceFromNet(50000);
-    expect(solvedHigh).toBe(50500);
-    expect(AsterUI.calculateConsignmentFee(solvedHigh).netPayout).toBe(50000);
-
-    // Decimal currency formatting in AfCashierModal (never produces "99.5.00")
-    const cashierDecimalHtml = renderToStaticMarkup(
-      <AsterThemeProvider>
-        <AsterUI.AfCashierModal inline amountCny={99.5} countdownPaused />
-      </AsterThemeProvider>,
-    );
-    expect(cashierDecimalHtml).toContain("99.50");
-    expect(cashierDecimalHtml).not.toContain("99.5.00");
+    // 验证光标锚点不动点公式：(cursorX - pan0)/z0 === (cursorX - pan1)/z1
+    const pan0 = { x: -30, y: 20 };
+    const pan1 = AsterUI.computeCursorAnchoredPan(180, 120, pan0, 1, 2.5);
+    expect((180 - pan0.x) / 1).toBeCloseTo((180 - pan1.x) / 2.5, 4);
+    expect((120 - pan0.y) / 1).toBeCloseTo((120 - pan1.y) / 2.5, 4);
 
     // Localized AfDropzone (locale="zh-CN") renders Chinese dropzone copy cleanly
     const zhDropzoneHtml = renderToStaticMarkup(
@@ -1738,159 +1461,92 @@ describe("Aster UI Package Contracts & Standalone Rendering", () => {
     expect(zhDropzoneHtml).toContain("拖拽文件到此处");
     expect(zhDropzoneHtml).toContain("正在合并分片");
     expect(zhDropzoneHtml).not.toContain("Drop files here");
+  });
 
-    // Redesigned AfAccountAssetMatrix renders Master-Detail workspace + gold distribution bar + docked rail anchor
-    const assetMatrixHtml = renderToStaticMarkup(
-      <AsterThemeProvider>
-        <AsterUI.AfAccountAssetMatrix />
+  it("exports core layout & semantic spacing primitives (AfPage, AfPageHeader, AfSection, AfStack, AfInline, AfColumns, AfToolbar, AfListRow, AfSpacer) across core, main, and runtime", () => {
+    const layoutExports = [
+      "AfPage",
+      "AfPageHeader",
+      "AfSection",
+      "AfStack",
+      "AfInline",
+      "AfColumns",
+      "AfToolbar",
+      "AfListRow",
+      "AfSpacer",
+    ] as const;
+
+    for (const symName of layoutExports) {
+      const coreSym = (AsterCore as Record<string, unknown>)[symName];
+      const uiSym = (AsterUI as Record<string, unknown>)[symName];
+      const rtSym = (AsterRuntime as Record<string, unknown>)[symName];
+      expect(coreSym, `@fangxinyan/aster-ui/core.${symName}`).toBeTruthy();
+      expect(uiSym, `aster-ui.${symName}`).toBe(coreSym);
+      expect(rtSym, `@fangxinyan/aster-ui/runtime.${symName}`).toBe(coreSym);
+    }
+
+    const coreCssPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../dist/core.css");
+    const coreCss = fs.readFileSync(coreCssPath, "utf8");
+    for (const tokenOrClass of [
+      "--af-space-micro",
+      "--af-space-inline",
+      "--af-space-group",
+      "--af-space-block",
+      "--af-space-section",
+      "--af-space-page",
+      ".af-page",
+      ".af-page-header",
+      ".af-section",
+      ".af-stack",
+      ".af-columns",
+      ".af-toolbar",
+      ".af-list-row",
+    ]) {
+      expect(coreCss, `dist/core.css should include ${tokenOrClass}`).toContain(tokenOrClass);
+    }
+
+    const layoutHtml = renderToStaticMarkup(
+      <AsterThemeProvider initialMode="light" initialDensity="compact">
+        <AsterCore.AfPage maxWidth="narrow">
+          <AsterCore.AfPageHeader
+            title="布局原语契约"
+            description="基于语义间距令牌自动响应紧凑密度"
+            actions={
+              <AsterCore.AfInline gap="inline">
+                <AsterCore.AfButton variant="secondary">取消</AsterCore.AfButton>
+                <AsterCore.AfButton variant="primary">保存</AsterCore.AfButton>
+              </AsterCore.AfInline>
+            }
+          />
+          <AsterCore.AfSection title="双列区">
+            <AsterCore.AfColumns columns={2} gap="group">
+              <AsterCore.AfStack gap="tight">
+                <AsterCore.AfToolbar
+                  leading={<AsterCore.AfInput placeholder="搜索" />}
+                  trailing={<AsterCore.AfButton size="sm">新建</AsterCore.AfButton>}
+                />
+                <AsterCore.AfSpacer />
+              </AsterCore.AfStack>
+              <AsterCore.AfCard flush>
+                <AsterCore.AfListRow
+                  icon="settings"
+                  title="默认配置"
+                  description="发丝分隔列表行"
+                  control={<AsterCore.AfSwitch defaultChecked />}
+                />
+              </AsterCore.AfCard>
+            </AsterCore.AfColumns>
+          </AsterCore.AfSection>
+        </AsterCore.AfPage>
       </AsterThemeProvider>,
     );
-    expect(assetMatrixHtml).toContain("af-asset-matrix__workspace");
-    expect(assetMatrixHtml).toContain("af-asset-matrix__roster");
-    expect(assetMatrixHtml).toContain("af-asset-matrix__inspector");
-    expect(assetMatrixHtml).toContain("af-asset-matrix__share-bar");
-    expect(assetMatrixHtml).toContain("af-asset-matrix__rail-anchor");
 
-    const marketNames = [
-      "AfMarketFilterBar",
-      "AfMarketListingView",
-      "AfCanvasViewportShell",
-      "AfMarketGoodsModal",
-      "AfCashierModal",
-      "AfConsignmentCalculator",
-      "AfAccountAssetMatrix",
-      "AfEdgeIdentityRail",
-    ] as const;
-
-    const ssrErrors: string[] = [];
-    const origError = console.error;
-    console.error = (...args: unknown[]) => {
-      ssrErrors.push(args.map(String).join(" "));
-    };
-
-    try {
-      for (const name of marketNames) {
-        const Comp = (AsterUI as unknown as Record<string, React.ComponentType>)[name];
-        expect(Boolean(Comp && (typeof Comp === "function" || typeof Comp === "object"))).toBe(true);
-        expect((AsterRuntime as Record<string, unknown>)[name]).toBe(Comp);
-        expect((storePattern as Record<string, unknown>)[name]).toBe(Comp);
-        const html = renderToStaticMarkup(
-          <AsterThemeProvider initialMode="light">
-            <Comp />
-          </AsterThemeProvider>,
-        );
-        expect(html.length).toBeGreaterThan(60);
-      }
-    } finally {
-      console.error = origError;
-    }
-
-    expect(ssrErrors).toEqual([]);
-  });
-
-  it("P3-1 & P3-2 视觉精修与多媒体时间轴套件导出对称、光标锚点缩放不动点恒等且零参 SSR 无报错", async () => {
-    const workbenchPattern = await import("@fangxinyan/aster-ui/patterns/workbench");
-    const AsterCore = await import("@fangxinyan/aster-ui/core");
-    const AsterPrimitives = await import("@fangxinyan/aster-ui/primitives");
-
-    expect(typeof AsterUI.useCanvasZoomPan).toBe("function");
-    expect(AsterCore.useCanvasZoomPan).toBe(AsterUI.useCanvasZoomPan);
-    expect(AsterPrimitives.useCanvasZoomPan).toBe(AsterUI.useCanvasZoomPan);
-    expect(AsterRuntime.useCanvasZoomPan).toBe(AsterUI.useCanvasZoomPan);
-
-    // 验证光标锚点不动点公式：(cursorX - pan0)/z0 === (cursorX - pan1)/z1
-    const pan0 = { x: -30, y: 20 };
-    const pan1 = AsterUI.computeCursorAnchoredPan(180, 120, pan0, 1, 2.5);
-    expect((180 - pan0.x) / 1).toBeCloseTo((180 - pan1.x) / 2.5, 4);
-    expect((120 - pan0.y) / 1).toBeCloseTo((120 - pan1.y) / 2.5, 4);
-    expect(AsterUI.formatTimecode30Fps(6.5)).toBe("00:00:06:15");
-
-    const names = [
-      "AfScreenCaptureOverlay",
-      "AfImageCompareStage",
-      "AfTimelineTrackEditor",
-      "AfAspectPreviewStage",
-    ] as const;
-
-    const ssrErrors: string[] = [];
-    const origError = console.error;
-    console.error = (...args: unknown[]) => {
-      ssrErrors.push(args.map(String).join(" "));
-    };
-
-    try {
-      for (const name of names) {
-        const Comp = (AsterUI as unknown as Record<string, React.ComponentType>)[name];
-        expect(typeof Comp).toBe("function");
-        expect((AsterRuntime as Record<string, unknown>)[name]).toBe(Comp);
-        expect((workbenchPattern as Record<string, unknown>)[name]).toBe(Comp);
-        const html = renderToStaticMarkup(
-          <AsterThemeProvider initialMode="light">
-            <Comp />
-          </AsterThemeProvider>,
-        );
-        expect(html.length).toBeGreaterThan(80);
-      }
-    } finally {
-      console.error = origError;
-    }
-
-    expect(ssrErrors).toEqual([]);
-  });
-
-  it("P3-3 & P3-4 文档画布、进程拾取、代理规则链命中模拟器与服务器监控三端同源导出且零参 SSR 无报错", async () => {
-    const workbenchPattern = await import("@fangxinyan/aster-ui/patterns/workbench");
-
-    const sampleRules: AsterUI.AfProxyChainRule[] = [
-      { id: "r1", kind: "PROCESS-NAME", pattern: "node.exe", verdict: "PROXY", outboundGroup: "JP", enabled: true },
-      { id: "r2", kind: "DOMAIN-SUFFIX", pattern: "anthropic.com", verdict: "PROXY", outboundGroup: "US", enabled: true },
-      { id: "r3", kind: "DOMAIN-KEYWORD", pattern: "telemetry", verdict: "REJECT", outboundGroup: "BLK", enabled: true },
-      { id: "r-cidr24", kind: "IP-CIDR", pattern: "192.168.1.0/24", verdict: "DIRECT", outboundGroup: "LAN-24", enabled: true },
-      { id: "r-cidr12", kind: "IP-CIDR", pattern: "172.16.0.0/12", verdict: "DIRECT", outboundGroup: "LAN-12", enabled: true },
-      { id: "r4", kind: "FINAL", pattern: "*", verdict: "DIRECT", outboundGroup: "CN", enabled: true },
-    ];
-    expect(AsterUI.evaluateRuleChain("api.anthropic.com:443", sampleRules).matchedRule?.id).toBe("r2");
-    expect(AsterUI.evaluateRuleChain("sdk.telemetry.io", sampleRules).verdict).toBe("REJECT");
-    expect(AsterUI.evaluateRuleChain("C:\\Program Files\\nodejs\\node.exe", sampleRules).matchedRule?.id).toBe("r1");
-    // Real 32-bit IPv4 CIDR bitwise mask checks
-    expect(AsterUI.evaluateRuleChain("192.168.1.50:443", sampleRules).matchedRule?.id).toBe("r-cidr24");
-    expect(AsterUI.evaluateRuleChain("192.168.2.50:443", sampleRules).matchedRule?.id).toBe("r4");
-    expect(AsterUI.evaluateRuleChain("172.31.255.1:8080", sampleRules).matchedRule?.id).toBe("r-cidr12");
-    expect(AsterUI.evaluateRuleChain("172.32.0.1:8080", sampleRules).matchedRule?.id).toBe("r4");
-
-    const names = [
-      "AfSectionOutline",
-      "AfDocumentPageCanvas",
-      "AfProcessPickerModal",
-      "AfRuleChainList",
-      "AfServerMetricPanel",
-      "AfQuotaFloatCard",
-    ] as const;
-
-    const ssrErrors: string[] = [];
-    const origError = console.error;
-    console.error = (...args: unknown[]) => {
-      ssrErrors.push(args.map(String).join(" "));
-    };
-
-    try {
-      for (const name of names) {
-        const Comp = (AsterUI as unknown as Record<string, React.ComponentType>)[name];
-        expect(typeof Comp).toBe("function");
-        expect((AsterRuntime as Record<string, unknown>)[name]).toBe(Comp);
-        expect((workbenchPattern as Record<string, unknown>)[name]).toBe(Comp);
-        const html = renderToStaticMarkup(
-          <AsterThemeProvider initialMode="light">
-            <Comp />
-          </AsterThemeProvider>,
-        );
-        expect(html.length).toBeGreaterThan(60);
-      }
-    } finally {
-      console.error = origError;
-    }
-
-    expect(ssrErrors).toEqual([]);
+    expect(layoutHtml).toContain("af-page__inner");
+    expect(layoutHtml).toContain("af-page-header__title");
+    expect(layoutHtml).toContain("af-columns");
+    expect(layoutHtml).toContain('data-columns="2"');
+    expect(layoutHtml).toContain('role="toolbar"');
+    expect(layoutHtml).toContain("af-list-row__title");
   });
 
   it("v0.5.1 增强契约：图标别名/校验函数、命令式 afModal、表单无障碍与多图层媒体原语全部同源可用", () => {

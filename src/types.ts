@@ -10,7 +10,6 @@ export type GalleryGroup =
   | "Agents"
   | "Blocks"
   | "Screens"
-  | "定制组件"
   | "动效"
   | "插画";
 
@@ -47,7 +46,6 @@ export const GROUPS: GalleryGroup[] = [
   "Agents",
   "Blocks",
   "Screens",
-  "定制组件",
   "动效",
   "插画",
 ];

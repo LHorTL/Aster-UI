@@ -38,6 +38,7 @@
   "files": [
     "dist",
     "DESIGN.md",
+    "COMPONENTS.md",
     "CHANGELOG.md",
     "assets/showcase-light.png",
     "assets/showcase-dark.png",

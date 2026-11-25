@@ -1,0 +1,368 @@
+/* Aster UI 基础布局与间距原语样式（100% Flexbox，零 CSS Grid，严格收口于 .af-* 作用域） */
+
+/* ---------------- AfStack / AfInline / AfSpacer ---------------- */
+
+.af-stack {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.af-stack[data-direction="horizontal"] {
+  flex-direction: row;
+}
+
+.af-stack[data-wrap="true"] {
+  flex-wrap: wrap;
+}
+
+.af-stack[data-fill="true"] {
+  flex: 1 1 auto;
+}
+
+.af-spacer {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* ---------------- AfColumns (Flexbox Multi-Column) ---------------- */
+
+.af-columns {
+  --af-cols-gap: var(--af-space-group);
+  --af-cols-min: 220px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--af-cols-gap);
+  width: 100%;
+  min-width: 0;
+}
+
+.af-columns > * {
+  min-width: 0;
+}
+
+.af-columns[data-columns="auto"] > * {
+  flex: 1 1 var(--af-cols-min);
+}
+
+.af-columns[data-columns="1"] > * {
+  flex: 0 0 100%;
+}
+
+.af-columns[data-columns="2"] > * {
+  flex: 1 1 calc((100% - var(--af-cols-gap)) / 2);
+  min-width: min(100%, 240px);
+}
+
+.af-columns[data-columns="3"] > * {
+  flex: 1 1 calc((100% - var(--af-cols-gap) * 2) / 3);
+  min-width: min(100%, 220px);
+}
+
+.af-columns[data-columns="4"] > * {
+  flex: 1 1 calc((100% - var(--af-cols-gap) * 3) / 4);
+  min-width: min(100%, 180px);
+}
+
+/* ---------------- AfPage ---------------- */
+
+.af-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
+
+.af-page[data-surface="canvas"] {
+  background: var(--af-canvas);
+}
+
+.af-page[data-surface="panel"] {
+  background: var(--af-panel);
+}
+
+.af-page__inner {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
+
+.af-page__inner[data-centered="true"] {
+  margin-inline: auto;
+}
+
+/* ---------------- AfPageHeader ---------------- */
+
+.af-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--af-space-inline);
+  min-width: 0;
+}
+
+.af-page-header[data-divider="true"] {
+  padding-bottom: var(--af-space-block);
+  box-shadow: var(--af-divider-hairline);
+}
+
+.af-page-header__crumb {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.af-page-header__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--af-space-group) var(--af-space-block);
+  min-width: 0;
+}
+
+.af-page-header__titles {
+  display: flex;
+  flex: 1 1 260px;
+  flex-direction: column;
+  gap: var(--af-space-micro);
+  min-width: 0;
+}
+
+.af-page-header__titleline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--af-space-inline);
+  min-width: 0;
+}
+
+.af-page-header__title {
+  margin: 0;
+  color: var(--af-strong);
+  font-size: var(--af-fs-2xl);
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.015em;
+}
+
+.af-page-header__desc {
+  margin: 0;
+  color: var(--af-muted);
+  font-size: var(--af-fs-md);
+  line-height: 20px;
+}
+
+.af-page-header__actions {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--af-space-inline);
+}
+
+.af-page-header__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--af-space-group);
+  min-width: 0;
+}
+
+/* ---------------- AfSection ---------------- */
+
+.af-section {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.af-section[data-divider="true"] {
+  padding-top: var(--af-space-section);
+  box-shadow: var(--af-divider-hairline-top);
+}
+
+.af-section__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--af-space-inline) var(--af-space-group);
+  min-width: 0;
+}
+
+.af-section__titles {
+  display: flex;
+  flex: 1 1 220px;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.af-section__title {
+  margin: 0;
+  color: var(--af-strong);
+  font-size: var(--af-fs-section);
+  font-weight: 600;
+  line-height: 22px;
+  letter-spacing: -0.01em;
+}
+
+.af-section__desc {
+  margin: 0;
+  color: var(--af-muted);
+  font-size: var(--af-fs-sm);
+  line-height: 18px;
+}
+
+.af-section__action {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--af-space-inline);
+}
+
+/* ---------------- AfToolbar ---------------- */
+
+.af-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-width: 0;
+}
+
+.af-toolbar[data-wrap="true"] {
+  flex-wrap: wrap;
+}
+
+.af-toolbar[data-surface="sunken"] {
+  padding: var(--af-space-inline) var(--af-space-group);
+  border-radius: var(--af-r-pop);
+  background: var(--af-surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--af-line);
+}
+
+.af-toolbar[data-surface="card"] {
+  padding: var(--af-space-inline) var(--af-space-group);
+  border-radius: var(--af-r-card);
+  background: var(--af-surface);
+  box-shadow: var(--af-shadow-card);
+}
+
+.af-toolbar__group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  min-width: 0;
+}
+
+.af-toolbar__group--trailing {
+  margin-left: auto;
+  flex: none;
+}
+
+/* ---------------- AfListRow ---------------- */
+
+.af-list-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--af-space-group);
+  min-height: var(--af-row-h-loose);
+  padding: var(--af-row-pad-y) var(--af-row-pad-x);
+  min-width: 0;
+  background: transparent;
+  color: var(--af-ink);
+  transition: color var(--af-dur-fast) ease, opacity var(--af-dur-fast) ease;
+}
+
+.af-list-row:not(:last-child) {
+  box-shadow: var(--af-divider-hairline);
+}
+
+.af-card__body[data-flush] [data-af-hover-list] {
+  --af-ht-r: var(--af-r-md);
+}
+
+.af-card__body[data-flush] .af-list-row {
+  padding-inline: calc(var(--af-row-pad-x) - 6px);
+  border-radius: var(--af-r-md);
+}
+
+.af-list-row[data-align="start"] {
+  align-items: flex-start;
+}
+
+.af-list-row[data-clickable="true"] {
+  cursor: pointer;
+}
+
+.af-list-row[data-selected="true"] {
+  background: var(--af-selected);
+}
+
+.af-list-row[data-disabled="true"] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.af-list-row__icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--af-r-md);
+  background: var(--af-track-soft);
+  box-shadow: inset 0 0 0 1px var(--af-line);
+  color: var(--af-icon);
+}
+
+.af-list-row__main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.af-list-row__titleline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--af-space-tight);
+  min-width: 0;
+}
+
+.af-list-row__title {
+  color: var(--af-strong);
+  font-size: var(--af-fs-md);
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.af-list-row__desc {
+  margin: 0;
+  color: var(--af-muted);
+  font-size: var(--af-fs-sm);
+  line-height: 18px;
+}
+
+.af-list-row__trail {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--af-space-inline);
+}
+
+.af-list-row__meta {
+  color: var(--af-muted);
+  font-size: var(--af-fs-sm);
+  font-variant-numeric: tabular-nums;
+  line-height: 18px;
+  white-space: nowrap;
+}

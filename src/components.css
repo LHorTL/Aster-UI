@@ -65,6 +65,10 @@
   min-width: 0;
 }
 
+.af-form:not([data-layout="inline"]) .af-form-item__control > :is(.af-field, .af-field-wrap, .af-select, .af-number, .af-autocomplete, .af-cascader) {
+  width: 100%;
+}
+
 .af-form-item__hint {
   color: var(--af-muted);
   font-size: var(--af-fs-sm);

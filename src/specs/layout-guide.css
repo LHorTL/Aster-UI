@@ -1,0 +1,200 @@
+/* 基础组件布局与间距规范演示页（Showcase 专属样板与间距标尺可视化） */
+
+.af-lg-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 1060px;
+  margin: 0 auto;
+}
+
+.af-lg-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 14px;
+  padding: 10px 14px;
+  border-radius: var(--af-r-card);
+  background: var(--af-surface);
+  box-shadow: var(--af-shadow-card);
+}
+
+.af-lg-bar__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.af-lg-ctrl {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.af-lg-ctrl__label {
+  color: var(--af-muted);
+  font-size: var(--af-fs-xs);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* 演示画布：模拟真实桌面工作台内嵌圆角面板（Inset Frame） */
+.af-lg-viewport {
+  border-radius: var(--af-r-panel);
+  background: var(--af-canvas);
+  box-shadow: var(--af-shadow-card);
+  padding: 6px;
+  overflow: hidden;
+}
+
+.af-lg-canvas {
+  border-radius: var(--af-r-pop);
+  background: var(--af-panel);
+  box-shadow: 0 0 0 1px var(--af-ring);
+  min-height: 540px;
+}
+
+/* 间距标注模式（Blueprint Overlay）：透出实际应用的间距与容器边界 */
+.af-lg-canvas[data-blueprint="true"] .af-page {
+  background-image: radial-gradient(color-mix(in srgb, var(--af-accent) 18%, transparent) 1px, transparent 1px);
+  background-size: 8px 8px;
+}
+
+.af-lg-canvas[data-blueprint="true"] .af-page__inner {
+  outline: 1px dashed color-mix(in srgb, var(--af-accent) 45%, transparent);
+  outline-offset: 2px;
+}
+
+.af-lg-canvas[data-blueprint="true"] .af-section,
+.af-lg-canvas[data-blueprint="true"] .af-page-header,
+.af-lg-canvas[data-blueprint="true"] .af-toolbar {
+  position: relative;
+  outline: 1px dashed color-mix(in srgb, var(--af-accent) 32%, transparent);
+  outline-offset: 2px;
+  border-radius: var(--af-r-sm);
+}
+
+.af-lg-canvas[data-blueprint="true"] .af-columns {
+  outline: 1px dashed color-mix(in srgb, var(--af-warning) 50%, transparent);
+  outline-offset: 2px;
+  border-radius: var(--af-r-sm);
+}
+
+.af-lg-bp-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: var(--af-r-xs);
+  background: var(--af-accent-soft);
+  color: var(--af-accent-ink);
+  font-family: var(--af-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+/* 间距标尺列表 */
+.af-lg-ruler {
+  display: flex;
+  flex-direction: column;
+}
+
+.af-lg-ruler__row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  min-width: 0;
+}
+
+.af-lg-ruler__row:not(:last-child) {
+  box-shadow: var(--af-divider-hairline);
+}
+
+.af-lg-ruler__token {
+  flex: 0 0 184px;
+  font-family: var(--af-mono);
+  font-size: var(--af-fs-sm);
+  color: var(--af-strong);
+}
+
+.af-lg-ruler__val {
+  flex: 0 0 56px;
+  font-family: var(--af-mono);
+  font-size: var(--af-fs-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--af-accent-ink);
+  text-align: right;
+}
+
+.af-lg-ruler__barwrap {
+  flex: 0 0 120px;
+  display: flex;
+  align-items: center;
+}
+
+.af-lg-ruler__bar {
+  height: 10px;
+  border-radius: 3px;
+  background: var(--af-accent);
+  opacity: 0.85;
+  transition: width var(--af-dur) var(--af-ease);
+}
+
+.af-lg-ruler__use {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--af-muted);
+  font-size: var(--af-fs-sm);
+  line-height: 18px;
+}
+
+/* 表面层级阶梯 */
+.af-lg-surface-step {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px;
+  border-radius: var(--af-r-pop);
+  min-width: 0;
+}
+
+.af-lg-surface-step__name {
+  color: var(--af-strong);
+  font-size: var(--af-fs-md);
+  font-weight: 600;
+}
+
+.af-lg-surface-step__token {
+  font-family: var(--af-mono);
+  font-size: var(--af-fs-xs);
+  color: var(--af-accent-ink);
+}
+
+.af-lg-surface-step__desc {
+  color: var(--af-muted);
+  font-size: var(--af-fs-xs);
+  line-height: 16px;
+}
+
+/* Before / After 对比徽标 */
+.af-lg-compare-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* 刻意展示的错误反面示例区 */
+.af-lg-bad-box {
+  padding: 12px;
+  border-radius: var(--af-r-md);
+  background: var(--af-surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--af-line);
+}

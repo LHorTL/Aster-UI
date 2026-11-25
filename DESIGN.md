@@ -1,8 +1,8 @@
 # Aster UI · affectUI Clean / Pro 设计规范与工程准则 (`DESIGN.md`)
 
-> 版本：`v0.5.1`（1:1 同步 [affectui.com/components](https://www.affectui.com/components)，全库 `268` 个组件展示规格：`215` 套 affectUI 1:1 + `53` 套 Aster 原生扩展）  
-> 适用范围：`Aster UI`（`@fangxinyan/aster-ui`）组件库开发，以及现代桌面工作台与高密度 Web 应用的界面构建与存量组件迁移  
-> 目标：**用一套统一、克制、零拟态、零视觉噪音的 affectUI Clean / Pro 设计工程体系支撑全场景产品界面。**
+> 版本：`v0.5.1`（1:1 同步 [affectui.com/components](https://www.affectui.com/components)，全库 `259` 个纯净通用组件与场景规格；完整目录见 [`COMPONENTS.md`](./COMPONENTS.md)）  
+> 适用范围：`Aster UI`（`@fangxinyan/aster-ui`）组件库开发，以及基于纯基础组件或复合模式构建的现代桌面工作台与高密度 Web 应用  
+> 目标：**用一套统一、克制、零拟态、零视觉噪音的 affectUI Clean / Pro 设计工程体系与基础组件间距/排版契约，支撑全场景产品界面。**
 
 ---
 
@@ -75,15 +75,62 @@
 
 ---
 
-## 4. 空间尺度、控件密度与圆角（Spacing, Density & Radius）
+## 4. 空间尺度、基础组件拼装间距规范与密度圆角（Spacing, Composition & Density）
 
-- **空间网格**：严格以 `4px` 为基准增量（`--af-1: 4px`、`--af-2: 8px`、`--af-3: 12px`、`--af-4: 16px`、`--af-5: 20px`、`--af-6: 24px`、`--af-8: 32px`）。
-- **控件高度与同排对齐**：同一操作行内的输入、选择、按钮必须同高。
-  - **标准密度（`comfortable`，默认）**：`xs = 24px`、`sm = 28px`、`md = 32px`、`lg = 36px`；表格行高 `44px / 52px`。
-  - **紧凑密度（`.af[data-density="compact"]`）**：`xs = 22px`、`sm = 24px`、`md = 28px`、`lg = 32px`；表格行高 `36px / 44px`，专用于高信息密度桌面工作台与侧栏。
+> **为什么需要本节**：高阶 Blocks/Screens 自带成套内部排版，但实际业务中大量界面直接由 `@fangxinyan/aster-ui/core` 的基础组件拼装而成。以下空间契约已内置为 `--af-space-*` 语义令牌与 9 个零业务布局原语（`AfPage` / `AfPageHeader` / `AfSection` / `AfStack` / `AfInline` / `AfColumns` / `AfToolbar` / `AfListRow` / `AfSpacer`），确保仅用基础组件也能保持与 affectUI Pro 同源的呼吸感与对齐精度（交互示范见展示站 `Layout & Spacing Guide`）。
+
+### 4.1 九级语义间距阶梯（严格 4px 网格 + 自动密度缩放）
+
+**严禁在业务页面里随手写 `gap: 7px` / `gap: 13px` / `margin-bottom: 18px` 等拍脑袋数值**，统一选用以下语义令牌或 `AfStack` / `AfInline` / `AfColumns` 的同名 `gap` 档位：
+
+| 语义令牌（CSS） | 组件 `gap` 属性 | 标准密度（`comfortable`） | 紧凑密度（`compact`） | 唯一推荐用途 |
+| --- | --- | --- | --- | --- |
+| `--af-space-micro` | `"micro"` | `4px` | `4px` | 标题↔副标题、表单 Label↔Hint、图标与紧邻角标 |
+| `--af-space-tight` | `"tight"` | `6px` | `4px` | 表单标签↔控件、标题↔行内 Tag、按钮内图标与文字 |
+| `--af-space-inline` | `"inline"` | `8px` | `6px` | 相邻按钮组、工具栏同组控件、Tag 簇、页头操作按钮 |
+| `--af-space-group` | `"group"` | `12px` | `8px` | 多列 KPI/卡片列距、双列表单横距、区块标题↔正文、工具栏↔表格 |
+| `--af-space-block` | `"block"` | `16px` | `12px` | 卡片标准内边距、表单字段纵间距、同区多卡纵距、弹窗/抽屉正文块距 |
+| `--af-space-section-inner` | `"section-inner"` | `20px` | `14px` | 页头↔首区块、宽松弹窗内边距、主次双栏槽距 |
+| `--af-space-section` | `"section"` | `24px` | `16px` | 页面一级 `AfSection` 之间的垂直节奏 |
+| `--af-space-page` | `"page"` | `24px` | `16px` | `AfPage` 四周标准页边距 |
+| `--af-space-page-lg` | `"page-lg"` | `32px` | `20px` | 宽屏画布、空状态引导区、着陆首屏呼吸留白 |
+
+- 原子尺度同步保留：`--af-1: 4px`、`--af-1-5: 6px`、`--af-2: 8px`、`--af-3: 12px`、`--af-4: 16px`、`--af-5: 20px`、`--af-6: 24px`、`--af-8: 32px`。
+- 列表/设置行内边距令牌：`--af-row-pad-x`（`16px` / compact `12px`）、`--af-row-pad-y`（`12px` / compact `8px`）。
+
+### 4.2 页面骨架与阅读宽度档位
+
+使用 `<AfPage maxWidth="...">` 统一收口页面骨架，严禁在超宽屏（1920px+）把单列设置项或长表单拉满 100% 导致标签与右侧开关视线断裂：
+
+| 页面类型 | `AfPage maxWidth` | 令牌与基准宽 | 典型组合 |
+| --- | --- | --- | --- |
+| 设置页 / 单列表单 / 偏好配置 | `"narrow"` | `--af-page-max-narrow: 680px` | `AfPageHeader(divider)` → `AfSection` → `AfCard flush` + `AfHoverList` + `AfListRow` |
+| 常规详情页 / 多步配置 / 审批页 | `"medium"` | `--af-page-max-medium: 960px` | `AfPageHeader` → `AfDescriptions` + `AfColumns(2)` |
+| 仪表盘 / 数据列表 / 管理台 | `"wide"`（默认） | `--af-page-max-wide: 1200px` | `AfPageHeader` → `AfColumns(4)` 指标 → `AfToolbar` + `AfTable` |
+| 满宽分栏工作台 / 编辑器 / 画布 | `"full"` | 无上限（配合 `AfSplitter`） | `AfSplitter` / `AfResizableGroup` 固定侧栏 + 自适应主区 |
+
+### 4.3 基础组件六大高频拼装标准配方（Recipes）
+
+1. **页头（`AfPageHeader`）**：面包屑 ↔ 标题行 `8px`（`inline`）；主标题（`20px / 600`）↔ 一句话说明（`13px / --af-muted`）`4px`（`micro`）；右侧操作组 `8px`（`inline`），所有同排控件严格同高。
+2. **多列卡片与 KPI（`AfColumns`）**：4 列指标行用 `<AfColumns columns={4} gap="group">`（`12px/8px`）；2 列内容卡用 `<AfColumns columns={2} gap="block">`（`16px/12px`）；默认 `align="stretch"` 保证同行卡片底边齐平。
+3. **工具栏与数据表（`AfToolbar` + `AfTable`）**：搜索框宽 `220px–260px`、筛选项宽 `120px–160px`，左侧筛选与右侧动作之间由 `AfToolbar` 自动推开，同排控件间距 `8px`（`inline`）；工具栏与下方 `AfTable` 间距 `12px`（`group`）。
+4. **设置分组与列表行（`AfCard flush` + `AfHoverList` + `AfListRow`）**：容器圆角 `14px`（`--af-r-card`），`flush` 留白 `6px` 搭配行圆角 `8px`（`--af-r-md`）实现光学同心圆角；行高默认 `52px`（compact `44px`），行间自动 `1px` 发丝底线，零静态 `:hover` 跳色。
+5. **表单与操作栏（`AfForm` + `AfColumns` + `AfInline`）**：
+   - 垂直字段间距默认 `14–16px`（`block`），同一行两列字段用 `<AfColumns columns={2} gap="group">`（`12px`），Label ↔ 控件 `5–6px`（`tight`）。
+   - 提交栏顶部用 `<AfDivider />` 分隔；**按钮顺序铁律**：危险操作独立隔离至最左侧，主操作区靠右且严格遵循 **「左次右主」**（`Secondary / Cancel` 在左，`Primary / Confirm` 在右，间距 `8px`）。
+6. **表面分层与禁卡套卡（Surface Nesting Law）**：
+   - 标准四层递增：`--af-canvas`（画布/侧栏）→ `--af-panel`（内嵌主工作区）→ `--af-surface`（`AfCard` 卡片）→ `--af-overlay`（`AfModal` / `AfDrawer` / `AfPopover`）。
+   - **严禁在 `AfCard` 内部再嵌套一层 `AfCard`**（相同底色与双层 `--af-shadow-card` 会显得厚重发虚）；卡内二级分组统一使用 `<AfSurface level="sunken" bordered padding="sm" radius="md">` 下沉轻槽。
+   - `AfModal` / `AfDrawer` 内部正文块之间统一使用 `<AfStack gap="block">`（`16px`）。
+
+### 4.4 控件高度、密度与圆角
+
+- **同排控件等高铁律**：同一操作行（页头、工具栏、表单尾栏）内的 `AfInput`、`AfSelect`、`AfSegmented`、`AfButton` **必须传入同一 `size` 档位**，严禁混用 `sm` + `lg` + `xs`。
+  - **标准密度（`comfortable`，默认）**：`xs = 24px`、`sm = 28px`、`md = 32px`、`lg = 36px`；表格/列表行高 `44px / 52px`。
+  - **紧凑密度（`.af[data-density="compact"]`）**：`xs = 22px`、`sm = 24px`、`md = 28px`、`lg = 32px`；表格/列表行高 `36px / 44px`，语义间距自动同步收紧。
 - **圆角三档与层阶对应**：
   - 默认中圆角（`md`）：微标签 `--af-r-xs: 4px` → 小控件/Tag `--af-r-sm: 6px` → 基础圆角 `--af-r-md: 8px` → 输入框 `--af-r-input: 9px` → 按钮 `--af-r-btn: 10px` → 浮层 `--af-r-pop: 12px` → 卡片 `--af-r-card / --af-r-lg: 14px` → 弹窗 `--af-r-modal: 16px` → 主面板 `--af-r-panel / --af-r-xl: 18px` → 全胶囊 `--af-r-pill: 999px`。
-  - 通过 `<AsterThemeProvider initialRadius="sm" | "md" | "lg">` 或用户配置实时切换 `.af[data-radius="sm"|"lg"]`。
+  - 通过 `<AsterThemeProvider initialRadius="sm" | "md" | "lg">` 实时切换 `.af[data-radius="sm"|"lg"]`。
 
 ---
 
@@ -115,8 +162,8 @@
 4. **边框防消失与多倍率 DPI 发丝线铁律（Anti-Vanishing Hairline & Inset Frame Law）**：
    - **禁止实色浅灰描边融进浅灰画布**：`--af-card-ring` 与 `--af-ring` 必须统一采用正片叠底半透明色（浅色 `rgba(0, 0, 0, 0.08)` / 深色 `rgba(255, 255, 255, 0.08)`），**严禁写死实色 `#ebebeb` 或 `#f0f0f0`**——实色浅灰在 `#f7f7f7` 点阵画布或同色侧栏上对比度不足 `5%`，会导致卡片上/左外框视觉消失。
    - **禁止 `0.5px` 亚像素叠加 `6%` 极淡线**：在 Windows `100% (1x)` 与 `125% (1.25x)` 缩放屏幕下，`inset 0 ±0.5px 0 var(--af-line)`、`inset -0.5px 0 0 var(--af-line)` 与 `inset 0 0 0 0.5px var(--af-line)` 会被光栅化舍入为 `0px` 或 `3%` 透明度而彻底消失。所有容器分隔线与内嵌槽描边统一使用整数像素 **`1px` + `var(--af-line)`**（如 `inset 0 1px 0 var(--af-line)`、`inset 0 -1px 0 var(--af-line)`、`inset 0 0 0 1px var(--af-line)`），由 `lint:arch` **Rule 9** 强制拦截。
-   - **双栏/多栏外壳采用 Inset 内嵌圆角画布**：设置中心（`AfSettingsLayout` `.af-pj-settings`）、导航舞台（`AppDock` `.af-shell-dock-demo`）与工作台外壳对齐 affectUI Pro `Inset` 范式——外框使用 `--af-canvas` 底 + `var(--af-shadow-card)`，右侧主面板内缩 `6px` 并独立加 `border-radius: 12px; background: var(--af-panel); box-shadow: 0 0 0 1px var(--af-ring)`，靠表面明度差与完整闭合环自然分界，不依赖脆弱的单根竖向细线。
-   - **外描边防裁切安全余量（Overflow Clearance）**：任何声明 `overflow: hidden | clip | auto` 的父级舞台或滚动槽，若内部子卡片依赖 `box-shadow: 0 0 0 1px ...` 绘制外环，父容器四周必须预留 `>= 2px–6px` 内边距余量，严禁贴边 `0px` 削掉卡片上下左右任一侧边框；分组卡片（如 `.af-pj-setting-section__card`）自身设置 `overflow: hidden` 以防止首尾子行背景溢出圆角遮盖外环。
+   - **双栏/多栏外壳采用 Inset 内嵌圆角画布**：工作台与设置外壳对齐 affectUI Pro `Inset` 范式（如 `AfAppShellInset`）——外框使用 `--af-canvas` 底 + `var(--af-shadow-card)`，右侧主面板内缩 `6px` 并独立加 `border-radius: 12px; background: var(--af-panel); box-shadow: 0 0 0 1px var(--af-ring)`，靠表面明度差与完整闭合环自然分界，不依赖脆弱的单根竖向细线。
+   - **外描边防裁切安全余量（Overflow Clearance）**：任何声明 `overflow: hidden | clip | auto` 的父级舞台或滚动槽，若内部子卡片依赖 `box-shadow: 0 0 0 1px ...` 绘制外环，父容器四周必须预留 `>= 2px–6px` 内边距余量，严禁贴边 `0px` 削掉卡片上下左右任一侧边框；分组列表卡片推荐 `<AfCard flush>`（内留 `6px`）搭配 `<AfHoverList>` 与 `<AfListRow>`。
 
 ---
 
@@ -154,15 +201,15 @@
 8. **胶囊/徽章内数字与箭头光学居中铁律（Capsule & Chevron Optical Alignment Law）**：
    - 在紧凑胶囊按钮或折叠徽章（如 `AgentTree` `.af-agtc__fold` 的 `-2` / `+2` 折叠器）中，**严禁直接拼接基线偏置的原始 Unicode 字符（如 `⌄` `U+2304`）与数字混排**；必须使用 `display: inline-flex; align-items: center; justify-content: center; line-height: 1; font-variant-numeric: tabular-nums` 容器搭配显式几何居中的 `<svg>` 矢量 Chevron（展开/收起通过 `transform: rotate(-90deg)` 过渡），确保文字与图标在垂直中轴线上达到 `0px` 光学对齐。
 9. **affectUI 标志性动画与交互动效总纲（Signature Motion & Interaction Taxonomy）**：
-   - 所有定制组件（`src/components/project/*`、`src/components/shell/*`）及新开发业务组件，其交互手感与动效细节必须与复制自 affectUI 的组件同源一致，严格遵循以下八大标志性范式：
-     1. **GPU 滑动悬停底块（`data-af-hover-list`）**：侧栏导航、设置分组行、会话/通知/下载/规则/应用列表全部启用 `data-af-hover-list="hover" | "wash"`（非直接按钮/列表项加 `data-af-hover-item`），删除单行 `:hover { background }`，初入 `80ms ease-out` 仅淡入透明度，跨行 `100ms var(--af-ease)` `translate3d` 平滑跟随。
-     2. **分段激活胶囊滑块（`<AfSegmented>`）**：时间窗切换（`7d / 30d`、`5h / 7d`）、会话快筛（`全部 / 活跃 / 异常`）、代理策略（`代理 / 直连 / 阻断`）与视图切换统一使用带白底滑动胶囊的 `<AfSegmented>` 或测量滑块，严禁按钮组无过渡硬跳。
-     3. **等宽数字同步插值（`useTween` / `useTweens`）**：时间窗切换、配额刷新、缓存释放、安装/部署进度变化时，所有大数字与百分比统一接入 `useTween` / `useTweens`（`420ms–500ms` 四次方 `ease-out`）配合 `tabular-nums` 平滑滚动到位。
-     4. **多段配比双向联动与微折线磁吸游标（Bidirectional Highlight & Sparkline Scrubbing）**：多段占比条（如 `ProjectStorageCard`）与图例双向悬停联动，非悬停项 `180ms ease` 平滑退暗至 `opacity: 0.35`；KPI 微折线支持指针磁吸游标（垂直参考细线 + 吸附点 + 右上角实时读数回显）。
-     5. **内容切换微位移淡入与异构高度过渡（Keyed Crossfade & `<AfSwap>`）**：设置子页、安装步骤、桌面工具二级面板切换时，在单一内容包裹节点绑定 `key={activeKey}` 执行 `180ms–200ms var(--af-ease)` 从 `opacity: 0.38; transform: translateY(4px)` 到 `1 / none` 入场（零幽灵重复节点）；异构高度块（如空状态预设切换、Dock 工作区舞台切换）使用 `<AfSwap swapKey={...}>` 同步过渡容器高度。
-     6. **先退场再 FLIP 升位 / 三层叠卡推进（Exit-Before-Promote Physics）**：通知逐条忽略、下载任务取消、版本公告叠卡（`front / back / deep`）点击“知道了”时，先添加 `data-leaving="true"` 执行 `180ms–220ms var(--af-ease)` 侧滑或上浮淡出，动画结束后再移除数据并触发 `useListFlip`（`260ms var(--af-ease)`）或后卡透视升位，严禁 `0ms` 瞬删硬跳。
-     7. **原生 `<details>` 平滑展开收起（`::details-content` Disclosure）**：归档通知、存储目录说明、安装终端日志等 `<details>` 抽屉在 `@media (prefers-reduced-motion: no-preference)` 下启用 `interpolate-size: allow-keywords` 与 `::details-content` 的 `block-size`、`opacity`、`content-visibility allow-discrete` 过渡（固定 `contain: layout; overflow: clip` 防跳帧），配合摘要箭头 `rotate(180deg)`。
-     8. **零卡片点击缩小铁律（Zero Card Click-Shrink）**：卡片、设置行、会话行、侧栏导航项、指标卡严禁声明 `:active { transform: scale(...) }`，按压微缩仅限独立小尺寸按钮。
+   - 所有新开发组件与业务页面，其交互手感与动效细节必须与 affectUI Clean / Pro 保持同源一致，严格遵循以下八大标志性范式：
+     1. **GPU 滑动悬停底块（`data-af-hover-list`）**：侧栏导航、设置分组行、列表行全部启用 `<AfHoverList>`（`data-af-hover-list="hover" | "wash"`）+ `<AfListRow>`（`data-af-hover-item`），删除单行 `:hover { background }`，初入 `80ms ease-out` 仅淡入透明度，跨行 `100ms var(--af-ease)` `translate3d` 平滑跟随。
+     2. **分段激活胶囊滑块（`<AfSegmented>`）**：时间窗切换（`24h / 7d / 30d`）、状态快筛与视图切换统一使用带白底滑动胶囊的 `<AfSegmented>` 或测量滑块，严禁按钮组无过渡硬跳。
+     3. **等宽数字同步插值（`useTween` / `useTweens`）**：时间窗切换、配额刷新、进度变化时，核心大数字与百分比统一接入 `useTween` / `useTweens`（`420ms–500ms` 四次方 `ease-out`）配合 `tabular-nums` 平滑滚动到位。
+     4. **多段配比双向联动与微折线磁吸游标（Bidirectional Highlight & Sparkline Scrubbing）**：多段占比条（`AfMeterBar` / `AfBreakdown`）与图例双向悬停联动，非悬停项 `180ms ease` 平滑退暗至 `opacity: 0.35`；KPI 微折线（`AfSparkline interactive`）支持指针磁吸游标。
+     5. **内容切换微位移淡入与异构高度过渡（Keyed Crossfade & `<AfSwap>`）**：子页签或步骤切换时，单一内容节点绑定 `key={activeKey}` 执行 `180ms–200ms var(--af-ease)` 微位移淡入；异构高度块使用 `<AfSwap swapKey={...}>` 同步过渡容器高度。
+     6. **先退场再 FLIP 升位（Exit-Before-Promote Physics）**：列表删除、叠卡关闭时，先通过 `useAnimatedList` 标记 `data-leaving="true"` 执行 `180ms–220ms var(--af-ease)` 退场，再触发 `useListFlip`（`260ms var(--af-ease)`）补位，严禁 `0ms` 瞬删硬跳。
+     7. **原生 `<details>` 平滑展开收起（`::details-content` Disclosure）**：折叠说明、归档日志等 `<details>` 抽屉在 `@media (prefers-reduced-motion: no-preference)` 下启用 `interpolate-size: allow-keywords` 与 `::details-content` 平滑高度与透明度过渡。
+     8. **零卡片点击缩小铁律（Zero Card Click-Shrink）**：卡片、设置行、侧栏导航项、指标卡严禁声明 `:active { transform: scale(...) }`，按压微缩仅限独立小尺寸按钮。
 10. **高阶特效与 Pro 复刻保真度契约（Advanced Motion & Pro Effect Fidelity）**：
    - **全链路退场闭环（Zero `0ms` Close）**：不仅入场需要 `160ms–200ms`，所有通过 `anchorRef` 锚定的下拉层（`Select`、`AutoComplete`、`Cascader`、`TimePicker`、`DateRangePicker`）、`Tooltip`、嵌套子菜单、`ContextMenu` 与 `AfMessage` 关闭时均须执行 `115ms–150ms` 退场动画；关闭瞬间必须冻结最后一次有效锚点坐标与菜单快照，待 `animationend` / `transitionend`（含减动效短兜底）后再卸载 Portal，严禁 `{open && ...}` 瞬卸或提前置空数据导致空壳塌缩。
    - **形变容器防裁切与在途可中断（Ring-Safe Morph & Interruptible WAAPI）**：`AfBlurCrossfade`、`AfSwap`、`AfTray`、`AfSaveBar` 等尺寸形变容器严禁使用 `overflow: hidden` 贴边削切内部卡片的 `0 0 0 1px` 描边环与焦点环，统一使用 `overflow: clip; overflow-clip-margin: 6px–12px`；测量目标尺寸须读取不受 `:active scale` 污染的布局宽高（`offsetWidth` / `offsetHeight`），启动新 WAAPI 动画前必须取消或承接在途动画，高频连切时保留多幽灵帧并存淡出。
@@ -227,6 +274,8 @@
 | 骨架流光用 `background-attachment: fixed`（弹窗内失效），或看板用原生 HTML5 `draggable` 残影拖拽 | 流光改用伪元素 `transform: translate3d` 合成层扫光；拖拽统一改用 `setPointerCapture` + 兄弟节点 FLIP 让位 | `DESIGN.md` §7.10 |
 | 折线图用 `clip-path` 横擦冒充描边、游标从图表边缘横穿飞入，或减动效下暴露未模糊的裸多边形 | 使用 `pathLength="1"` + `stroke-dashoffset` 匀速描边，游标原地淡入；减动效下静态弥散背景保留柔和渐变兜底且跑马灯静止 | `DESIGN.md` §7.10 |
 | 复刻 Pro 组件同时写 `border: 1px solid` + `--af-shadow-card` 或遗留私有色值孤岛 | 卡片统一只用 `--af-shadow-card` 单层发丝环，全面映射至 `--af-*` 明暗自适应令牌 | `npm run lint:arch` & `DESIGN.md` §6.4 / §7.10 |
+| 纯基础组件拼装时手写 `gap: 7px / 13px / 18px`、混用不同高度控件、或 `AfCard` 里套 `AfCard` | 统一使用 `--af-space-*` 与 `AfPage` / `AfPageHeader` / `AfSection` / `AfStack` / `AfColumns` / `AfToolbar` / `AfListRow`；同排同 `size`；卡内二级分区用 `AfSurface level="sunken"` | `DESIGN.md` §4 & `Layout & Spacing Guide` |
+| 表单/弹窗按钮随意排序（主按钮在左或危险按钮紧贴主按钮） | 危险操作隔离到最左侧，主操作区靠右严格「左次右主」且间距 `8px`（`--af-space-inline`） | `DESIGN.md` §4.3 |
 
 ---
 
@@ -250,8 +299,9 @@
 
 ### 12.1 基础输入、表单与展示组件
 
-| 传统组件名 | Aster UI v0.5.0 对应 | 契约说明 |
+| 传统组件名 | Aster UI v0.5.1 对应 | 契约说明 |
 | --- | --- | --- |
+| `Page / Stack / Row / Grid / Toolbar / ListRow` | `AfPage` / `AfPageHeader` / `AfSection` / `AfStack` / `AfInline` / `AfColumns` / `AfToolbar` / `AfListRow` / `AfSpacer`（`@fangxinyan/aster-ui/core`） | 100% Flexbox 布局与语义间距原语，内置 `--af-space-*` 舒适/紧凑密度缩放、`min-width: 0` 与发丝分隔行 |
 | `Button` | `AfButton` | 支持 `xs / sm / md / lg`、`primary / secondary / accent / ghost / outline / dashed / danger`、`block / tip / icon / trailingIcon / iconOnly / loading` |
 | `IconButton` | `AfIconButton` | 原生图标按钮封装（支持 `size="xs"`、必填 `label` 无障碍名与 `tip` 提示） |
 | `Input` / `Input.Password` / `Input.TextArea` | `AfInput` / `AfInput.Password`（或 `AfPasswordInput`）/ `AfInput.TextArea`（或 `AfTextarea`） | 支持 `variant="outline \| filled \| borderless"`、`inputClassName`、`leadingIcon / trailingIcon / prefix / allowClear / showCount / revealable / onValueChange / onPressEnter`；合法态输出 `aria-invalid="false"` |

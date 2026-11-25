@@ -1,16 +1,19 @@
 # Aster UI · Agent 工程与设计防走偏准则 (`AGENTS.md`)
 
-> 单一事实来源：完整视觉令牌、组件交互契约与迁移映射详见 [`DESIGN.md`](./DESIGN.md)。  
-> 适用范围：`Aster UI` 全量组件开发、affectUI Clean / Pro 复刻对齐、以及定制组件（`src/components/project/*`、`src/components/shell/*`、`src/components/store/*`、`src/components/workbench/*`）迭代维护。  
+> 单一事实来源：完整视觉令牌、基础组件间距规范与组件迁移映射详见 [`DESIGN.md`](./DESIGN.md)，全量组件目录与选型索引详见 [`COMPONENTS.md`](./COMPONENTS.md)。  
+> 适用范围：`Aster UI` 全量通用组件开发（`Core` 基础控件与布局原语、`UI Pro`、`Patterns`、`Blocks`、`Screens`、`Motion`、`Illustrations`）及基于 Aster UI 拼装的产品界面。  
 
 ---
 
 ## 1. 模块分层与导入红线（Bundle Boundaries）
 
 1. **双入口边界**：
-   - `@fangxinyan/aster-ui/core`（`src/ui.tsx` + `src/ui.css` + `src/components.css` + `src/components/shell/core-shell.css`）：基础控件与轻量宿主原语（含 `AsterThemeProvider`、`TitleBar`、`ThemePanel`）。**`src/ui.tsx` 链路下的任何文件严禁反向 `import` `src/ui-pro.tsx` 或 `src/patterns/*`**。
-   - `@fangxinyan/aster-ui`（`src/index.ts`）：完整包，汇总 `./ui`、`./ui-pro`（`useTween`、`useTweens`、`AfSwap`、图表与动效原语）、Patterns、Blocks、Screens 与全部定制组件。
+   - `@fangxinyan/aster-ui/core`（`src/ui.tsx` + `src/tokens.css` + `src/layout.css` + `src/ui.css` + `src/components.css` + `src/components/shell/core-shell.css`）：基础布局/间距原语（`AfPage`、`AfPageHeader`、`AfSection`、`AfStack`、`AfInline`、`AfColumns`、`AfToolbar`、`AfListRow`、`AfSpacer`）、全量基础控件与轻量宿主原语（`AsterThemeProvider`、`AfTitleBar`、`AfWindowControls`、`AfThemePanel`）。**`src/ui.tsx` 链路下的任何文件严禁反向 `import` `src/ui-pro.tsx` 或 `src/patterns/*`**。
+   - `@fangxinyan/aster-ui`（`src/index.ts`）：完整包，汇总 `./ui`、`./ui-pro`（`useTween`、`useTweens`、`AfSwap`、图表与动效原语）、Patterns、Blocks、Screens 与 26 套交互插画。
 2. **零舞台耦合**：`src/` 内严禁引用展示站 `StageContext` / `useStage`；所有浮层必须通过 `useAfLayerContainer()` 挂载至 `.af-portal-root`，严禁直接 `createPortal(..., document.body)`。
+3. **纯基础组件拼装间距铁律**：
+   - 使用基础组件搭页面时，**禁止随手写非标准像素间距（如 `7px / 13px / 18px`）或裸 `display: flex; gap` 样式漂移**，必须优先组合 `AfPage` / `AfPageHeader` / `AfSection` / `AfStack` / `AfInline` / `AfColumns` / `AfToolbar` / `AfListRow` 与 `--af-space-*` 语义令牌（自动适配 `comfortable / compact` 密度）。
+   - 同排交互控件（搜索框、下拉、分段、按钮）必须严格同 `size`；设置/表单页收束 `maxWidth="narrow"`（`680px`）；严禁 `AfCard` 内嵌套 `AfCard`（改用 `AfSurface level="sunken"`）；操作栏危险按钮孤立靠左，主操作区靠右严格「左次右主」且间距 `8px`。
 
 ---
 

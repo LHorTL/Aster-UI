@@ -163,14 +163,29 @@
   --af-row-h: 44px;
   --af-row-h-loose: 52px;
 
-  /* ---- 间距：4 的倍数 ---- */
+  /* ---- 间距：4 的倍数 + 语义组合阶梯（自动响应 density="compact"） ---- */
   --af-1: 4px;
+  --af-1-5: 6px;
   --af-2: 8px;
   --af-3: 12px;
   --af-4: 16px;
   --af-5: 20px;
   --af-6: 24px;
   --af-8: 32px;
+  --af-space-micro: 4px;
+  --af-space-tight: 6px;
+  --af-space-inline: 8px;
+  --af-space-group: 12px;
+  --af-space-block: 16px;
+  --af-space-section-inner: 20px;
+  --af-space-section: 24px;
+  --af-space-page: 24px;
+  --af-space-page-lg: 32px;
+  --af-row-pad-x: 16px;
+  --af-row-pad-y: 12px;
+  --af-page-max-narrow: 680px;
+  --af-page-max-medium: 960px;
+  --af-page-max-wide: 1200px;
 
   /* ---- 字体：控件 13，正文 13.5，区块 15，页面标题 22；数字一律等宽 ---- */
   --af-font: "Inter", "InterVariable", "Segoe UI Variable Text", "Segoe UI", "PingFang SC", "Microsoft YaHei UI",
@@ -387,6 +402,17 @@
   --af-h-lg: 32px;
   --af-row-h: 36px;
   --af-row-h-loose: 44px;
+  --af-space-micro: 4px;
+  --af-space-tight: 4px;
+  --af-space-inline: 6px;
+  --af-space-group: 8px;
+  --af-space-block: 12px;
+  --af-space-section-inner: 14px;
+  --af-space-section: 16px;
+  --af-space-page: 16px;
+  --af-space-page-lg: 20px;
+  --af-row-pad-x: 12px;
+  --af-row-pad-y: 8px;
 }
 
 /* 圆角档位：小圆角（sm）/ 默认中圆角（md）/ 大圆角（lg） */

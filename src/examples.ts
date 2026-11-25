@@ -84,22 +84,6 @@ export {
 } from "./patterns/agents-d";
 
 export {
-  AfProjectKpiCard,
-  AfProjectEmptyState,
-  AfProjectFilterToolbar,
-  AfProjectQuotaRow,
-  AfProjectSessionList,
-  AfProjectAppRow,
-  AfProjectStoreCard,
-  AfProjectDownloadRow,
-  AfProjectNotificationCenter,
-  AfProjectStorageCard,
-  AfProjectProxyRuleRow,
-  AfProjectUpdateStack,
-  AfSettingsLayout,
-  AfSettingsPage,
-  AfSettingSection,
-  AfSettingRow,
   AfAgentGalleryPattern,
   AfAppDirectoryPattern,
   AfClientContextPattern,
@@ -109,10 +93,3 @@ export {
   AfRunInspectorPattern,
   AfTaskBoardPattern,
 } from "./patterns/project";
-
-export {
-  AfAppShell,
-  AfAppDock,
-  AfDesktopTools,
-  AfInstallerWizard,
-} from "./patterns/shell";
