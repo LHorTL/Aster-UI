@@ -1,4 +1,4 @@
-# Aster UI（星序）`v0.5.1`
+# Aster UI（星序）`v0.6.0`
 
 1:1 对齐 [affectUI](https://www.affectui.com/components) Clean / Pro 交互、动效、无障碍与像素细节规范的通用 React 组件库（全库共 **259** 个独立组件与场景规格）。  
 面向现代桌面工作台、AI 智能体协同、高信息密度 SaaS 与开发者工具，完整覆盖**基础布局与间距原语**、轻量化基础控件底座、复合业务模式、整页级应用界面、动态主题系统与 Electron 无边框窗口原语。
@@ -11,7 +11,7 @@
 
 ![Aster UI 深色预览](assets/showcase-dark.png)
 
-## v0.5.1 核心特性
+## v0.6.0 核心特性
 
 - **259 个纯净通用组件与场景规格矩阵**：
   - **基础布局与语义间距原语（`@fangxinyan/aster-ui/core`）**：内置 `AfPage`、`AfPageHeader`、`AfSection`、`AfStack`、`AfInline`、`AfColumns`、`AfToolbar`、`AfListRow`、`AfSpacer` 与九级 `--af-space-*` 语义间距令牌，自动响应 `comfortable / compact` 密度缩放，解决纯基础组件拼装缺少间距与对齐规范的问题。

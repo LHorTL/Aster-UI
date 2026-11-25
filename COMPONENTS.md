@@ -1,6 +1,6 @@
 # Aster UI 全量组件清单与选型索引 (`COMPONENTS.md`)
 
-> 版本：`v0.5.1`（已清除全部业务定制套件，全库保持纯净通用的 **Core 基础控件与布局原语 + UI Pro + Patterns + Blocks + Screens + Motion + Illustrations** 体系）  
+> 版本：`v0.6.0`（已清除全部业务定制套件，全库保持纯净通用的 **Core 基础控件与布局原语 + UI Pro + Patterns + Blocks + Screens + Motion + Illustrations** 体系）  
 > 设计与间距细则见 [`DESIGN.md`](./DESIGN.md)；交互示范页可在展示站打开 `Layout & Spacing Guide`（`?component=layout-guide`）实时切换浅深色、舒适/紧凑密度与间距标注。
 
 ---

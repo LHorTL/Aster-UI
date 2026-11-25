@@ -2,6 +2,26 @@
 
 All notable changes to `@fangxinyan/aster-ui` are documented in this file following [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.6.0] - 2026-11-25
+
+### Added
+- **Core Layout & Semantic Spacing System (`@fangxinyan/aster-ui/core` & `core.css`)**:
+  - Added 9 zero-business-logic, 100% Flexbox layout primitives: `AfPage`, `AfPageHeader`, `AfSection`, `AfStack`, `AfInline`, `AfColumns`, `AfToolbar`, `AfListRow`, and `AfSpacer`.
+  - Added 9-tier semantic spacing tokens (`--af-space-micro` through `--af-space-page-lg`), row padding tokens (`--af-row-pad-x`, `--af-row-pad-y`), and page max-width tokens (`--af-page-max-narrow`, `--af-page-max-medium`, `--af-page-max-wide`) in `tokens.css` with automatic `[data-density="compact"]` scaling.
+  - Added an interactive `Layout & Spacing Guide` showcase page (`?component=layout-guide`) demonstrating pure Core composition recipes, live density/radius/blueprint toggles, spacing rulers, and anti-pattern comparisons.
+- **Full Component Catalog & Composition Guidelines**:
+  - Added `COMPONENTS.md` (included in the published npm tarball) indexing all 259 general-purpose component and scene specs across L0–L7 with entry paths, CSS subpaths, and selection guidance.
+  - Expanded `DESIGN.md` and `AGENTS.md` with semantic spacing tables, page width tiers, pure Core composition recipes, surface nesting laws, same-row control height parity, and button-ordering rules.
+
+### Changed
+- Moved generic host primitives `AfTitleBar`, `AfWindowControls`, and `AfThemePanel` into the core controls showcase group while keeping all 8 Pro Blocks, 43 Screens, 26 Illustrations, and generic interaction primitives intact.
+
+### Fixed
+- Stretched direct form inputs/selects (`AfInput`, `AfSelect`, `AfNumberInput`, `AfAutoComplete`, `AfCascader`) to `width: 100%` inside vertical and multi-column `AfForm` layouts for flush column alignment.
+
+### Removed
+- Removed project-specific custom suites (`patterns/store`, `patterns/workbench`, 13 project-specific `AfProject*` / `AfSettingsLayout` components, and custom multi-window host shells such as `AfAppDock`, `AfDesktopTools`, `AfInstallerWizard`, `AfEdgeNotificationOverlay`, `AfSubwindowChrome`, `AfRecoveryLockShell`, and `AfWindowFrame`) to keep the library purely general-purpose.
+
 ## [0.5.1] - 2026-11-18
 
 ### Added

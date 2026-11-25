@@ -386,7 +386,7 @@ export function Showcase() {
           </nav>
           <div className="ast-sidefoot">
             <span>
-              <b>Aster UI</b> v0.5.1
+              <b>Aster UI</b> v0.6.0
             </span>
             <span>{allSpecs.length} extracted components</span>
           </div>

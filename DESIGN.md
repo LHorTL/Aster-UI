@@ -1,6 +1,6 @@
 # Aster UI · affectUI Clean / Pro 设计规范与工程准则 (`DESIGN.md`)
 
-> 版本：`v0.5.1`（1:1 同步 [affectui.com/components](https://www.affectui.com/components)，全库 `259` 个纯净通用组件与场景规格；完整目录见 [`COMPONENTS.md`](./COMPONENTS.md)）  
+> 版本：`v0.6.0`（1:1 同步 [affectui.com/components](https://www.affectui.com/components)，全库 `259` 个纯净通用组件与场景规格；完整目录见 [`COMPONENTS.md`](./COMPONENTS.md)）  
 > 适用范围：`Aster UI`（`@fangxinyan/aster-ui`）组件库开发，以及基于纯基础组件或复合模式构建的现代桌面工作台与高密度 Web 应用  
 > 目标：**用一套统一、克制、零拟态、零视觉噪音的 affectUI Clean / Pro 设计工程体系与基础组件间距/排版契约，支撑全场景产品界面。**
 
@@ -299,7 +299,7 @@
 
 ### 12.1 基础输入、表单与展示组件
 
-| 传统组件名 | Aster UI v0.5.1 对应 | 契约说明 |
+| 传统组件名 | Aster UI v0.6.0 对应 | 契约说明 |
 | --- | --- | --- |
 | `Page / Stack / Row / Grid / Toolbar / ListRow` | `AfPage` / `AfPageHeader` / `AfSection` / `AfStack` / `AfInline` / `AfColumns` / `AfToolbar` / `AfListRow` / `AfSpacer`（`@fangxinyan/aster-ui/core`） | 100% Flexbox 布局与语义间距原语，内置 `--af-space-*` 舒适/紧凑密度缩放、`min-width: 0` 与发丝分隔行 |
 | `Button` | `AfButton` | 支持 `xs / sm / md / lg`、`primary / secondary / accent / ghost / outline / dashed / danger`、`block / tip / icon / trailingIcon / iconOnly / loading` |
